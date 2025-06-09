@@ -6,12 +6,6 @@
 # Log files
 *.log
 
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
 # Java package files
 *.jar
 *.war
@@ -30,13 +24,13 @@ replay_pid*
 # -------------------------------------
 .gradle/
 build/
-# Ignore Kotlin session/state files in buildSrc
-buildSrc/.kotlin/
-# buildSrc (aka buildSource) compiled output
-buildSrc/build/
-
 **/build/
 **/out/
+**/bin/
+
+# buildSrc (aka buildSource) compiled output and Kotlin state
+buildSrc/.kotlin/
+buildSrc/build/
 
 # Keep Gradle wrapper files
 !gradle/wrapper/gradle-wrapper.jar
@@ -49,8 +43,24 @@ buildSrc/build/
 .idea/
 *.iml
 *.iws
+out/
+
 # VS Code
 .vscode/
+
+# Eclipse
+.project
+.classpath
+.settings/
+target/
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
 
 # -------------------------------------
 # Cucumber Reports
@@ -68,15 +78,12 @@ buildSrc/build/
 # -------------------------------------
 *.tmp
 *.bak
-
-# IntelliJ IDEA files
-.idea/
-*.iml
-out/
+*.swp
+*.swo
+*~
 
 # -------------------------------------
-# Saves
+# Saves (if applicable)
 # -------------------------------------
 **/saves/
 **/saves/index.json
-

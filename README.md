@@ -120,7 +120,7 @@ Use the format `JIRA-ISSUE-KEY commit-type commit-message`.
    ```
 
 7. **Open a Merge Request / Pull Request**
-   Target `main` by opening a merge request. Add reviewers, and notify your peers to review it and merge it.
+   Target `main` by opening a merge request. Add reviewers, and notify your peers to review and merge it.
 
 ---
 

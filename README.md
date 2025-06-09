@@ -50,6 +50,81 @@ To be filled in later.
 
 ### Version Control
 - The project is tracked using Git. All team members are supposed to contribute equally, and the repository is hosted on [GitLab](https://gitlab.gbar.dtu.dk/02160-f25/group-14-re).
+- Separate branches will be used for feature development, and the main branch will always reflect the latest stable version of the project. 
+- Additionally, all branches and commits must be named according to the following conventions:
+
+| Work type         | Branch prefix         | Example branch name                      | Commit prefix (Conventional Commits) |
+| ----------------- | --------------------- |------------------------------------------| ------------------------------------ |
+| **New feature**   | `feature/`            | `feature/LASER-10-laser-button-triggers` | `feat:`                              |
+| **Bug fix**       | `bugfix/` (or `fix/`) | `bugfix/LASER-23-null-pointer`           | `fix:`                               |
+| **Hot-fix**       | `hotfix/`             | `hotfix/LASER-42-crash-on-startup`       | `fix:` or `hotfix:` (team choice)    |
+| **Refactor**      | `refactor/`           | `refactor/LASER-30-clean-player-service` | `refactor:`                          |
+| **Chore / build** | `chore/`              | `chore/LASER-55-update-ci-pipeline`      | `chore:`                             |
+| **Docs**          | `docs/`               | `docs/LASER-12-readme-usage-section`     | `docs:`                              |
+| **Tests only**    | `test/`               | `test/LASER-19-add-controller-tests`     | `test:`                              |
+
+
+### Working on a New Feature
+
+1. **Pull latest changes from `main`**
+
+     ```bash
+     git checkout main
+     git pull origin main
+     ```
+
+2. **Create a new branch for your feature**
+
+   ```bash
+   git checkout -b feature/<JIRA-ISSUE-KEY>-[short-description]
+   # Example:
+   git checkout -b feature/LASER-10-laser-button-triggers
+   ```
+
+3. **Do the work**
+
+    Make your code changes, run the tests, and verify that everything works. **Remember** to follow the BDD approach and write the tests first! (See the above definition of Behavior-Driven Development).
+
+
+4. **Stage the changes and review them**
+
+   ```bash
+   git add .
+   git status
+   ```
+
+6. **Commit**
+Use the format `JIRA-ISSUE-KEY commit-type commit-message`.
+   ```bash
+   git commit -m "<JIRA-ISSUE-KEY> <commit-type>: <commit-message>"
+   # Example:
+   git commit -m "LASER-10 feat: add laser button and trigger functionality"
+   ```
+
+   | commit-type | When to use                             |
+   | ----------- |-----------------------------------------|
+   | `feat`      | New feature                             |
+   | `fix`       | Bug fix                                 |
+   | `hotfix`    | Urgent production patch                 |
+   | `chore`     | Non-functional change (build, CI, etc.) |
+   | `docs`      | Documentation update                    |
+   | `refactor`  | Code changes without behaviour changes  |
+   | `test`      | Adding or updating tests                |
+
+6. **Push the branch**
+
+   ```bash
+   git push origin feature/<JIRA-ISSUE-KEY>-[short-description]
+   # Example:
+   git push origin feature/LASER-10-laser-button-triggers
+   ```
+
+7. **Open a Merge Request / Pull Request**
+   Target `main`, add reviewers, and link the Jira ticket.
+
+---
+
+> **Tip:** Protect the `main` branch by making sure that all changes must come through peer-reviewed pull requests.
 
 ---
 

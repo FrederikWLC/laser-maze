@@ -13,11 +13,11 @@ Feature: Board setup
     Then the tile should exist and be empty
 
     #create these steps after adding Token Class
-  #Scenario: Tile with a token is not empty
-   # Given the board is initialized with width 2 and height 2
-    #When I get the tile at position (1, 1)
-    #And I place a dummy token on the tile
-    #Then the tile should not be empty
+    #Scenario: Tile with a token is not empty
+    #  Given the board is initialized with width 2 and height 2
+    #  When I get the tile at position (1, 1)
+    #  And I place a dummy token on the tile
+    #  Then the tile should not be empty
 
   #test for getTile
   Scenario: Access a tile outside board bounds

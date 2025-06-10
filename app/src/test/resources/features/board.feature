@@ -31,7 +31,7 @@ Feature: Board setup
     Then the board width should be 6
     And the board height should be 4
 
-
+  #test for getTile and getX and getY
   Scenario: Tile coordinates are set correctly
     Given the board is initialized with width 2 and height 2
     When I get the tile at position (1, 1)

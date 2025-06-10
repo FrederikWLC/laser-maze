@@ -42,7 +42,7 @@ To be filled in later.
 ### Behavior-Driven Development (BDD)
 - **Identification and Prioritization:** All functionalities have been identified and prioritized based on project requirements.
 - **User Stories and Scrum Board:** User stories are defined and tracked on a Scrum board in Jira and used in Cucumber tests within the code base. Their creation are according to our rules managed by the product owners.
-- **Implementation of User Stories:** 
+- **Implementation of User Stories:**
     - The user stories are (before any real implementation) first written in .feature files in Gherkin syntax with corresponding Cucumber steps.
     - Core classes are then implemented to make tests pass.
     - Continuous refactoring and unit testing are then performed to ensure code quality.
@@ -50,7 +50,7 @@ To be filled in later.
 
 ### Version Control
 - The project is tracked using Git. All team members are supposed to contribute equally, and the repository is hosted on [GitLab](https://gitlab.gbar.dtu.dk/02160-f25/group-14-re).
-- Separate branches will be used for feature development, and the main branch will always reflect the latest stable version of the project. 
+- Separate branches will be used for feature development, and the main branch will always reflect the latest stable version of the project.
 - Additionally, all branches and commits must be named according to the following conventions:
 
 | Work type         | Branch prefix         | Example branch name                      | Commit prefix (Conventional Commits) |
@@ -76,14 +76,16 @@ To be filled in later.
 2. **Create a new branch for your feature**
 
    ```bash
+   # Correct format
    git checkout -b feature/<JIRA-ISSUE-KEY>-[short-description]
+   
    # Example:
    git checkout -b feature/LASER-10-laser-button-triggers
    ```
 
 3. **Do the work**
 
-    Make your code changes, run the tests, and verify that everything works. **Remember** to follow the BDD approach and write the tests first! (See the above definition of Behavior-Driven Development).
+   Make your code changes, run the tests, and verify that everything works. **Remember** to follow the BDD approach and write the tests first! (See the above definition of Behavior-Driven Development).
 
 
 4. **Stage the changes and review them**
@@ -94,15 +96,17 @@ To be filled in later.
    ```
 
 6. **Commit**
-Use the format `JIRA-ISSUE-KEY commit-type commit-message`.
+   Use the format `JIRA-ISSUE-KEY commit-type commit-message`.
    ```bash
+   # Correct format
    git commit -m "<JIRA-ISSUE-KEY> <commit-type>: <commit-message>"
+   
    # Example:
    git commit -m "LASER-10 feat: add laser button and trigger functionality"
    ```
 
    | commit-type | When to use                             |
-   | ----------- |-----------------------------------------|
+      | ----------- |-----------------------------------------|
    | `feat`      | New feature                             |
    | `fix`       | Bug fix                                 |
    | `hotfix`    | Urgent production patch                 |
@@ -114,13 +118,24 @@ Use the format `JIRA-ISSUE-KEY commit-type commit-message`.
 6. **Push the branch**
 
    ```bash
+   # Correct format
    git push origin feature/<JIRA-ISSUE-KEY>-[short-description]
    # Example:
    git push origin feature/LASER-10-laser-button-triggers
    ```
 
 7. **Open a Merge Request / Pull Request**
-   Target `main`, add reviewers, and link the Jira ticket.
+   Target `main` by opening a merge request. The title should be on the format:
+
+   ```text
+   # Correct format
+   <JIRA-ISSUE-KEY>: <concise summary of the change>
+   
+   # Example
+   LASER-10: Laser triggers on laser button push
+   ```
+
+   Add reviewers, and notify your peers to review and merge it.
 
 ---
 
@@ -137,7 +152,7 @@ Use the format `JIRA-ISSUE-KEY commit-type commit-message`.
 - **Cucumber** - For running BDD tests.
 
 ### Installation Steps
-1. **Clone the Repository:**  
+1. **Clone the Repository:**
      ```bash
      git clone https://gitlab.gbar.dtu.dk/02160-f25/group-14-re.git
      ```
@@ -145,12 +160,12 @@ Use the format `JIRA-ISSUE-KEY commit-type commit-message`.
     cd group-14-re
      ```
 2. **Build the Project:**  
-     Using Gradle Wrapper:
+   Using Gradle Wrapper:
      ```bash
      gradlew clean build
      ```
 3. **Launch the Game:**  
-     Execute the main class (e.g., GameLauncher.java) from your IDE or via command line:
+   Execute the main class (e.g., GameLauncher.java) from your IDE or via command line:
      ```bash
      java -jar app/build/libs/laser.jar
      ```

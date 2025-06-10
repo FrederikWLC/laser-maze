@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BoardSteps {
     private Board board;
+    Tile tile;
 
     @Given("^a new game is started$")
     public void aNewGameIsStarted() {
@@ -36,7 +37,6 @@ public class BoardSteps {
         assertEquals(expectedCount, emptyTileCount);
     }
 
-    Tile tile;
 
     @Then("the tile should exist and be empty")
     public void theTileShouldExistAndBeEmpty() {
@@ -58,8 +58,6 @@ public class BoardSteps {
             exception = e;
         }
     }
-
-
 
     @Then("an error should occur")
     public void anErrorShouldOccur() {

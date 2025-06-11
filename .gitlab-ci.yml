@@ -1,16 +1,17 @@
 test:
   stage: test
-  image: openjdk:17-slim        # signed image ⇒ no “missing signature” error
+  image: gradle:8.10-jdk17            # Gradle 8.10 already inside ⇒ no download
+  variables:
+    GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
+  cache:
+    paths:                            # still cache downloaded deps
+      - .gradle/wrapper
+      - .gradle/caches
   script:
-    - chmod +x ./gradlew        # Windows repo safeguard
-    - ./gradlew --no-daemon test
+    - gradle --no-daemon test         # wrapper no longer needed
   artifacts:
     paths:
       - app/build/reports
-  cache:
-    paths:
-      - .gradle/wrapper
-      - .gradle/caches
   only:
     - branches
     - merge_requests

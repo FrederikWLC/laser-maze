@@ -5,26 +5,28 @@ variables:
   GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
 
 test:
-  image: eclipse-temurin:17-jdk
   stage: test
+  image: eclipse-temurin:17-jdk
 
-  cache:                       # speeds up repeat pipelines
+  cache:                    # speed up repeat pipelines
     key: gradle
     paths:
       - .gradle/wrapper/
       - .gradle/caches/
 
   script:
-    - chmod +x ./gradlew       # precaution
+    - chmod +x ./gradlew    # precaution
     - ./gradlew --no-daemon test
 
   artifacts:
     when: always
     paths:
       - app/build/reports
-    reports:                   # lets GitLab display test results
+    reports:
       junit: "app/build/test-results/test/*.xml"
 
-  rules:
+  rules:                    # ← triggers
+    # Run for any merge-request pipeline (including updates)
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-    - if: '$CI_COMMIT_BRANCH == "main"'
+    # Run for every push to any branch or tag
+    - if: '$CI_PIPELINE_SOURCE == "push"'

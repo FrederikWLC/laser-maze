@@ -1,14 +1,17 @@
+stages:
+  - test
+
 test:
   stage: test
-  image: openjdk:17-slim           # this image is signed
-  before_script:
-    - apt-get update               # install Gradle on the fly
-    - apt-get install -y gradle
+  tags:
+    - windows
+    - docker
+  image: openjdk:17-slim         # signed, trusted by runner
   script:
-    - gradle --no-daemon test      # now use the system Gradle
+    - gradle --no-daemon test     # or ./gradlew if wrapper is preferred 
   cache:
     paths:
-      - .gradle/caches             # still cache deps
+      - .gradle/caches
   artifacts:
     paths:
       - app/build/reports

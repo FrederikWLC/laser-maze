@@ -1,38 +1,15 @@
-image: gradle:alpine
-
-variables:
-  # Disable the Gradle daemon in CI (lower memory footprint)
-  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
-  # Use a workspace-local Gradle home so we can cache it
-  GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
-
-stages:
-  - test
-
 test:
-  stage: test
-
-  # Keep the wrapper and all downloaded artifacts in a per-branch cache
-  cache:
-    key: "$CI_COMMIT_REF_NAME"
-    policy: pull-push
-    paths:
-      - .gradle
-      - build
-
+  image: mcr.microsoft.com/java/jdk:17-ubuntu
   before_script:
-    # Ensure the wrapper is executable
-    - chmod +x ./gradlew
-
+    - apt-get update && apt-get install -y gradle
   script:
-    # Assemble and run all checks (including your Cucumber tests)
-    - ./gradlew --no-daemon check
-
+    - gradle --no-daemon test
+  cache:
+    paths:
+      - .gradle/caches
   artifacts:
-    when: always
     paths:
       - app/build/reports
-
   only:
     - branches
     - merge_requests

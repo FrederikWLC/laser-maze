@@ -3,12 +3,12 @@ stages:
 
 test:
   stage: test
-  tags:
-    - windows
-    - docker
-  image: openjdk:17-slim         # signed, trusted by runner
+  image: mcr.microsoft.com/java/jdk:17-ubuntu  # signed, contains OpenJDK 17
+  before_script:
+    # Install Gradle from apt (only ~10 s) so 'gradle' is on the PATH
+    - apt-get update && apt-get install -y gradle
   script:
-    - gradle --no-daemon test     # or ./gradlew if wrapper is preferred 
+    - gradle --no-daemon test
   cache:
     paths:
       - .gradle/caches

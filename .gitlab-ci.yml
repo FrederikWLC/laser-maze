@@ -1,0 +1,31 @@
+stages:
+  - test
+
+variables:
+  GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
+
+test:
+  image: eclipse-temurin:17-jdk
+  stage: test
+
+  cache:                       # speeds up repeat pipelines
+    key: gradle
+    paths:
+      - .gradle/wrapper/
+      - .gradle/caches/
+
+  script:
+    - chmod +x ./gradlew       # precaution
+    - ./gradlew --no-daemon test
+
+  artifacts:
+    when: always
+    paths:
+      - app/build/reports
+    reports:                   # lets GitLab display test results
+      junit: "app/build/test-results/test/*.xml"
+      cucumber: "app/build/reports/cucumber.json"
+
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "main"'

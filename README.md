@@ -189,8 +189,8 @@ To be filled in later.
 ## 7. Project Milestones & Key Dates
 
 - **Group Contract Deadline:** Jun 6, 2025, 12:00
-- **Sprint 1** Takes place from Jun 9, 12:00 until Jun 12, 12:00
-- **Sprint 2** Takes place from Jun 13, 12:00 until Jun 17, 12:00
+- **Sprint 1** Takes place from Jun 9, 12:00 until Jun 13, 12:00
+- **Sprint 2** Takes place from Jun 14, 12:00 until Jun 18, 12:00
 - **Sprint 3** Takes place from Jun 18, 12:00 until Jun 23, 12:00
 
 - **Final Submission:** Jun 24, 2025, 13:00

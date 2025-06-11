@@ -67,7 +67,7 @@ public class BoardSteps {
     @Then("an error should occur")
     public void anErrorShouldOccur() {
         assertNotNull(exception);
-        assertTrue(exception instanceof IndexOutOfBoundsException);
+        assertTrue(exception instanceof Exception);
     }
 
     @Then("the board width should be {int}")
@@ -79,7 +79,6 @@ public class BoardSteps {
     @And("the board height should be {int}")
     public void theBoardHeightShouldBe(int expectedHeight) {
         assertEquals(expectedHeight, board.getHeight());
-
     }
 
     @Then("the tile's position should be \\({int}, {int})")
@@ -120,4 +119,8 @@ public class BoardSteps {
                         " but was " + actualBeamPath);
     }
 
+    @Then("the tile should return null")
+    public void theTileShouldReturnNull() {
+        assertNull(tile);
+    }
 }

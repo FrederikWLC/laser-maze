@@ -14,9 +14,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BoardSteps {
     Board board;
+    BoardEngine boardEngine;
     Tile tile;
     LaserEngine laserEngine;
     LaserToken laser;
+    CellBlockerToken cellBlocker;
     List<PositionDirection> actualBeamPath;
 
     @Given("^a new game is started$")
@@ -122,5 +124,38 @@ public class BoardSteps {
     @Then("the tile should return null")
     public void theTileShouldReturnNull() {
         assertNull(tile);
+    }
+
+    @And("the board contains a Cell Blocker token at \\({int}, {int})")
+    public void theBoardContainsACellBlockerTokenAt(int x, int y) {
+        cellBlocker = new CellBlockerToken(new Position(x, y));
+        Tile blockerTile = board.getTile(x, y);
+        blockerTile.setToken(cellBlocker);
+    }
+
+
+    @Given("I try to move the Cell Blocker token to \\({int}, {int})")
+    public void iTryToMoveTheCellBlockerTokenTo(int x, int y) {
+        BoardEngine boardEngine = new BoardEngine();
+        boardEngine.moveToken(cellBlocker, new Position(x, y), board);
+    }
+
+    @Then("the Cell Blocker token should remain at \\({int}, {int})")
+    public void theCellBlockerTokenShouldRemainAt(int x, int y) {
+        Tile blockerTile = board.getTile(x, y);
+        assertEquals(cellBlocker,blockerTile.getToken(), "Cell Blocker token should not change position as it is immutable");
+        assertEquals(cellBlocker.getPosition(),new Position(x, y),"Cell Blocker token should not change position as it is immutable");
+    }
+
+    @Given("I try to turn the Cell Blocker token to face right")
+    public void iTryToTurnTheCellBlockerTokenToFaceRight() {
+        BoardEngine boardEngine = new BoardEngine();
+        boardEngine.turnToken(cellBlocker, Direction.RIGHT);
+    }
+
+    @Then("the Cell Blocker token should still face down")
+    public void theCellBlockerTokenShouldStillFaceDown() {
+        assertEquals(Direction.DOWN, cellBlocker.getDirection(),
+                "Cell Blocker token should not change direction as it is immutable");
     }
 }

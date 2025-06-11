@@ -1,10 +1,10 @@
 package model;
 
-public record PositionDirection(Position position, Direction direction) {
+public record PositionDirection(Position getPos, Direction getDir) {
     public PositionDirection increment() {
         return new PositionDirection(
-            new Position(position.x() + direction.getDx(), position.y() + direction.getDy()),
-            direction
+            new Position(getPos().getX() + getDir().getDx(), getPos().getY() + getDir().getDy()),
+                getDir()
         );
     }
 }

@@ -1,14 +1,14 @@
 test:
   stage: test
-  image: gradle:8.10-jdk17            # Gradle 8.10 already inside ⇒ no download
-  variables:
-    GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
-  cache:
-    paths:                            # still cache downloaded deps
-      - .gradle/wrapper
-      - .gradle/caches
+  image: openjdk:17-slim           # this image is signed
+  before_script:
+    - apt-get update               # install Gradle on the fly
+    - apt-get install -y gradle
   script:
-    - gradle --no-daemon test         # wrapper no longer needed
+    - gradle --no-daemon test      # now use the system Gradle
+  cache:
+    paths:
+      - .gradle/caches             # still cache deps
   artifacts:
     paths:
       - app/build/reports

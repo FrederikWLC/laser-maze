@@ -1,10 +1,16 @@
 test:
   stage: test
-  image: eclipse-temurin:17-jdk
-  script: ./gradlew test
+  image: openjdk:17-slim        # signed image ⇒ no “missing signature” error
+  script:
+    - chmod +x ./gradlew        # Windows repo safeguard
+    - ./gradlew --no-daemon test
   artifacts:
     paths:
       - app/build/reports
+  cache:
+    paths:
+      - .gradle/wrapper
+      - .gradle/caches
   only:
     - branches
     - merge_requests

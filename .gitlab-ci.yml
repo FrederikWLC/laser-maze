@@ -24,7 +24,6 @@ test:
       - app/build/reports
     reports:                   # lets GitLab display test results
       junit: "app/build/test-results/test/*.xml"
-      cucumber: "app/build/reports/cucumber.json"
 
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'

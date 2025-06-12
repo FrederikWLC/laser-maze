@@ -1,10 +1,43 @@
 package model;
 
-public record PositionDirection(Position getPos, Direction getDir) {
+import java.util.Objects;
+
+public class PositionDirection {
+    private final Position position;
+    private final Direction direction;
+
+    public PositionDirection(Position position, Direction direction) {
+        this.position = position;
+        this.direction = direction;
+    }
+
+    public Position getPosition() { return position; }
+    public Direction getDirection() { return direction; }
+
     public PositionDirection increment() {
         return new PositionDirection(
-            new Position(getPos().getX() + getDir().getDx(), getPos().getY() + getDir().getDy()),
-                getDir()
+                new Position(
+                        position.getX() + direction.getDx(),
+                        position.getY() + direction.getDy()
+                ),
+                direction
         );
     }
+
+    public PositionDirection withDirection(Direction newDirection) {
+        return new PositionDirection(position, newDirection);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PositionDirection pd)) return false;
+        return Objects.equals(position, pd.position) && Objects.equals(direction, pd.direction);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(position, direction);
+    }
 }
+

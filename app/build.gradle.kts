@@ -1,3 +1,4 @@
+
 plugins {
     id("buildlogic.java-application-conventions")
 }
@@ -17,4 +18,18 @@ dependencies {
 
 application {
     mainClass.set("GameLauncher")
+}
+
+tasks.named<Jar>("jar") {
+    manifest {
+        attributes["Main-Class"] = "GameLauncher"
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE // or .WARN, .INCLUDE, etc.
+
+    from({
+        configurations.runtimeClasspath.get()
+            .filter { it.name.endsWith("jar") }
+            .map { zipTree(it) }
+    })
 }

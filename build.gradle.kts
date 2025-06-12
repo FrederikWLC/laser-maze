@@ -6,13 +6,7 @@ import org.gradle.api.tasks.SourceSetContainer
 
 
 plugins {
-    application
 }
-
-application {
-    mainClass.set("GameLauncher")
-}
-
 
 subprojects {
 

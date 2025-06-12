@@ -167,7 +167,7 @@ To be filled in later.
 3. **Launch the Game:**  
    Execute the main class (e.g., GameLauncher.java) from your IDE or via command line:
      ```bash
-     java -jar app/build/libs/laser.jar
+     java -jar app/build/libs/app.jar
      ```
 ---
 

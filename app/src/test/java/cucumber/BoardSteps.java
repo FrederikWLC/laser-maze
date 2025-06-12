@@ -1,6 +1,7 @@
 package cucumber;
 
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.ParameterType;
 import model.*;
 import io.cucumber.java.en.*;
 import io.cucumber.java.en.And;
@@ -19,7 +20,26 @@ public class BoardSteps {
     LaserEngine laserEngine;
     LaserToken laser;
     CellBlockerToken cellBlocker;
+    MirrorToken mirror;
     List<PositionDirection> actualBeamPath;
+
+    @ParameterType("(?i)laser token|cell blocker token|mirror token")
+    public Token token(String name) {
+        switch (name.toLowerCase()) {
+            case "laser token":
+                return laser;
+            case "cell blocker token":
+                return cellBlocker;
+            case "mirror token":
+                return mirror;
+        }
+        throw new IllegalArgumentException("Unknown token type: " + name);
+    }
+
+    @ParameterType("(?i)laser token|cell blocker token|mirror token")
+    public String tokenName(String name) {
+        return name.toLowerCase();
+    }
 
     @Given("^a new game is started$")
     public void aNewGameIsStarted() {
@@ -89,12 +109,6 @@ public class BoardSteps {
         assertEquals(expectedY, tile.getY());
     }
 
-    @Given("the board contains a Laser token at \\({int}, {int}) facing {direction}")
-    public void theBoardContainsALaserTokenAtFacingRight(int x, int y, Direction direction) {
-        laserEngine = new LaserEngine();
-        laser = new LaserToken(new Position(x, y), direction);
-    }
-
     @When("I activate the laser")
     public void iActivateTheLaser() {
         laser.trigger(true);
@@ -106,7 +120,7 @@ public class BoardSteps {
     }
 
     @Then("the laser beam should pass through the following position directions:")
-    public void theLaserBeamShouldPassThroughTheFollowingPositions(DataTable table) {
+    public void theLaserBeamShouldPassThroughTheFollowingPositionDirections(DataTable table) {
 
         List<PositionDirection> expected = table.asMaps(String.class, String.class)
                 .stream()
@@ -126,36 +140,54 @@ public class BoardSteps {
         assertNull(tile);
     }
 
-    @And("the board contains a Cell Blocker token at \\({int}, {int})")
-    public void theBoardContainsACellBlockerTokenAt(int x, int y) {
+    @And("a Cell Blocker token is placed on the board at \\({int}, {int})")
+    public void aCellBlockerTokenIsPlacedOnTheBoardAt(int x, int y) {
         cellBlocker = new CellBlockerToken(new Position(x, y));
         Tile blockerTile = board.getTile(x, y);
         blockerTile.setToken(cellBlocker);
     }
 
+    @Given("a {tokenName} is placed on the board at \\({int}, {int}) facing {direction}")
+    public void theBoardContainsATokenAtFacing(String tokenName,int x, int y, Direction direction) {
+        switch (tokenName.toLowerCase()) {
+            case "laser token":
+                laserEngine = new LaserEngine();
+                laser = new LaserToken(new Position(x, y), direction);
+                Tile laserTile = board.getTile(x, y);
+                laserTile.setToken(laser);
+                break;
+            case "mirror token":
+                mirror = new MirrorToken(new Position(x, y), direction);
+                Tile mirrorTile = board.getTile(x, y);
+                mirrorTile.setToken(mirror);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown token type: " + tokenName);
+        }
+    }
 
-    @Given("I try to move the Cell Blocker token to \\({int}, {int})")
-    public void iTryToMoveTheCellBlockerTokenTo(int x, int y) {
+    @Given("I try to move the {token} to \\({int}, {int})")
+    public void iTryToMoveTheTokenTo(Token token, int x, int y) {
         BoardEngine boardEngine = new BoardEngine();
-        boardEngine.moveToken(cellBlocker, new Position(x, y), board);
+        boardEngine.moveToken(token, new Position(x, y), board);
     }
 
-    @Then("the Cell Blocker token should remain at \\({int}, {int})")
-    public void theCellBlockerTokenShouldRemainAt(int x, int y) {
-        Tile blockerTile = board.getTile(x, y);
-        assertEquals(cellBlocker,blockerTile.getToken(), "Cell Blocker token should not change position as it is immutable");
-        assertEquals(cellBlocker.getPosition(),new Position(x, y),"Cell Blocker token should not change position as it is immutable");
+    @Then("the {token} should be at \\({int}, {int})")
+    public void theTokenShouldRemainAt(Token token, int x, int y) {
+        Tile tokenTile = board.getTile(x, y);
+        assertEquals(token,tokenTile.getToken(), "Token should not change position");
+        assertEquals(token.getPosition(),new Position(x, y),"Token should not change position");
     }
 
-    @Given("I try to turn the Cell Blocker token to face right")
-    public void iTryToTurnTheCellBlockerTokenToFaceRight() {
+    @Given("I try to turn the {token} to face {direction}")
+    public void iTryToTurnTheTokenToFace(Token token, Direction direction) {
         BoardEngine boardEngine = new BoardEngine();
-        boardEngine.turnToken(cellBlocker, Direction.RIGHT);
+        boardEngine.turnToken(token, direction);
     }
 
-    @Then("the Cell Blocker token should still face down")
-    public void theCellBlockerTokenShouldStillFaceDown() {
-        assertEquals(Direction.DOWN, cellBlocker.getDirection(),
-                "Cell Blocker token should not change direction as it is immutable");
+    @Then("the {token} should face {direction}")
+    public void theCellBlockerTokenShouldStillFace(Token token, Direction direction) {
+        assertEquals(direction, token.getDirection(),
+                "Token should not change direction");
     }
 }

@@ -29,6 +29,7 @@ Feature: Double Mirror token
     Then the laser beam should pass through the following position directions:
       | x | y | dir |
       | 3 | 2 | LEFT |
+      # Hits and gets reflected by double mirror, but skips its tile (2, 2))
       | 2 | 3 | DOWN |
       | 2 | 4 | DOWN |
 
@@ -41,5 +42,6 @@ Feature: Double Mirror token
     Then the laser beam should pass through the following position directions:
       | x | y | dir |
       | 3 | 2 | LEFT |
+      # Hits and gets reflected by double mirror, but skips its tile (2, 2))
       | 2 | 1 | UP |
       | 2 | 0 | UP |

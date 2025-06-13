@@ -26,7 +26,9 @@ Feature: Cell blocker
     Then the laser beam should pass through the following position directions:
       | x | y | dir |
       | 2 | 3 | UP |
+      # Hits and goes through cell blocker
       | 2 | 2 | UP |
+      # continues straight
       | 2 | 1 | UP |
       | 2 | 0 | UP |
 

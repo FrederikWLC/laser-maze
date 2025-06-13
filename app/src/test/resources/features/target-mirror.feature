@@ -34,6 +34,7 @@ Feature: Target Mirror token
     Then the laser beam should pass through the following position directions:
       | x | y | dir |
       | 2 | 1 | DOWN |
+      # Hits and gets reflected by mirror side of target/mirror token, but skips its tile (2, 2))
       | 3 | 2 | RIGHT |
       | 4 | 2 | RIGHT |
 
@@ -45,6 +46,8 @@ Feature: Target Mirror token
     Then the laser beam should pass through the following position directions:
       | x | y | dir |
       | 2 | 3 | UP |
+      # Hits target side of target/mirror token, but skips its tile (2, 2))
+
 
   # Hits bare side: Laser travels in a straight line until it hits the target mirror that faces down
   Scenario: Laser hits bare side
@@ -54,3 +57,4 @@ Feature: Target Mirror token
     Then the laser beam should pass through the following position directions:
       | x | y | dir |
       | 1 | 2 | RIGHT |
+      # Hits non-target non-mirror side of target/mirror token, but skips its tile (2, 2))

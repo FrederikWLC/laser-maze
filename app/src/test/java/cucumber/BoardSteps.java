@@ -22,9 +22,10 @@ public class BoardSteps {
     DoubleMirrorToken doubleMirror;
     TargetMirrorToken targetMirror;
     BeamSplitterToken beamSplitter;
+    CheckpointToken checkpoint;
     List<PositionDirection> actualBeamPath;
 
-    @ParameterType("(?i)laser|cell blocker|double mirror|target mirror|beam splitter")
+    @ParameterType("(?i)laser|cell blocker|double mirror|target mirror|beam splitter|checkpoint")
     public Token token(String name) {
         switch (name.toLowerCase()) {
             case "laser":
@@ -37,13 +38,14 @@ public class BoardSteps {
                 return targetMirror;
             case "beam splitter":
                 return beamSplitter;
-
+            case "checkpoint":
+                return checkpoint;
         }
 
         throw new IllegalArgumentException("Unknown token type: " + name);
     }
 
-    @ParameterType("(?i)laser|cell blocker|double mirror|target mirror|beam splitter")
+    @ParameterType("(?i)laser|cell blocker|double mirror|target mirror|beam splitter|checkpoint")
     public String tokenName(String name) {
         return name.toLowerCase();
     }
@@ -178,6 +180,11 @@ public class BoardSteps {
                 Tile beamSplitterTile = board.getTile(x, y);
                 beamSplitterTile.setToken(beamSplitter);
                 break;
+            case "checkpoint":
+                checkpoint = new CheckpointToken(new Position(x, y), direction);
+                Tile checkpointTile = board.getTile(x, y);
+                checkpointTile.setToken(checkpoint);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown token type: " + tokenName);
         }
@@ -203,7 +210,7 @@ public class BoardSteps {
     }
 
     @Then("the {token} token should face {direction}")
-    public void theCellBlockerTokenShouldStillFace(Token token, Direction direction) {
+    public void theTokenShouldStillFace(Token token, Direction direction) {
         assertEquals(direction, token.getDirection(),
                 "Token should not change direction");
     }

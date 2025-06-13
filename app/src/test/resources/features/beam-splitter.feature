@@ -29,10 +29,11 @@ Feature: Beam Splitter token
     Then the laser beam should pass through the following position directions:
       | x | y | dir |
       | 3 | 2 | LEFT |
-      # The forward beam continues straight
+      # Hits and gets split by beam splitter, but skips its tile (2, 2))
+      # The forward beam continues straight (always first one calculated)
       | 1 | 2 | LEFT |
       | 0 | 2 | LEFT |
-      # The reflected beam goes down
+      # The reflected beam (always second one calculated) goes down
       | 2 | 3 | DOWN |
       | 2 | 4 | DOWN |
 
@@ -46,9 +47,10 @@ Feature: Beam Splitter token
     Then the laser beam should pass through the following position directions:
       | x | y | dir |
       | 3 | 2 | LEFT |
-      # The forward beam continues straight
+      # Hits and gets split by beam splitter, but skips its tile (2, 2))
+      # The forward beam (always first one calculated) continues straight
       | 1 | 2 | LEFT |
       | 0 | 2 | LEFT |
-      # The reflected beam goes up
+      # The reflected beam (always second one calculated) goes up
       | 2 | 1 | UP |
       | 2 | 0 | UP |

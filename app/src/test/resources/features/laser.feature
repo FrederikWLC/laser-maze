@@ -11,7 +11,7 @@ Feature: Fire Laser
 
     # Laser travels in an unobstructed straight line
   Scenario: Fire laser in an open horizontal line
-    Given the board contains a Laser token at (0, 0) facing right
+    Given a Laser token is placed on the board at (0, 0) facing right
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:

@@ -22,4 +22,13 @@ public enum Direction {
         return dy;
     }
 
+    public Direction rotateClockwise() {
+        return switch (this) {
+            case UP -> RIGHT;
+            case RIGHT -> DOWN;
+            case DOWN -> LEFT;
+            case LEFT -> UP;
+        };
+    }
+
 }

@@ -20,6 +20,8 @@ import model.Direction;
 public class MainController {
     private GamePanel gamePanel;
     private Board board;
+    private GameController gameController;
+
 
     public void startGame() {
         SwingUtilities.invokeLater(() -> {
@@ -32,10 +34,6 @@ public class MainController {
             gamePanel.setQuitGameAction(e -> System.exit(0));
             gamePanel.setLevelSelectAction(this::loadLevel);
 
-            InputHandler inputHandler = new InputHandler();
-            gamePanel.addMouseListener(inputHandler);
-            gamePanel.addMouseMotionListener(inputHandler);
-
             window.add(gamePanel);
             window.pack();
             window.setLocationRelativeTo(null);
@@ -43,15 +41,20 @@ public class MainController {
         });
     }
     public void loadLevel(int levelNumber) {
-        Board board = new Board(5, 5); // or dynamic size per level
+        Board board = new Board(5, 5); // Can be changed if we need bigger levels
 
         // Proper tokens with positions and directions
         board.getTile(0, 0).setToken(new LaserToken(new Position(0, 0), Direction.LEFT));
         board.getTile(1, 3).setToken(new DoubleMirrorToken(new Position(1, 3), Direction.DOWN));
         board.getTile(4, 4).setToken(new TargetMirrorToken(new Position(4, 4), Direction.UP));
 
+        this.gameController = new GameController(board);
         gamePanel.setBoard(board);
         gamePanel.showBoard(levelNumber);
+
+        InputHandler inputHandler = new InputHandler(gameController);
+        gamePanel.addMouseListener(inputHandler);
+        gamePanel.addMouseMotionListener(inputHandler);
     }
 
 

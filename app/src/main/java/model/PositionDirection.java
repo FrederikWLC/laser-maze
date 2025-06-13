@@ -39,5 +39,10 @@ public class PositionDirection {
     public int hashCode() {
         return Objects.hash(position, direction);
     }
+
+    @Override
+    public String toString() {
+        return "PositionDirection{position=" + position + ", direction=" + direction + "}";
+    }
 }
 

@@ -3,7 +3,6 @@ package cucumber;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.ParameterType;
 import model.*;
-import io.cucumber.java.en.*;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -20,23 +19,27 @@ public class BoardSteps {
     LaserEngine laserEngine;
     LaserToken laser;
     CellBlockerToken cellBlocker;
-    MirrorToken mirror;
+    DoubleMirrorToken doubleMirror;
+    TargetMirrorToken targetMirror;
     List<PositionDirection> actualBeamPath;
 
-    @ParameterType("(?i)laser token|cell blocker token|mirror token")
+    @ParameterType("(?i)laser token|cell blocker token|double mirror token|target mirror token")
     public Token token(String name) {
         switch (name.toLowerCase()) {
             case "laser token":
                 return laser;
             case "cell blocker token":
                 return cellBlocker;
-            case "mirror token":
-                return mirror;
+            case "double mirror token":
+                return doubleMirror;
+            case "target mirror token":
+                return targetMirror;
         }
+
         throw new IllegalArgumentException("Unknown token type: " + name);
     }
 
-    @ParameterType("(?i)laser token|cell blocker token|mirror token")
+    @ParameterType("(?i)laser token|cell blocker token|double mirror token|target mirror token")
     public String tokenName(String name) {
         return name.toLowerCase();
     }
@@ -148,7 +151,7 @@ public class BoardSteps {
     }
 
     @Given("a {tokenName} is placed on the board at \\({int}, {int}) facing {direction}")
-    public void theBoardContainsATokenAtFacing(String tokenName,int x, int y, Direction direction) {
+    public void aTokenIsPlacedOnTheBoardAtFacing(String tokenName,int x, int y, Direction direction) {
         switch (tokenName.toLowerCase()) {
             case "laser token":
                 laserEngine = new LaserEngine();
@@ -156,10 +159,15 @@ public class BoardSteps {
                 Tile laserTile = board.getTile(x, y);
                 laserTile.setToken(laser);
                 break;
-            case "mirror token":
-                mirror = new MirrorToken(new Position(x, y), direction);
-                Tile mirrorTile = board.getTile(x, y);
-                mirrorTile.setToken(mirror);
+            case "double mirror token":
+                doubleMirror = new DoubleMirrorToken(new Position(x, y), direction);
+                Tile doubleMirrorTile = board.getTile(x, y);
+                doubleMirrorTile.setToken(doubleMirror);
+                break;
+            case "target mirror token":
+                targetMirror = new TargetMirrorToken(new Position(x, y), direction);
+                Tile targetMirrorTile = board.getTile(x, y);
+                targetMirrorTile.setToken(targetMirror);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown token type: " + tokenName);

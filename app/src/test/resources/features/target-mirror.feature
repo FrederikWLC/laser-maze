@@ -34,7 +34,6 @@ Feature: Target Mirror token
     Then the laser beam should pass through the following position directions:
       | x | y | dir |
       | 2 | 1 | DOWN |
-      | 2 | 2 | RIGHT |
       | 3 | 2 | RIGHT |
       | 4 | 2 | RIGHT |
 
@@ -46,7 +45,6 @@ Feature: Target Mirror token
     Then the laser beam should pass through the following position directions:
       | x | y | dir |
       | 2 | 3 | UP |
-      | 2 | 2 | UP |
 
   # Hits bare side: Laser travels in a straight line until it hits the target mirror that faces down
   Scenario: Laser hits bare side

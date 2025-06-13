@@ -21,25 +21,29 @@ public class BoardSteps {
     CellBlockerToken cellBlocker;
     DoubleMirrorToken doubleMirror;
     TargetMirrorToken targetMirror;
+    BeamSplitterToken beamSplitter;
     List<PositionDirection> actualBeamPath;
 
-    @ParameterType("(?i)laser token|cell blocker token|double mirror token|target mirror token")
+    @ParameterType("(?i)laser|cell blocker|double mirror|target mirror|beam splitter")
     public Token token(String name) {
         switch (name.toLowerCase()) {
-            case "laser token":
+            case "laser":
                 return laser;
-            case "cell blocker token":
+            case "cell blocker":
                 return cellBlocker;
-            case "double mirror token":
+            case "double mirror":
                 return doubleMirror;
-            case "target mirror token":
+            case "target mirror":
                 return targetMirror;
+            case "beam splitter":
+                return beamSplitter;
+
         }
 
         throw new IllegalArgumentException("Unknown token type: " + name);
     }
 
-    @ParameterType("(?i)laser token|cell blocker token|double mirror token|target mirror token")
+    @ParameterType("(?i)laser|cell blocker|double mirror|target mirror|beam splitter")
     public String tokenName(String name) {
         return name.toLowerCase();
     }
@@ -150,50 +154,55 @@ public class BoardSteps {
         blockerTile.setToken(cellBlocker);
     }
 
-    @Given("a {tokenName} is placed on the board at \\({int}, {int}) facing {direction}")
+    @Given("a {tokenName} token is placed on the board at \\({int}, {int}) facing {direction}")
     public void aTokenIsPlacedOnTheBoardAtFacing(String tokenName,int x, int y, Direction direction) {
         switch (tokenName.toLowerCase()) {
-            case "laser token":
+            case "laser":
                 laserEngine = new LaserEngine();
                 laser = new LaserToken(new Position(x, y), direction);
                 Tile laserTile = board.getTile(x, y);
                 laserTile.setToken(laser);
                 break;
-            case "double mirror token":
+            case "double mirror":
                 doubleMirror = new DoubleMirrorToken(new Position(x, y), direction);
                 Tile doubleMirrorTile = board.getTile(x, y);
                 doubleMirrorTile.setToken(doubleMirror);
                 break;
-            case "target mirror token":
+            case "target mirror":
                 targetMirror = new TargetMirrorToken(new Position(x, y), direction);
                 Tile targetMirrorTile = board.getTile(x, y);
                 targetMirrorTile.setToken(targetMirror);
+                break;
+            case "beam splitter":
+                beamSplitter = new BeamSplitterToken(new Position(x, y), direction);
+                Tile beamSplitterTile = board.getTile(x, y);
+                beamSplitterTile.setToken(beamSplitter);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown token type: " + tokenName);
         }
     }
 
-    @Given("I try to move the {token} to \\({int}, {int})")
+    @Given("I try to move the {token} token to \\({int}, {int})")
     public void iTryToMoveTheTokenTo(Token token, int x, int y) {
         BoardEngine boardEngine = new BoardEngine();
         boardEngine.moveToken(token, new Position(x, y), board);
     }
 
-    @Then("the {token} should be at \\({int}, {int})")
+    @Then("the {token} token should be at \\({int}, {int})")
     public void theTokenShouldRemainAt(Token token, int x, int y) {
         Tile tokenTile = board.getTile(x, y);
         assertEquals(token,tokenTile.getToken(), "Token should not change position");
         assertEquals(token.getPosition(),new Position(x, y),"Token should not change position");
     }
 
-    @Given("I try to turn the {token} to face {direction}")
+    @Given("I try to turn the {token} token to face {direction}")
     public void iTryToTurnTheTokenToFace(Token token, Direction direction) {
         BoardEngine boardEngine = new BoardEngine();
         boardEngine.turnToken(token, direction);
     }
 
-    @Then("the {token} should face {direction}")
+    @Then("the {token} token should face {direction}")
     public void theCellBlockerTokenShouldStillFace(Token token, Direction direction) {
         assertEquals(direction, token.getDirection(),
                 "Token should not change direction");

@@ -12,10 +12,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 
-import model.Board;
-import model.Token;
-import model.Tile;
-import model.Direction;
+import model.*;
 
 public class GamePanel extends JPanel {
 
@@ -23,6 +20,7 @@ public class GamePanel extends JPanel {
     private JButton singlePlayer;
     private JButton multiplayer;
     private JButton backButton;
+    private JButton fireLaserButton;
 
     private JScrollPane levelScrollPane;
     private JPanel levelListPanel;
@@ -90,7 +88,7 @@ public class GamePanel extends JPanel {
 
             JButton levelButton = new JButton("Level " + levelNumber);
 
-            // ✅ Notify the controller when clicked
+            // Notify the controller when clicked
             levelButton.addActionListener(e -> {
                 if (levelSelectAction != null) {
                     levelSelectAction.accept(levelNumber);
@@ -129,6 +127,14 @@ public class GamePanel extends JPanel {
         singlePlayer.setVisible(true);
         multiplayer.setVisible(true);
         quitGame.setVisible(true);
+
+        //Hiding laser button
+        if (fireLaserButton != null) fireLaserButton.setVisible(false);
+    }
+    private List<PositionDirection> laserPath = new ArrayList<>();
+    public void setLaserPath(List<PositionDirection> path) {
+        this.laserPath = path;
+        repaint();
     }
 
     @Override
@@ -164,6 +170,14 @@ public class GamePanel extends JPanel {
                     }
                 }
             }
+        }
+
+        //Very basic logic for drawing a laser. Needs to be remade!
+        g2d.setColor(Color.RED);
+        for (PositionDirection pd : laserPath) {
+            int x = 100 + pd.getPosition().getX() * 80;
+            int y = 100 + pd.getPosition().getY() * 80;
+            g2d.fillRect(x + 30, y + 30, 20, 20); // Adjust for visual centering
         }
 
 
@@ -240,6 +254,13 @@ public class GamePanel extends JPanel {
         levelScrollPane.setVisible(false);
         backButton.setVisible(false);
 
+        if (fireLaserButton == null) {
+            fireLaserButton = new JButton("Fire Laser");
+            fireLaserButton.setBounds(20, 20, 120, 30);
+            add(fireLaserButton);
+        }
+        fireLaserButton.setVisible(true);
+
         repaint();
     }
 
@@ -247,6 +268,11 @@ public class GamePanel extends JPanel {
         this.board = board;
     }
 
+    public void setFireLaserAction(ActionListener listener) {
+        if (fireLaserButton != null) {
+            fireLaserButton.addActionListener(listener);
+        }
+    }
     public void setQuitGameAction(ActionListener listener) {
         quitGame.addActionListener(listener);
     }

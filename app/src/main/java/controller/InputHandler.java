@@ -21,7 +21,7 @@ public class InputHandler implements MouseListener, MouseMotionListener {
     public void mouseClicked(MouseEvent e) {
         Position clicked = convertToGridPosition(e.getX(), e.getY());
 
-        Token token = gameController.getTokenAt(clicked); // you'll need to add this helper method
+        Token token = gameController.getTokenAt(clicked);
         if (token == null) {
             System.out.println("No token at: " + clicked);
             return;

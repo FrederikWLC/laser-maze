@@ -23,7 +23,8 @@ public class Board {
         if (x < 0 || y < 0
                 || x >= width
                 || y >= height) {   // assumes a rectangular board
-            return null;                     // invalid coordinates -> “error”
+        throw new IndexOutOfBoundsException(
+                "Tile coordinates out of bounds: (" + x + ", " + y + ")");
         }
         return tiles[x][y];                  // safe access
     }

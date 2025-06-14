@@ -1,6 +1,8 @@
 package controller;
 
 import view.GamePanel;
+import model.*;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -40,17 +42,32 @@ public class MainController {
             window.setVisible(true);
         });
     }
+
+    private void setupFireLaserAction() {
+        gamePanel.setFireLaserAction(e -> {
+            List<PositionDirection> laserPath = gameController.fireLaser();
+
+            System.out.println("Laser path:");
+            for (PositionDirection pd : laserPath) {
+                System.out.println(" -> " + pd);
+            }
+
+            gamePanel.setLaserPath(laserPath);
+        });
+    }
+
     public void loadLevel(int levelNumber) {
-        Board board = new Board(5, 5); // Can be changed if we need bigger levels
+        Board board = new Board(5, 5);
 
         // Proper tokens with positions and directions
-        board.getTile(0, 0).setToken(new LaserToken(new Position(0, 0), Direction.LEFT));
+        board.getTile(1, 0).setToken(new LaserToken(new Position(1, 0), Direction.LEFT));
         board.getTile(1, 3).setToken(new DoubleMirrorToken(new Position(1, 3), Direction.DOWN));
-        board.getTile(4, 4).setToken(new TargetMirrorToken(new Position(4, 4), Direction.UP));
+        board.getTile(4, 3).setToken(new TargetMirrorToken(new Position(4, 3), Direction.UP));
 
         this.gameController = new GameController(board);
         gamePanel.setBoard(board);
         gamePanel.showBoard(levelNumber);
+        setupFireLaserAction();
 
         InputHandler inputHandler = new InputHandler(gameController);
         gamePanel.addMouseListener(inputHandler);

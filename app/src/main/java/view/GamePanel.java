@@ -219,23 +219,14 @@ public class GamePanel extends JPanel {
 
 
     private void drawToken(Graphics2D g2d, Token token, int x, int y, int tileSize) {
-        String filename = null;
-
-        if (token instanceof ITurnableToken directionalToken) {
-            String direction = mapDirection(directionalToken.getDirection());
-            filename = switch (token.getClass().getSimpleName()) {
-                case "LaserToken" -> "RedLaser-GENERATOR_ON_" + direction + ".png";
-                case "TargetMirrorToken" -> "PurpleTarget-TARGET_ON_" + direction + ".png";
-                default -> null;
-            };
-        } else {
-            filename = switch (token.getClass().getSimpleName()) {
-                case "DoubleMirrorToken" -> "GreenMirror-BACKSLASH_MIRROR.png";
-                case "CellBlockerToken" -> "WhiteObstacle-NONE-Dark.png";
-                // Add more tokens '
-                default -> null;
-            };
-        }
+        String filename = switch (token.getClass().getSimpleName()) {
+            case "LaserToken" -> "RedLaser-GENERATOR_ON_" + mapDirection(((ITurnableToken) token).getDirection()) + ".png";
+            case "TargetMirrorToken" -> "PurpleTarget-TARGET_ON_" + mapDirection(((ITurnableToken) token).getDirection()) + ".png";
+            case "DoubleMirrorToken" -> "GreenMirror-BACKSLASH_MIRROR.png";
+            case "CellBlockerToken" -> "WhiteObstacle-NONE-Dark.png";
+            // Add more tokens here
+            default -> null;
+        };
 
         if (filename != null) {
             BufferedImage img = tokenImages.get(filename);

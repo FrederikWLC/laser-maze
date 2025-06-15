@@ -1,6 +1,7 @@
 package model;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public final class LevelBuilder {
     private final int id;
@@ -8,7 +9,7 @@ public final class LevelBuilder {
     private int height = 5; // default board height
     private List<Token> preplacedTokens = List.of();
     private List<Token> requiredTokens = List.of();
-    private int requiredTargetNumber;
+    private int requiredTargetNumber = 1;
 
     public LevelBuilder(int id) { this.id = id; }
 
@@ -32,8 +33,10 @@ public final class LevelBuilder {
         Board board = new BoardBuilder().
                 withDimensions(width,height).
                 withPreplacedTokens(preplacedTokens).build();
+        List<Token> tokens = Stream.concat(preplacedTokens.stream(),requiredTokens.stream()).toList();
+
         Level lvl = new Level(id,board);
-        lvl.setPreplacedTokens(preplacedTokens);
+        lvl.setTokens(tokens);
         lvl.setRequiredTokens(requiredTokens);
         lvl.setRequiredTargetNumber(requiredTargetNumber);
         return lvl;

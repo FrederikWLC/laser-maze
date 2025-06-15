@@ -1,14 +1,17 @@
 package model;
 
 import java.util.List;
+import java.util.Optional;
 
 public class Level {
     int id;
-    List<Token> preplacedTokens;
-    List<Token> requiredTokens;
-    boolean completed = false;
+    boolean complete = false;
     int requiredTargetNumber;
+    int currentTargetNumber = 0;
     Board board;
+    List<Token> tokens;
+    List<Token> requiredTokens;
+
 
     public Level(int id, Board board) {
         this.id = id;
@@ -23,36 +26,72 @@ public class Level {
         return board;
     }
 
-    public List<Token> getPreplacedTokens() {
-        return preplacedTokens;
+    public List<Token> getTokens() {
+        return tokens;
     }
 
-    public List<Token> getRequiredTokens() {
-        return requiredTokens;
+    public List<Token> getPlacedTokens() {
+        return getTokens().stream()
+                .filter(token -> token.isPlaced())
+                .toList();
     }
 
-    public int getRequiredTargetNumber() {
-        return requiredTargetNumber;
+    public boolean isRequiredTargetNumberSatisfied() {
+        return getRemainingTargetCount() == 0;
     }
 
-    public boolean isCompleted() {
-        return completed;
+    public int getRemainingTargetCount() {
+        return Math.max(0,getRequiredTargetNumber() - getCurrentTargetNumber());
     }
 
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
+    public boolean areAllTokensPlaced() {
+        return getTokens().stream()
+                .allMatch(Token::isPlaced);
     }
 
-    public void setPreplacedTokens(List<Token> preplacedTokens) {
-        this.preplacedTokens = preplacedTokens;
+    public Optional<LaserToken> getActiveLaser() {
+        return getTriggerableLaser().filter(LaserToken::isActive);
+    }
+
+    public Optional<LaserToken> getTriggerableLaser() {
+        return getPlacedTokens().stream()
+                .filter(LaserToken.class::isInstance)
+                .map(LaserToken.class::cast)
+                .filter(LaserToken::isTriggerable)
+                .findFirst();
+    }
+
+    public void setComplete(boolean complete) {
+        this.complete= complete;
+    }
+
+    public boolean isComplete() {
+        return complete;
+    }
+
+    public void setTokens(List<Token> tokens) {
+        this.tokens = tokens;
     }
 
     public void setRequiredTokens(List<Token> requiredTokens) {
         this.requiredTokens = requiredTokens;
     }
+    public List<Token> getRequiredTokens() {
+        return requiredTokens;
+    }
 
     public void setRequiredTargetNumber(int requiredTargetNumber) {
         this.requiredTargetNumber = requiredTargetNumber;
+    }
+    public int getRequiredTargetNumber() {
+        return requiredTargetNumber;
+    }
+
+    public void setCurrentTargetNumber(int currentTargetNumber) {
+        this.currentTargetNumber = currentTargetNumber;
+    }
+    public int getCurrentTargetNumber() {
+        return currentTargetNumber;
     }
 
 }

@@ -34,7 +34,7 @@ public class MainController {
             gamePanel = new GamePanel();
 
             gamePanel.setQuitGameAction(e -> System.exit(0));
-            gamePanel.setLevelSelectAction(this::loadLevel);
+            gamePanel.setLevelSelectAction(LevelLoader::load);
 
             window.add(gamePanel);
             window.pack();

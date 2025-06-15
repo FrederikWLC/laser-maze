@@ -288,6 +288,8 @@ public class BoardSteps {
     public List<Token> getPreplacedTokensFromTable(DataTable table) {
         return table.asMaps(String.class, String.class)
                 .stream()
+                // keep only rows where preplaced == true
+                .filter(row -> Boolean.parseBoolean(row.get("preplaced")))
                 .map(row -> {
                     // Only consider turnable column if not immutable
                     Token preplacedToken;
@@ -309,10 +311,13 @@ public class BoardSteps {
                                             .withDirection(Direction.valueOf(row.get("dir").toUpperCase())).build();
                                     return preplacedToken;
                                 case "target mirror":
-                                    preplacedToken = TokenBuilder.of(TargetMirrorToken::new).withMutability(false,turnable)
+                                    TokenBuilder tempBuild = TokenBuilder.of(TargetMirrorToken::new).withMutability(false,turnable)
                                             .withPosition(Integer.parseInt(row.get("x")), Integer.parseInt(row.get("y")))
-                                            .withDirection(Direction.valueOf(row.get("dir").toUpperCase())).build();
-                                    return preplacedToken;
+                                            .withDirection(Direction.valueOf(row.get("dir").toUpperCase()));
+                                    if (row.containsKey("is required") && Boolean.parseBoolean(row.get("is required"))) {
+                                        return tempBuild.withRequiredTarget().build();
+                                    }
+                                    return tempBuild.build();
                                 case "beam splitter":
                                     preplacedToken = TokenBuilder.of(BeamSplitterToken::new).withMutability(false,turnable)
                                             .withPosition(Integer.parseInt(row.get("x")), Integer.parseInt(row.get("y")))
@@ -334,6 +339,8 @@ public class BoardSteps {
     public List<Token> getRequiredTokensFromTable(DataTable table) {
         return table.asMaps(String.class, String.class)
                 .stream()
+                // keep only rows where preplaced == false
+                .filter(row -> !Boolean.parseBoolean(row.get("preplaced")))
                 .map(row -> {
                             Token requiredToken;
                             Boolean turnable;
@@ -347,8 +354,12 @@ public class BoardSteps {
                                             .build();
                                     return requiredToken;
                                 case "target mirror":
-                                    requiredToken = TokenBuilder.of(TargetMirrorToken::new).withMutability(true,true).build();
-                                    return requiredToken;
+                                    TokenBuilder tempBuild = TokenBuilder.of(TargetMirrorToken::new)
+                                            .withMutability(true,true);
+                                    if (row.containsKey("is required") && Boolean.parseBoolean(row.get("is required"))) {
+                                        return tempBuild.withRequiredTarget().build();
+                                    }
+                                    return tempBuild.build();
                                 case "beam splitter":
                                     requiredToken = TokenBuilder.of(BeamSplitterToken::new).withMutability(true,true).build();
                                     return requiredToken;
@@ -363,30 +374,6 @@ public class BoardSteps {
                 ).toList();
     }
 
-    @And("the level has the following tokens preplaced on its board:")
-    public void theLevelHasTheFollowingTokensPreplacedOnItsBoard(DataTable table) {
-        List<Token> preplacedTokens = getPreplacedTokensFromTable(table);
-        LevelEngine.setPreplacedTokens(level,preplacedTokens);
-    }
-
-    @And("the level requires placement of:")
-    public void theLevelRequiresPlacementOf(DataTable table) {
-        List<Token> requiredTokens = getRequiredTokensFromTable(table);
-        LevelEngine.setRequiredTokens(level,requiredTokens);
-    }
-
-    @And("the level's required target number is {int}")
-    public void theLevelsRequiredTargetNumberIs(int n) {
-        LevelEngine.setRequiredTargetNumber(level,n);
-    }
-
-    @And("the level is initialized with id {int} and a board with width {int} and height {int}")
-    public void theLevelIsInitializedWithABoardWithWidthAndHeight(int id, int width, int height) {
-        level = new LevelBuilder(id)
-                .withBoardDimensions(width, height)
-                .build();
-        board = level.getBoard();
-    }
 
     @Then("the level's id should be {int}")
     public void theLevelsIdShouldBe(int id) {
@@ -412,14 +399,36 @@ public class BoardSteps {
     public void iPlaceTokenFromTheRequiredTokensOnTheBoardAt(int i, int x, int y) {
         token = level.getRequiredTokens().get(i);
         LevelEngine.placeRequiredToken(level, token, new Position(x, y));
+        saveTokenAsType(token); // Save the token as its specific type for further checks
+    }
+
+    public void saveTokenAsType(Token token) {
+        if (token instanceof LaserToken t) {
+            laser = t;
+        } else if (token instanceof CellBlockerToken t) {
+            cellBlocker = t;
+        } else if (token instanceof DoubleMirrorToken t) {
+            doubleMirror = t;
+        } else if (token instanceof TargetMirrorToken t) {
+            targetMirror = t;
+        } else if (token instanceof BeamSplitterToken t) {
+            beamSplitter = t;
+        } else if (token instanceof CheckpointToken t) {
+            checkpoint = t;
+        } else {
+            throw new IllegalArgumentException("Unknown token type: " + token.getClass());
+        }
     }
 
     @Then("the token on the board at \\({int}, {int}) should be a {tokenType} token")
     public void theTokenOnTheBoardAtShouldBeAToken(int x, int y, Class<? extends Token> tokenType) {
         Tile tile = board.getTile(x, y);
+        // set token to the one on the board for further checks
         token = tile.getToken();
         assertEquals(tokenType,token.getClass(),
                 "Token at (" + x + ", " + y + ") should be a Double Mirror token, but is: " + tile.getToken());
+        // set token of specific type to the one on the board for further checks
+        saveTokenAsType(token);
     }
 
     @And("the token should be turnable without direction")
@@ -429,9 +438,112 @@ public class BoardSteps {
                     "Token should not have a direction, but is: " + ((ITurnableToken) token).getDirection());
     }
 
-    @And("the remaining number of required tokens should be {int}")
+    @And("the remaining number of required tokens to be placed should be {int}")
     public void theRemainingNumberOfRequiredTokensShouldBe(int i) {
         assertEquals(i, level.getRequiredTokens().size(),
-                "Remaining required tokens should be " + i + ", but is: " + level.getRequiredTokens().size());
+                "Remaining required tokens to be placed should be " + i + ", but is: " + level.getRequiredTokens().size());
+    }
+
+    @And("the level is initialized with id {int}, required target number {int}, a board with width {int} and height {int}, and the following tokens:")
+    public void theLevelIsInitializedWithIdRequiredTargetNumberABoardWithWidthAndHeightAndTheFollowingTokens(int id, int n, int width, int height, DataTable table) {
+        level = new LevelBuilder(id)
+                .withBoardDimensions(width, height)
+                .withRequiredTargetNumber(n)
+                .withPreplaced(getPreplacedTokensFromTable(table))
+                .withRequired(getRequiredTokensFromTable(table))
+                .build();
+        board = level.getBoard();
+    }
+
+    @And("the level's tokens should be:")
+    public void theLevelSTokensShouldBe(DataTable table) {
+        List<? extends Class<? extends Token>> expectedTokenTypes = table.asMaps(String.class, String.class)
+                .stream()
+                .map(row -> {
+                    Class<? extends Token> ttype = tokenType(row.get("token"));
+                    return ttype;
+                })
+                .toList();
+
+        List<? extends Class<? extends Token>> actualTokenTypes = level.getTokens()
+                .stream()
+                .map(tk -> {
+                    Class<? extends Token> ttype = tk.getClass();
+                    return ttype;
+                })
+                .toList();
+
+        assertEquals(expectedTokenTypes, actualTokenTypes,
+                "Level token types do not match expected token types");
+    }
+
+
+
+    @Then("the level should be incomplete")
+    public void theLevelShouldBeIncomplete() {
+        LevelEngine.updateAndCheckLevelCompletionState(level);
+        assertFalse(level.isComplete(), "Level should not be complete, but is");
+    }
+
+    @Then("the level should be complete")
+    public void theLevelShouldBeComplete() {
+        LevelEngine.updateAndCheckLevelCompletionState(level);
+        assertTrue(level.isComplete(), "Level should be complete, but is not");
+    }
+
+    @And("the number of targets hit by the beam path should be {int}")
+    public void theNumberOfTargetsHitShouldBe(int n) {
+        int actualHitCount = LaserEngine.getTargetHitNumber(actualBeamPath, level.getTokens());
+        assertEquals(actualHitCount,n,
+                "Number of targets hit should be " + n + ", but is: " + actualHitCount);
+    }
+
+    @And("the beam path should hit all the required targets")
+    public void theBeamPathHitsAllTheRequiredTargets() {
+        boolean allRequiredTargetsHit = LaserEngine.areAllRequiredTargetsHit(actualBeamPath, level.getTokens());
+        assertTrue(allRequiredTargetsHit, "Beam path does not hit all required targets");
+    }
+
+
+    @And("the beam path should touch every touch-required token given by the level")
+    public void theBeamPathTouchesEveryTokenOnTheBoardExceptTheOnesNotTouchRequired() {
+        boolean allTouchRequiredTokensTouched = LaserEngine.areAllTouchRequiredTokensTouched(actualBeamPath, level.getTokens());
+        assertTrue(allTouchRequiredTokensTouched, "Beam path does not touch all touch-required tokens");
+    }
+
+    @And("the beam path should pass through all checkpoints")
+    public void theBeamPathShouldPassThroughAllCheckpoints() {
+        boolean allCheckpointsPenetrated = LaserEngine.areAllCheckpointsPenetrated(actualBeamPath, level.getTokens());
+        assertTrue(allCheckpointsPenetrated, "Beam path does not pass through all checkpoints");
+    }
+
+
+    @And("all turnable tokens should have a direction")
+    public void allTurnableTokensShouldHaveADirection() {
+        for (Token token : level.getTokens()) {
+            if (token instanceof ITurnableToken turnableToken) {
+                assertNotNull(turnableToken.getDirection(),
+                        "Token " + token.getClass().getSimpleName() + " should have a direction, but does not");
+            }
+        }
+    }
+
+    @And("all tokens required to be placed should be placed on the board")
+    public void allTokensRequiredToBePlacedShouldBePlacedOnTheBoard() {
+        for (Token token : level.getRequiredTokens()) {
+            assertTrue(token.isPlaced(),
+                    "Token " + token.getClass().getSimpleName() + " should be placed on the board, but is not");
+        }
+    }
+
+    @Given("I activate the level's laser")
+    public void iActivateTheLevelSLaser() {
+        level.getTriggerableLaser().ifPresent(laser -> {
+            laser.trigger(true);
+            this.laser = laser; // Save the active laser for further checks
+        });
+        if (laser == null) {
+            throw new IllegalStateException("No triggerable laser found in the level");
+        }
     }
 }

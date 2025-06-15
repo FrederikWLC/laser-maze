@@ -27,7 +27,7 @@ public class InputHandler implements MouseListener, MouseMotionListener {
             return;
         }
 
-        Direction current = (token instanceof ITurnableToken turnable) ? turnable.getDirection() : null;
+        Direction current = ((ITurnableToken) token).getDirection();
         Direction next = current.rotateClockwise();
 
         boolean success = gameController.rotateToken(clicked, next);

@@ -22,6 +22,20 @@ public enum Direction {
         return dy;
     }
 
+    public Direction opposite() {
+        return switch (this) {
+            case UP -> DOWN;
+            case DOWN -> UP;
+            case LEFT -> RIGHT;
+            case RIGHT -> LEFT;
+        };
+    }
+
+    boolean isParallel(Direction other) {
+        return (this == UP || this == DOWN) && (other == UP || other == DOWN) ||
+               (this == LEFT || this == RIGHT) && (other == LEFT || other == RIGHT);
+    }
+
     public Direction rotateClockwise() {
         return switch (this) {
             case UP -> RIGHT;

@@ -147,11 +147,11 @@ public class GamePanel extends JPanel {
         }
 
         if (isInBoardView && board != null) {
-            int tileSize = 80;
+            int tileSize = ViewConfig.TILE_SIZE;;
             for (int row = 0; row < board.getHeight(); row++) {
                 for (int col = 0; col < board.getWidth(); col++) {
-                    int x = 100 + col * tileSize;
-                    int y = 100 + row * tileSize;
+                    int x = ViewConfig.BOARD_OFFSET_X + col * tileSize;
+                    int y = ViewConfig.BOARD_OFFSET_Y + row * tileSize;
 
                     BufferedImage emptyTile = tokenImages.get("EmptyCell.png");
                     if (emptyTile != null) {
@@ -211,6 +211,8 @@ public class GamePanel extends JPanel {
                 tokenImages.put(name, img);
             } catch (Exception e) {
                 System.err.println("Failed to load: " + name);
+                e.printStackTrace(); // shows the real error
+
             }
         }
     }
@@ -237,6 +239,21 @@ public class GamePanel extends JPanel {
         // Fallback
         g2d.setColor(Color.MAGENTA);
         g2d.drawString("?", x + tileSize / 2 - 4, y + tileSize / 2 + 4);
+    }
+
+    public Position screenToBoard(int pixelX, int pixelY) {
+        int tileSize = ViewConfig.TILE_SIZE;
+        int offsetX = ViewConfig.BOARD_OFFSET_X;
+        int offsetY = ViewConfig.BOARD_OFFSET_Y;
+
+        int col = (pixelX - offsetX) / tileSize;
+        int row = (pixelY - offsetY) / tileSize;
+
+        if (board == null || col < 0 || row < 0 || col >= board.getWidth() || row >= board.getHeight()) {
+            return null; // Click was outside the board
+        }
+
+        return new Position(col, row);
     }
 
 

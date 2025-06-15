@@ -29,4 +29,8 @@ public abstract class MutableToken extends Token implements IMutableToken  {
         return turnable;
     }
 
+    public boolean isTurned() {
+        return direction != null; // Token is turned if it has a direction
+    }
+
 }

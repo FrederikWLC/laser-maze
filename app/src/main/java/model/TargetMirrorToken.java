@@ -19,13 +19,13 @@ public class TargetMirrorToken extends MutableToken implements ITargetToken {
     }
 
     @Override
-    public List<PositionDirection> interact(PositionDirection currentPositionDirection, List<PositionDirection> beamPath, Board board) {
+    public List<PositionDirection> interact(PositionDirection currentBeamPositionDirection, List<PositionDirection> beamPath, Board board) {
         // A Target Mirror reflects the beam only on two of its four sides, depending on the direction of the beam.
         switch (this.getDirection()) {
             case UP -> {
-                switch (currentPositionDirection.getDirection()) { // where beam then gets reflected depending on the direction
+                switch (currentBeamPositionDirection.getDirection()) { // where beam then gets reflected depending on the direction
                     case UP ->
-                            currentPositionDirection = currentPositionDirection.withDirection(Direction.LEFT);
+                            currentBeamPositionDirection = currentBeamPositionDirection.withDirection(Direction.LEFT);
                     case DOWN -> {
                         return beamPath;
                     } // Beam hits target
@@ -33,32 +33,32 @@ public class TargetMirrorToken extends MutableToken implements ITargetToken {
                         return beamPath;
                     } // Beam hits non-mirror non-target part
                     case RIGHT ->
-                            currentPositionDirection = currentPositionDirection.withDirection(Direction.DOWN);
+                            currentBeamPositionDirection = currentBeamPositionDirection.withDirection(Direction.DOWN);
                 }
             }
             case DOWN -> {
-                switch (currentPositionDirection.getDirection()) { // where beam then gets reflected depending on the direction
+                switch (currentBeamPositionDirection.getDirection()) { // where beam then gets reflected depending on the direction
                     case UP -> {
                         return beamPath;
                     } // Beam hits target
                     case DOWN ->
-                            currentPositionDirection = currentPositionDirection.withDirection(Direction.RIGHT);
+                            currentBeamPositionDirection = currentBeamPositionDirection.withDirection(Direction.RIGHT);
                     case LEFT ->
-                            currentPositionDirection = currentPositionDirection.withDirection(Direction.UP);
+                            currentBeamPositionDirection = currentBeamPositionDirection.withDirection(Direction.UP);
                     case RIGHT -> {
                         return beamPath;
                     } // Beam hits non-mirror non-target part
                 }
             }
             case LEFT -> {
-                switch (currentPositionDirection.getDirection()) { // where beam then gets reflected depending on the direction
+                switch (currentBeamPositionDirection.getDirection()) { // where beam then gets reflected depending on the direction
                     case UP ->
-                            currentPositionDirection = currentPositionDirection.withDirection(Direction.RIGHT);
+                            currentBeamPositionDirection = currentBeamPositionDirection.withDirection(Direction.RIGHT);
                     case DOWN -> {
                         return beamPath;
                     } // Beam hits non-mirror non-target part
                     case LEFT ->
-                            currentPositionDirection = currentPositionDirection.withDirection(Direction.DOWN);
+                            currentBeamPositionDirection = currentBeamPositionDirection.withDirection(Direction.DOWN);
                     case RIGHT -> {
                         return beamPath;
                     } // Beam hits target
@@ -66,22 +66,27 @@ public class TargetMirrorToken extends MutableToken implements ITargetToken {
             }
 
             case RIGHT -> {
-                switch (currentPositionDirection.getDirection()) { // where beam then gets reflected depending on the direction
+                switch (currentBeamPositionDirection.getDirection()) { // where beam then gets reflected depending on the direction
                     case UP -> {
                         return beamPath;
                     } // Beam hits non-mirror non-target part
                     case DOWN ->
-                            currentPositionDirection = currentPositionDirection.withDirection(Direction.LEFT);
+                            currentBeamPositionDirection = currentBeamPositionDirection.withDirection(Direction.LEFT);
                     case LEFT -> {
                         return beamPath;
                     } // Beam hits target
                     case RIGHT ->
-                            currentPositionDirection = currentPositionDirection.withDirection(Direction.UP);
+                            currentBeamPositionDirection = currentBeamPositionDirection.withDirection(Direction.UP);
                 }
             }
         }
-        return LaserEngine.travel(currentPositionDirection, beamPath, board);
+        return LaserEngine.travel(currentBeamPositionDirection, beamPath, board);
     }
 
+    public boolean isHit(PositionDirection beamPositionDirection) {
+        // A Target Mirror is hit if the beam is facing the target side of the mirror.
+        PositionDirection targetPositionDirection = new PositionDirection(this.position, this.direction);
+        return targetPositionDirection.increment().opposite().equals(beamPositionDirection);
+    }
 }
 

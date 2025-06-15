@@ -28,6 +28,10 @@ public class PositionDirection {
         return new PositionDirection(position, newDirection);
     }
 
+    public PositionDirection opposite() {
+        return new PositionDirection(position, direction.opposite());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

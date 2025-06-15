@@ -9,10 +9,15 @@ public class CellBlockerToken extends Token {
     }
 
     @Override
-    public List<PositionDirection> interact(PositionDirection currentPositionDirection, List<PositionDirection> beamPath, Board board) {
+    public List<PositionDirection> interact(PositionDirection currentBeamPositionDirection, List<PositionDirection> beamPath, Board board) {
         // A Cell Blocker allows the beam to pass through its tile without changing its direction.
-        beamPath = Stream.concat(beamPath.stream(), Stream.of(currentPositionDirection)).toList();
-        return LaserEngine.travel(currentPositionDirection, beamPath, board);
+        beamPath = Stream.concat(beamPath.stream(), Stream.of(currentBeamPositionDirection)).toList();
+        return LaserEngine.travel(currentBeamPositionDirection, beamPath, board);
+    }
+
+    @Override
+    public boolean isTouchRequired() {
+        return false;
     }
 }
 

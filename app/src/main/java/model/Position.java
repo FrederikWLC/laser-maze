@@ -1,4 +1,5 @@
 package model;
+import java.util.List;
 import java.util.Objects;
 
 public class Position {
@@ -8,6 +9,15 @@ public class Position {
     public Position(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    public List<Position> getNeighbours() {
+        return List.of(
+                new Position(x + 1, y),
+                new Position(x - 1, y),
+                new Position(x, y + 1),
+                new Position(x, y - 1)
+        );
     }
 
     public int getX() { return x; }

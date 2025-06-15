@@ -1,4 +1,5 @@
 package model;
 
-public class ICheckpoint {
+public interface ICheckpointToken {
+    boolean isPenetrated(PositionDirection beamPositionDirection);
 }

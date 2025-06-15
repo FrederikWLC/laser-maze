@@ -4,11 +4,11 @@ import java.util.List;
 
 public class Level {
     int id;
-    List<Token> preplacedTokens;
-    List<Token> requiredTokens;
     boolean completed = false;
     int requiredTargetNumber;
     Board board;
+    List<Token> tokens;
+    List<Token> requiredTokens;
 
     public Level(int id, Board board) {
         this.id = id;
@@ -23,8 +23,8 @@ public class Level {
         return board;
     }
 
-    public List<Token> getPreplacedTokens() {
-        return preplacedTokens;
+    public List<Token> getTokens() {
+        return tokens;
     }
 
     public List<Token> getRequiredTokens() {
@@ -43,8 +43,8 @@ public class Level {
         this.completed = completed;
     }
 
-    public void setPreplacedTokens(List<Token> preplacedTokens) {
-        this.preplacedTokens = preplacedTokens;
+    public void setTokens(List<Token> tokens) {
+        this.tokens = tokens;
     }
 
     public void setRequiredTokens(List<Token> requiredTokens) {

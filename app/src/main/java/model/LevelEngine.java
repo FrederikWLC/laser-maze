@@ -5,19 +5,6 @@ import java.util.List;
 
 public class LevelEngine {
 
-    public static void setRequiredTokens(Level level, List<Token> requiredTokens) {
-        level.setRequiredTokens(requiredTokens);
-    }
-
-    public static void setPreplacedTokens(Level level, List<Token> preplacedTokens) {
-        BoardEngine.setPreplacedTokens(level.getBoard(), preplacedTokens);
-        level.setPreplacedTokens(preplacedTokens);
-    }
-
-    public static void setRequiredTargetNumber(Level level, int requiredTargetNumber) {
-        level.setRequiredTargetNumber(requiredTargetNumber);
-    }
-
     public static void placeRequiredToken(Level level, Token token, Position position) {
         List<Token> tokens = new ArrayList<>(level.getRequiredTokens()); // create mutable copy
         tokens.remove(token);

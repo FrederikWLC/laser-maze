@@ -8,13 +8,13 @@ Feature: Target Mirror token
     Given a new game is started
     And the board is initialized with width 5 and height 5
     # Here facing down means the target faces down
-      # and the mirror only reflects beams changes their directions from right to up and vice versa (like a backslash)
+      # and the mirror only reflects beams from right to up and vice versa (like a backslash)
     # Facing up means the target faces up
-      # and the mirror only reflects beams changes their directions from left to down and vice versa (like a backslash)
+      # and the mirror only reflects beams from left to down and vice versa (like a backslash)
     # Facing right means the target faces right
-        # and the mirror only reflects beams changes their directions from down to left and vice versa (like a slash)
+        # and the mirror only reflects beams from down to left and vice versa (like a slash)
     # Facing left means the target faces left
-        # and the mirror only reflects beams and changes their directions from up to right and vice versa (like a slash)
+        # and the mirror only reflects beams from up to right and vice versa (like a slash)
     And a completely mutable Target Mirror token is placed on the board at (2, 2) facing down
 
   # Target Mirror is movable and turnable

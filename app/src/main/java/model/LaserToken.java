@@ -4,7 +4,7 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LaserToken extends MutableToken {
+public class LaserToken extends MutableToken implements ILaserToken {
 
     boolean isActive = false;
 

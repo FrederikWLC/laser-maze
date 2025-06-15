@@ -288,6 +288,8 @@ public class BoardSteps {
     public List<Token> getPreplacedTokensFromTable(DataTable table) {
         return table.asMaps(String.class, String.class)
                 .stream()
+                // keep only rows where preplaced == true
+                .filter(row -> Boolean.parseBoolean(row.get("preplaced")))
                 .map(row -> {
                     // Only consider turnable column if not immutable
                     Token preplacedToken;
@@ -334,6 +336,8 @@ public class BoardSteps {
     public List<Token> getRequiredTokensFromTable(DataTable table) {
         return table.asMaps(String.class, String.class)
                 .stream()
+                // keep only rows where preplaced == false
+                .filter(row -> !Boolean.parseBoolean(row.get("preplaced")))
                 .map(row -> {
                             Token requiredToken;
                             Boolean turnable;
@@ -363,30 +367,6 @@ public class BoardSteps {
                 ).toList();
     }
 
-    @And("the level has the following tokens preplaced on its board:")
-    public void theLevelHasTheFollowingTokensPreplacedOnItsBoard(DataTable table) {
-        List<Token> preplacedTokens = getPreplacedTokensFromTable(table);
-        LevelEngine.setPreplacedTokens(level,preplacedTokens);
-    }
-
-    @And("the level requires placement of:")
-    public void theLevelRequiresPlacementOf(DataTable table) {
-        List<Token> requiredTokens = getRequiredTokensFromTable(table);
-        LevelEngine.setRequiredTokens(level,requiredTokens);
-    }
-
-    @And("the level's required target number is {int}")
-    public void theLevelsRequiredTargetNumberIs(int n) {
-        LevelEngine.setRequiredTargetNumber(level,n);
-    }
-
-    @And("the level is initialized with id {int} and a board with width {int} and height {int}")
-    public void theLevelIsInitializedWithABoardWithWidthAndHeight(int id, int width, int height) {
-        level = new LevelBuilder(id)
-                .withBoardDimensions(width, height)
-                .build();
-        board = level.getBoard();
-    }
 
     @Then("the level's id should be {int}")
     public void theLevelsIdShouldBe(int id) {
@@ -414,12 +394,29 @@ public class BoardSteps {
         LevelEngine.placeRequiredToken(level, token, new Position(x, y));
     }
 
+
+
     @Then("the token on the board at \\({int}, {int}) should be a {tokenType} token")
     public void theTokenOnTheBoardAtShouldBeAToken(int x, int y, Class<? extends Token> tokenType) {
         Tile tile = board.getTile(x, y);
+        // set token to the one on the board for further checks
         token = tile.getToken();
         assertEquals(tokenType,token.getClass(),
                 "Token at (" + x + ", " + y + ") should be a Double Mirror token, but is: " + tile.getToken());
+        // set token of specific type to the one on the board for further checks
+        if (tokenType == LaserToken.class) {
+            laser = (LaserToken) token;
+        } else if (tokenType == CellBlockerToken.class) {
+            cellBlocker = (CellBlockerToken) token;
+        } else if (tokenType == DoubleMirrorToken.class) {
+            doubleMirror = (DoubleMirrorToken) token;
+        } else if (tokenType == TargetMirrorToken.class) {
+            targetMirror = (TargetMirrorToken) token;
+        } else if (tokenType == BeamSplitterToken.class) {
+            beamSplitter = (BeamSplitterToken) token;
+        } else if (tokenType == CheckpointToken.class) {
+            checkpoint = (CheckpointToken) token;
+        }
     }
 
     @And("the token should be turnable without direction")
@@ -429,9 +426,20 @@ public class BoardSteps {
                     "Token should not have a direction, but is: " + ((ITurnableToken) token).getDirection());
     }
 
-    @And("the remaining number of required tokens should be {int}")
+    @And("the remaining number of required tokens to be placed should be {int}")
     public void theRemainingNumberOfRequiredTokensShouldBe(int i) {
         assertEquals(i, level.getRequiredTokens().size(),
-                "Remaining required tokens should be " + i + ", but is: " + level.getRequiredTokens().size());
+                "Remaining required tokens to be placed should be " + i + ", but is: " + level.getRequiredTokens().size());
+    }
+
+    @And("the level is initialized with id {int}, required target number {int}, a board with width {int} and height {int}, and the following tokens:")
+    public void theLevelIsInitializedWithIdRequiredTargetNumberABoardWithWidthAndHeightAndTheFollowingTokens(int id, int n, int width, int height, DataTable table) {
+        level = new LevelBuilder(id)
+                .withBoardDimensions(width, height)
+                .withRequiredTargetNumber(n)
+                .withPreplaced(getPreplacedTokensFromTable(table))
+                .withRequired(getRequiredTokensFromTable(table))
+                .build();
+        board = level.getBoard();
     }
 }

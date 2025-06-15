@@ -1,5 +1,6 @@
 package controller;
 import model.*;
+import view.*;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -7,19 +8,18 @@ import java.awt.event.MouseMotionListener;
 
 public class InputHandler implements MouseListener, MouseMotionListener {
     private final GameController gameController;
+    private final GamePanel gamePanel;
 
-    public InputHandler(GameController gameController) {
+    public InputHandler(GameController gameController, GamePanel gamePanel) {
         this.gameController = gameController;
+        this.gamePanel = gamePanel;
     }
 
-    private Position convertToGridPosition(int pixelX, int pixelY) {
-        int tileSize = 64; // Use the same size used in GamePanel
-        return new Position(pixelX / tileSize, pixelY / tileSize);
-    }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        Position clicked = convertToGridPosition(e.getX(), e.getY());
+
+        Position clicked = gamePanel.screenToBoard(e.getX(), e.getY());;
 
         Token token = gameController.getTokenAt(clicked);
         if (token == null) {

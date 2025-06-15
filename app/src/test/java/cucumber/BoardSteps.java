@@ -394,16 +394,7 @@ public class BoardSteps {
         LevelEngine.placeRequiredToken(level, token, new Position(x, y));
     }
 
-
-
-    @Then("the token on the board at \\({int}, {int}) should be a {tokenType} token")
-    public void theTokenOnTheBoardAtShouldBeAToken(int x, int y, Class<? extends Token> tokenType) {
-        Tile tile = board.getTile(x, y);
-        // set token to the one on the board for further checks
-        token = tile.getToken();
-        assertEquals(tokenType,token.getClass(),
-                "Token at (" + x + ", " + y + ") should be a Double Mirror token, but is: " + tile.getToken());
-        // set token of specific type to the one on the board for further checks
+    public void saveTokenAsType(Class<? extends Token> tokenType) {
         if (tokenType == LaserToken.class) {
             laser = (LaserToken) token;
         } else if (tokenType == CellBlockerToken.class) {
@@ -417,6 +408,19 @@ public class BoardSteps {
         } else if (tokenType == CheckpointToken.class) {
             checkpoint = (CheckpointToken) token;
         }
+    }
+
+
+
+    @Then("the token on the board at \\({int}, {int}) should be a {tokenType} token")
+    public void theTokenOnTheBoardAtShouldBeAToken(int x, int y, Class<? extends Token> tokenType) {
+        Tile tile = board.getTile(x, y);
+        // set token to the one on the board for further checks
+        token = tile.getToken();
+        assertEquals(tokenType,token.getClass(),
+                "Token at (" + x + ", " + y + ") should be a Double Mirror token, but is: " + tile.getToken());
+        // set token of specific type to the one on the board for further checks
+        saveTokenAsType(tokenType);
     }
 
     @And("the token should be turnable without direction")
@@ -441,5 +445,27 @@ public class BoardSteps {
                 .withRequired(getRequiredTokensFromTable(table))
                 .build();
         board = level.getBoard();
+    }
+
+    @And("the level's tokens should be:")
+    public void theLevelSTokensShouldBe(DataTable table) {
+        List<? extends Class<? extends Token>> expectedTokenTypes = table.asMaps(String.class, String.class)
+                .stream()
+                .map(row -> {
+                    Class<? extends Token> ttype = tokenType(row.get("token"));
+                    return ttype;
+                })
+                .toList();
+
+        List<? extends Class<? extends Token>> actualTokenTypes = level.getTokens()
+                .stream()
+                .map(tk -> {
+                    Class<? extends Token> ttype = tk.getClass();
+                    return ttype;
+                })
+                .toList();
+
+        assertEquals(expectedTokenTypes, actualTokenTypes,
+                "Level token types do not match expected token types");
     }
 }

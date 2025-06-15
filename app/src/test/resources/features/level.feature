@@ -15,6 +15,12 @@ Feature: Level
     Then the level's id should be 1
     And the level's required target number should be 3
     And the level's board should have width 5 and height 5
+    And the level's tokens should be:
+      | token           |
+      | Target Mirror   |
+      | Checkpoint      |
+      | Double Mirror   |
+      | Beam Splitter   |
 
     Scenario: I place a token (from the required tokens) on the board
       Given I place token 0 (from the required tokens) on the board at (0, 0)

@@ -34,7 +34,7 @@ public class MainController {
             gamePanel = new GamePanel();
 
             gamePanel.setQuitGameAction(e -> System.exit(0));
-            gamePanel.setLevelSelectAction(this::loadLevel);
+            gamePanel.setLevelSelectAction(LevelLoader::load);
 
             window.add(gamePanel);
             window.pack();
@@ -55,25 +55,5 @@ public class MainController {
             gamePanel.setLaserPath(laserPath);
         });
     }
-
-    public void loadLevel(int levelNumber) {
-        Board board = new Board(5, 5);
-
-        // Proper tokens with positions and directions
-        board.getTile(1, 0).setToken(new LaserToken(new Position(1, 0), Direction.LEFT));
-        board.getTile(1, 3).setToken(new DoubleMirrorToken(new Position(1, 3), Direction.DOWN));
-        board.getTile(4, 3).setToken(new TargetMirrorToken(new Position(4, 3), Direction.UP));
-
-        this.gameController = new GameController(board);
-        gamePanel.setBoard(board);
-        gamePanel.showBoard(levelNumber);
-        setupFireLaserAction();
-
-        InputHandler inputHandler = new InputHandler(gameController);
-        gamePanel.addMouseListener(inputHandler);
-        gamePanel.addMouseMotionListener(inputHandler);
-    }
-
-
 
 }

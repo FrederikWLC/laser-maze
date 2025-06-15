@@ -28,8 +28,8 @@ public class GameController {
 
     public boolean rotateToken(Position pos, Direction direction) {
         Tile tile = board.getTile(pos.getX(), pos.getY());
-        if (tile != null && !tile.isEmpty() && tile.getToken().isMutable()) {
-            boardEngine.turnToken(tile.getToken(), direction);
+        if (tile != null && !tile.isEmpty() && tile.getToken().isTurnable()) {
+            boardEngine.turnToken((ITurnableToken) tile.getToken(), direction);
             return true;
         }
         return false;

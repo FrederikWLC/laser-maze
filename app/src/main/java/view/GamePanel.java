@@ -218,8 +218,8 @@ public class GamePanel extends JPanel {
 
     private void drawToken(Graphics2D g2d, Token token, int x, int y, int tileSize) {
         String filename = switch (token.getClass().getSimpleName()) {
-            case "LaserToken" -> "RedLaser-GENERATOR_ON_" + mapDirection(token.getDirection()) + ".png";
-            case "TargetMirrorToken" -> "PurpleTarget-TARGET_ON_" + mapDirection(token.getDirection()) + ".png";
+            case "LaserToken" -> "RedLaser-GENERATOR_ON_" + mapDirection(((ITurnableToken) token).getDirection()) + ".png";
+            case "TargetMirrorToken" -> "PurpleTarget-TARGET_ON_" + mapDirection(((ITurnableToken) token).getDirection()) + ".png";
             case "DoubleMirrorToken" -> "GreenMirror-BACKSLASH_MIRROR.png";
             case "CellBlockerToken" -> "WhiteObstacle-NONE-Dark.png";
             // Add more tokens here

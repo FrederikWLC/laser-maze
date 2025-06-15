@@ -217,14 +217,23 @@ public class GamePanel extends JPanel {
 
 
     private void drawToken(Graphics2D g2d, Token token, int x, int y, int tileSize) {
-        String filename = switch (token.getClass().getSimpleName()) {
-            case "LaserToken" -> "RedLaser-GENERATOR_ON_" + mapDirection(token.getDirection()) + ".png";
-            case "TargetMirrorToken" -> "PurpleTarget-TARGET_ON_" + mapDirection(token.getDirection()) + ".png";
-            case "DoubleMirrorToken" -> "GreenMirror-BACKSLASH_MIRROR.png";
-            case "CellBlockerToken" -> "WhiteObstacle-NONE-Dark.png";
-            // Add more tokens here
-            default -> null;
-        };
+        String filename = null;
+
+        if (token instanceof ITurnableToken directionalToken) {
+            String direction = mapDirection(directionalToken.getDirection());
+            filename = switch (token.getClass().getSimpleName()) {
+                case "LaserToken" -> "RedLaser-GENERATOR_ON_" + direction + ".png";
+                case "TargetMirrorToken" -> "PurpleTarget-TARGET_ON_" + direction + ".png";
+                default -> null;
+            };
+        } else {
+            filename = switch (token.getClass().getSimpleName()) {
+                case "DoubleMirrorToken" -> "GreenMirror-BACKSLASH_MIRROR.png";
+                case "CellBlockerToken" -> "WhiteObstacle-NONE-Dark.png";
+                // Add more tokens '
+                default -> null;
+            };
+        }
 
         if (filename != null) {
             BufferedImage img = tokenImages.get(filename);
@@ -238,6 +247,7 @@ public class GamePanel extends JPanel {
         g2d.setColor(Color.MAGENTA);
         g2d.drawString("?", x + tileSize / 2 - 4, y + tileSize / 2 + 4);
     }
+
 
 
     public void setLevelSelectAction(IntConsumer action) {

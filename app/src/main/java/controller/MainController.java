@@ -90,7 +90,7 @@ public class MainController {
         gamePanel.showBoard(levelNumber);
         setupFireLaserAction();
 
-        InputHandler inputHandler = new InputHandler(gameController);
+        InputHandler inputHandler = new InputHandler(gameController,gamePanel);
         gamePanel.addMouseListener(inputHandler);
         gamePanel.addMouseMotionListener(inputHandler);
     }

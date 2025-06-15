@@ -23,14 +23,13 @@ Feature: Board setup
   Scenario: Access a tile outside board bounds
     Given the board is initialized with width 5 and height 5
     When I try to get the tile at position (6, 6)
-    Then the tile should return null
+    Then an error should occur
 
   #test for getWidth and getHeight
   Scenario: Check board dimensions
     Given the board is initialized with width 6 and height 4
     Then the board width should be 6
     And the board height should be 4
-
 
   Scenario: Tile coordinates are set correctly
     Given the board is initialized with width 2 and height 2

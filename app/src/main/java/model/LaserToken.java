@@ -4,12 +4,12 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LaserToken extends Token {
+public class LaserToken extends MutableToken {
 
     boolean isActive = false;
 
-    public LaserToken(Position position, Direction direction) {
-        super(position,direction);
+    public LaserToken() {
+        super();
     }
 
     public boolean isActive() {

@@ -60,9 +60,30 @@ public class MainController {
         Board board = new Board(5, 5);
 
         // Proper tokens with positions and directions
-        board.getTile(1, 0).setToken(new LaserToken(new Position(1, 0), Direction.LEFT));
-        board.getTile(1, 3).setToken(new DoubleMirrorToken(new Position(1, 3), Direction.DOWN));
-        board.getTile(4, 3).setToken(new TargetMirrorToken(new Position(4, 3), Direction.UP));
+        board.getTile(1, 0).setToken(
+                TokenBuilder.of(LaserToken::new)
+                        .withPosition(1, 0)
+                        .withDirection(Direction.LEFT)
+                        .withMutability(true, true) // assuming LaserToken is turnable and movable
+                        .build()
+        );
+
+        board.getTile(1, 3).setToken(
+                TokenBuilder.of(DoubleMirrorToken::new)
+                        .withPosition(1, 3)
+                        .withDirection(Direction.DOWN)
+                        .withMutability(true, true) // adjust as needed
+                        .build()
+        );
+
+        board.getTile(4, 3).setToken(
+                TokenBuilder.of(TargetMirrorToken::new)
+                        .withPosition(4, 3)
+                        .withDirection(Direction.UP)
+                        .withMutability(true, true)     // if needed
+                        .withRequiredTarget()           // because it's a TargetMirrorToken
+                        .build()
+        );
 
         this.gameController = new GameController(board);
         gamePanel.setBoard(board);

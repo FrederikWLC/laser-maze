@@ -1,11 +1,11 @@
 package view;
 
-import model.ITurnableToken;
+import model.domain.token.ITurnableToken;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Map;
-import model.Direction;
+import model.domain.board.Direction;
 
 
 public class CheckpointTokenRenderer extends TurnableTokenRenderer {

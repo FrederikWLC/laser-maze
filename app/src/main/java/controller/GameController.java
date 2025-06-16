@@ -1,6 +1,15 @@
 package controller;
 
-import model.*;
+import model.domain.board.Direction;
+import model.domain.board.Position;
+import model.domain.board.PositionDirection;
+import model.domain.board.Tile;
+import model.domain.engine.BoardEngine;
+import model.domain.engine.LevelEngine;
+import model.domain.level.Level;
+import model.domain.token.ILaserToken;
+import model.domain.token.ITurnableToken;
+import model.domain.token.Token;
 
 import java.util.List;
 

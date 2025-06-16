@@ -1,8 +1,5 @@
 package view;
 
-import model.Direction;
-import model.Token;
-
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.List;

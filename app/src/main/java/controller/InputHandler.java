@@ -1,5 +1,6 @@
 package controller;
-import model.*;
+import model.domain.board.Position;
+import model.domain.token.Token;
 import view.*;
 
 import java.awt.event.MouseEvent;

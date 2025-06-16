@@ -1,6 +1,6 @@
 package view;
 
-import model.Token;
+import model.domain.token.Token;
 import java.awt.Graphics2D;
 
 public interface TokenRenderer {

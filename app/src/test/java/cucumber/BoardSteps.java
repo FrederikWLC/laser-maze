@@ -2,11 +2,19 @@ package cucumber;
 
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.ParameterType;
-import model.*;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import model.domain.board.*;
+import model.domain.board.builder.BoardBuilder;
+import model.domain.engine.BoardEngine;
+import model.domain.engine.LaserEngine;
+import model.domain.engine.LevelEngine;
+import model.domain.level.Level;
+import model.domain.level.builder.LevelBuilder;
+import model.domain.token.*;
+import model.domain.token.builder.TokenBuilder;
 
 import java.util.List;
 

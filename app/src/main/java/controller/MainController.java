@@ -1,15 +1,20 @@
 package controller;
 
-import model.*;
+import model.domain.board.Direction;
+import model.domain.board.PositionDirection;
+import model.domain.board.Tile;
+import model.domain.level.Level;
+import model.domain.token.ITurnableToken;
+import model.persistence.LevelLoader;
 import view.GamePanel;
 
 import java.util.List;
 
 import javax.swing.*;
 
-import model.Board;
+import model.domain.board.Board;
 
-import model.Token;
+import model.domain.token.Token;
 
 import java.util.ArrayList;
 import view.RenderableTile;

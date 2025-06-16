@@ -6,9 +6,16 @@ import java.awt.image.BufferedImage;
 public class BackgroundRenderer implements Drawable {
 
     private final BufferedImage image;
+    private final Color fallbackColor;
 
     public BackgroundRenderer(BufferedImage image) {
         this.image = image;
+        this.fallbackColor = Color.WHITE;
+    }
+    // Overloaded constructor for solid color backgrounds
+    public BackgroundRenderer(Color fallbackColor) {
+        this.image = null;
+        this.fallbackColor = fallbackColor;
     }
 
     @Override
@@ -16,7 +23,7 @@ public class BackgroundRenderer implements Drawable {
         if (image != null) {
             g.drawImage(image, 0, 0, 800, 600, null);
         } else {
-            g.setColor(Color.WHITE); // fallback background
+            g.setColor(fallbackColor); // fallback background
             g.fillRect(0, 0, 800, 600);
         }
     }

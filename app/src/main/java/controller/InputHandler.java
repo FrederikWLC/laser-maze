@@ -5,16 +5,19 @@ import view.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.List;
+
 
 public class InputHandler implements MouseListener, MouseMotionListener {
     private final GameController gameController;
     private final GamePanel gamePanel;
+    private final MainController mainController;
 
-    public InputHandler(GameController gameController, GamePanel gamePanel) {
+    public InputHandler(GameController gameController, GamePanel gamePanel, MainController mainController) {
         this.gameController = gameController;
         this.gamePanel = gamePanel;
+        this.mainController = mainController;
     }
-
 
     @Override
     public void mouseClicked(MouseEvent e) {
@@ -27,16 +30,10 @@ public class InputHandler implements MouseListener, MouseMotionListener {
             return;
         }
 
-        Direction current = ((ITurnableToken) token).getDirection();
-        Direction next = current.rotateClockwise();
-
-        boolean success = gameController.rotateToken(clicked, next);
-
-        if (success) {
-            System.out.println("Rotated token to " + next);
-        } else {
-            System.out.println("Rotation failed.");
-        }
+        gameController.rotateTokenClockwise(token);
+        List<RenderableTile> updatedTiles = mainController.convertBoardToRenderableTiles(gameController.getLevel().getBoard());
+        gamePanel.setTilesToRender(updatedTiles);
+        gamePanel.repaint();
     }
 
 

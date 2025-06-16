@@ -6,6 +6,24 @@ import java.util.Optional;
 
 public class LevelEngine {
 
+    public static List<PositionDirection> fireLaserToken(Level level) {
+        Optional<LaserToken> optionalLaserToken = level.getTriggerableLaser();
+        if (optionalLaserToken.isEmpty()) {
+            throw new IllegalStateException("No triggerable laser token found to fire.");
+        }
+        LaserToken laserToken = optionalLaserToken.get();
+        return LaserEngine.fire(laserToken, level.getBoard());
+    }
+
+    public static void triggerLaserToken(Level level, boolean isActive) {
+        Optional<LaserToken> optionalLaserToken = level.getTriggerableLaser();
+        if (optionalLaserToken.isEmpty()) {
+            throw new IllegalStateException("No triggerable laser token found to trigger.");
+        }
+        LaserToken laserToken = optionalLaserToken.get();
+        laserToken.trigger(isActive);
+    }
+
     public static void placeRequiredToken(Level level, Token token, Position position) {
         List<Token> tokens = new ArrayList<>(level.getRequiredTokens()); // create mutable copy
         tokens.remove(token);

@@ -60,6 +60,7 @@ public class Level {
                 .filter(LaserToken::isTriggerable)
                 .findFirst();
     }
+    
 
     public void setComplete(boolean complete) {
         this.complete= complete;

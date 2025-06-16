@@ -5,45 +5,59 @@ import model.*;
 import java.util.List;
 
 public class GameController {
-    private final Board board;
-    private final LaserEngine laserEngine = new LaserEngine();
-    private final BoardEngine boardEngine = new BoardEngine();
+    private Level level;
+    private List<PositionDirection> beamPath = List.of();
 
-    public GameController(Board board) {
-        this.board = board;
+
+    public GameController(Level level) {
+        this.level = level;
     }
 
-    public List<PositionDirection> fireLaser() {
-        for (int x = 0; x < board.getWidth(); x++) {
-            for (int y = 0; y < board.getHeight(); y++) {
-                Token token = board.getTile(x, y).getToken();
-                if (token instanceof LaserToken laser) {
-                    laser.trigger(true);
-                    return laserEngine.fire(laser, board);
-                }
-            }
+    public List<PositionDirection> getCurrentLaserPath() {
+       return beamPath;
+    }
+
+    public void updateCurrentLaserPath() {
+        beamPath = LevelEngine.fireLaserToken(level);
+    }
+
+    public void triggerLaser(boolean isActive) {
+        try {
+            LevelEngine.triggerLaserToken(level, isActive);
+            updateCurrentLaserPath();
+        } catch (Exception e) {
+            System.out.println("Failed to trigger laser: " + e.getMessage());
         }
-        return List.of();
     }
 
-    public boolean rotateToken(Position pos, Direction direction) {
-        Tile tile = board.getTile(pos.getX(), pos.getY());
-        if (tile != null && !tile.isEmpty() && tile.getToken().isTurnable()) {
-            boardEngine.turnToken((ITurnableToken) tile.getToken(), direction);
-            return true;
+    public void rotateTokenClockwise(Token token) {
+        Direction current = ((ITurnableToken) token).getDirection();
+        Direction next = current.rotateClockwise();
+        rotateToken(token, next);
+    }
+
+
+    public void rotateToken(Token token, Direction direction) {
+        if (token instanceof ILaserToken) {
+            ((ILaserToken) token).trigger(false); // turn off laser before rotation
+            updateCurrentLaserPath();
         }
-        return false;
+        try {
+            BoardEngine.turnToken((ITurnableToken) token, direction);
+            System.out.println("Rotated token to " + direction);
+        } catch (Exception e) {
+            System.out.println("Rotation failed: " + e.getMessage());
+        }
+
     }
-
-
 
     public Token getTokenAt(Position pos) {
-        Tile tile = board.getTile(pos.getX(), pos.getY());
+        Tile tile = level.getBoard().getTile(pos.getX(), pos.getY());
         return tile != null ? tile.getToken() : null;
     }
 
 
-    public Board getBoard() {
-        return board;
+    public Level getLevel() {
+        return level;
     }
 }

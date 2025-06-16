@@ -16,7 +16,7 @@ public class LevelStorage {
                 );
             case 2:
                 return List.of(
-                        TokenBuilder.of(LaserToken::new).withMutability(false,true).withPosition(0,4).build(),
+                        TokenBuilder.of(LaserToken::new).withMutability(false,true).withPosition(0,4).withDirection(Direction.DOWN).build(),
                         TokenBuilder.of(TargetMirrorToken::new).withMutability(false,false).withPosition(0,3).withDirection(Direction.LEFT).build(),
                         TokenBuilder.of(TargetMirrorToken::new).withMutability(false,false).withPosition(4,0).withDirection(Direction.DOWN).withRequiredTarget().build()
                 );

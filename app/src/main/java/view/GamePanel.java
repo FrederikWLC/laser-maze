@@ -10,9 +10,13 @@ import java.util.List;
 import java.util.function.IntConsumer;
 import java.util.Map;
 import java.util.HashMap;
+import model.Position;
+import model.ITurnableToken;
 
+import model.Token;
+import model.Direction;
+import model.PositionDirection;
 
-import model.*;
 
 public class GamePanel extends JPanel {
 
@@ -22,21 +26,34 @@ public class GamePanel extends JPanel {
     private JButton backButton;
     private JButton fireLaserButton;
 
+
     private JScrollPane levelScrollPane;
     private JPanel levelListPanel;
 
-    private Board board;
+    private List<RenderableTile> tilesToRender = new ArrayList<>();
+
+    private final Map<String, TokenRenderer> tokenRenderers = new HashMap<>();
 
     private IntConsumer levelSelectAction;
 
-    private String[][] boardLayout;
+    private DisplayManager currentScreen;
 
-    private boolean isInBoardView = false;
-    private int currentLevel = -1;
+    private Runnable singlePlayerAction;
+
+    private ActionListener fireLaserListener;
+
+
+
+
+
 
     private final List<Drawable> drawables = new ArrayList<>();
 
     private final Map<String, BufferedImage> tokenImages = new HashMap<>();
+
+    private final Map<String, TokenRenderer> staticRenderers = new HashMap<>();
+    private final Map<String, ITurnableTokenRenderer> turnableRenderers = new HashMap<>();
+
 
 
     public GamePanel() {
@@ -51,6 +68,11 @@ public class GamePanel extends JPanel {
 
         setupTitleButtons();
         setupLevelSelectScreen();
+
+
+
+
+
     }
 
     private BufferedImage loadBackgroundImage() {
@@ -73,7 +95,13 @@ public class GamePanel extends JPanel {
         multiplayer.setBounds(x, 340, w, h);
         quitGame.setBounds(640, 560, w, h);
 
-        singlePlayer.addActionListener(e -> showLevelSelectScreen());
+        // We'll delegate this to the controller
+        singlePlayer.addActionListener(e -> {
+            if (singlePlayerAction != null) {
+                singlePlayerAction.run();
+            }
+        });
+
         add(singlePlayer);
         add(multiplayer);
         add(quitGame);
@@ -121,19 +149,22 @@ public class GamePanel extends JPanel {
     }
 
     private void showTitleScreen() {
-        levelScrollPane.setVisible(false);
-        backButton.setVisible(false);
+        // Clear all previous drawables (including board renderers)
+        drawables.clear();
 
+        // Re-add background and title
+        drawables.add(new BackgroundRenderer(loadBackgroundImage()));
+        drawables.add(new TitleRenderer("LASER MAZE", 160));
+
+        // Restore title menu buttons
         singlePlayer.setVisible(true);
         multiplayer.setVisible(true);
         quitGame.setVisible(true);
 
-        //Hiding laser button
-        if (fireLaserButton != null) fireLaserButton.setVisible(false);
-    }
-    private List<PositionDirection> laserPath = new ArrayList<>();
-    public void setLaserPath(List<PositionDirection> path) {
-        this.laserPath = path;
+        // Hide board-related UI
+        levelScrollPane.setVisible(false);
+        backButton.setVisible(false);
+
         repaint();
     }
 
@@ -142,49 +173,60 @@ public class GamePanel extends JPanel {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g.create();
 
-        for (Drawable d : drawables) {
-            d.draw(g2d);
+        // Draw background layers (title, etc.)
+        if (currentScreen != null) {
+            currentScreen.draw(g2d);
         }
 
-        if (isInBoardView && board != null) {
-            int tileSize = ViewConfig.TILE_SIZE;;
-            for (int row = 0; row < board.getHeight(); row++) {
-                for (int col = 0; col < board.getWidth(); col++) {
-                    int x = ViewConfig.BOARD_OFFSET_X + col * tileSize;
-                    int y = ViewConfig.BOARD_OFFSET_Y + row * tileSize;
 
-                    BufferedImage emptyTile = tokenImages.get("EmptyCell.png");
-                    if (emptyTile != null) {
-                        g2d.drawImage(emptyTile, x, y, tileSize, tileSize, null);
+        if (!tilesToRender.isEmpty()) {
+            int tileSize = 80;
+
+            for (int row = 0; row < 5; row++) {
+                for (int col = 0; col < 5; col++) {
+                    int x = 100 + col * tileSize;
+                    int y = 100 + row * tileSize;
+
+                    RenderableTile match = findMatchingTile(col, row);
+
+                    if (match != null) {
+                        drawToken(g2d, match.getTokenType(), match.getDirection(), x, y, tileSize);
                     } else {
-                        g2d.setColor(Color.LIGHT_GRAY);
-                        g2d.fillRect(x, y, tileSize, tileSize);
+                        BufferedImage emptyTile = tokenImages.get("EmptyCell.png");
+                        if (emptyTile != null) {
+                            g2d.drawImage(emptyTile, x, y, tileSize, tileSize, null);
+                        } else {
+                            g2d.setColor(Color.LIGHT_GRAY);
+                            g2d.fillRect(x, y, tileSize, tileSize);
+                        }
                     }
 
                     g2d.setColor(Color.BLACK);
                     g2d.drawRect(x, y, tileSize, tileSize);
-
-                    Tile tile = board.getTile(col, row);
-                    if (!tile.isEmpty()) {
-                        drawToken(g2d, tile.getToken(), x, y, tileSize);
-                    }
                 }
             }
-        }
 
-        //Very basic logic for drawing a laser. Needs to be remade!
-        g2d.setColor(Color.RED);
-        for (PositionDirection pd : laserPath) {
-            int x = 100 + pd.getPosition().getX() * 80;
-            int y = 100 + pd.getPosition().getY() * 80;
-            g2d.fillRect(x + 30, y + 30, 20, 20); // Adjust for visual centering
-        }
 
+
+
+        }
+        // Draw laser path if available
+        if (laserPath != null && !laserPath.isEmpty()) {
+            g2d.setColor(Color.RED);
+            int tileSize = 80;
+            for (PositionDirection pd : laserPath) {
+                int x = 100 + pd.getPosition().getX() * tileSize;
+                int y = 100 + pd.getPosition().getY() * tileSize;
+                g2d.fillRect(x + 30, y + 30, 20, 20);
+            }
+        }
 
 
         g2d.dispose();
 
     }
+
+
     private void loadTokenImages() {
         String[] filenames = {
                 "RedLaser-GENERATOR_ON_NORTH.png",
@@ -199,6 +241,13 @@ public class GamePanel extends JPanel {
 
                 "GreenMirror-BACKSLASH_MIRROR.png",
                 "GreenMirror-SLASH_MIRROR.png",
+
+                "BlueMirror-BACKSLASH_MIRROR.png",
+                "BlueMirror-SLASH_MIRROR.png",
+
+                "YellowBridge-HORIZONTAL_BRIDGE.png",
+                "YellowBridge-VERTICAL_BRIDGE.png",
+
                 "WhiteObstacle-NONE-Dark.png",
                 "EmptyCell.png"
                 // Add more as needed
@@ -211,35 +260,31 @@ public class GamePanel extends JPanel {
                 tokenImages.put(name, img);
             } catch (Exception e) {
                 System.err.println("Failed to load: " + name);
-                e.printStackTrace(); // shows the real error
-
             }
         }
     }
 
+    private void drawToken(Graphics2D g2d, String tokenType, Direction direction, int x, int y, int tileSize) {
 
-    private void drawToken(Graphics2D g2d, Token token, int x, int y, int tileSize) {
-        String filename = switch (token.getClass().getSimpleName()) {
-            case "LaserToken" -> "RedLaser-GENERATOR_ON_" + mapDirection(((ITurnableToken) token).getDirection()) + ".png";
-            case "TargetMirrorToken" -> "PurpleTarget-TARGET_ON_" + mapDirection(((ITurnableToken) token).getDirection()) + ".png";
-            case "DoubleMirrorToken" -> "GreenMirror-BACKSLASH_MIRROR.png";
-            case "CellBlockerToken" -> "WhiteObstacle-NONE-Dark.png";
-            // Add more tokens here
-            default -> null;
-        };
 
-        if (filename != null) {
-            BufferedImage img = tokenImages.get(filename);
-            if (img != null) {
-                g2d.drawImage(img, x, y, tileSize, tileSize, null);
-                return;
-            }
+        TokenRenderer staticRenderer = staticRenderers.get(tokenType);
+        ITurnableTokenRenderer turnableRenderer = turnableRenderers.get(tokenType);
+
+        if (turnableRenderer != null) {
+            ITurnableToken dummy = new RenderToken(direction);
+            turnableRenderer.render(g2d, dummy, x, y, tileSize);
+        } else if (staticRenderer != null) {
+            Token dummy = new StaticDummyToken();  // or any Token subclass
+            staticRenderer.render(g2d, dummy, x, y, tileSize);
+        } else {
+            g2d.setColor(Color.MAGENTA);
+            g2d.drawString("?", x + tileSize / 2 - 4, y + tileSize / 2 + 4);
         }
 
-        // Fallback
-        g2d.setColor(Color.MAGENTA);
-        g2d.drawString("?", x + tileSize / 2 - 4, y + tileSize / 2 + 4);
     }
+
+
+
 
     public Position screenToBoard(int pixelX, int pixelY) {
         int tileSize = ViewConfig.TILE_SIZE;
@@ -249,7 +294,7 @@ public class GamePanel extends JPanel {
         int col = (pixelX - offsetX) / tileSize;
         int row = (pixelY - offsetY) / tileSize;
 
-        if (board == null || col < 0 || row < 0 || col >= board.getWidth() || row >= board.getHeight()) {
+        if (col < 0 || row < 0 || col >= 5 || row >= 5) {
             return null; // Click was outside the board
         }
 
@@ -260,9 +305,27 @@ public class GamePanel extends JPanel {
     public void setLevelSelectAction(IntConsumer action) {
         this.levelSelectAction = action;
     }
-    public void showBoard(int levelNumber) {
-        this.isInBoardView = true;
-        this.currentLevel = levelNumber;
+    public void showBoard() {
+
+
+        // Clear existing drawables
+        drawables.clear();
+        //drawables.add(new BackgroundRenderer(loadBackgroundImage()));
+        drawables.add(new EmptyTileRenderer(tokenImages.get("EmptyCell.png")));  // Renders empty board tiles
+
+        if (fireLaserButton == null) {
+            fireLaserButton = new JButton("Fire Laser");
+            fireLaserButton.setBounds(20, 20, 120, 30);
+            add(fireLaserButton);
+            if (fireLaserListener != null) {
+                fireLaserButton.addActionListener(fireLaserListener);
+            }
+        }
+        fireLaserButton.setVisible(true);
+        fireLaserButton.setBackground(Color.ORANGE); // for visibility debugging
+
+
+
 
         // Hide menu buttons
         singlePlayer.setVisible(false);
@@ -271,28 +334,23 @@ public class GamePanel extends JPanel {
         levelScrollPane.setVisible(false);
         backButton.setVisible(false);
 
-        if (fireLaserButton == null) {
-            fireLaserButton = new JButton("Fire Laser");
-            fireLaserButton.setBounds(20, 20, 120, 30);
-            add(fireLaserButton);
-        }
-        fireLaserButton.setVisible(true);
-
         repaint();
     }
 
-    public void setBoard(Board board) {
-        this.board = board;
+
+    public void setQuitGameAction(ActionListener listener) {
+        quitGame.addActionListener(listener);
     }
 
     public void setFireLaserAction(ActionListener listener) {
+        System.out.println("Attaching fire laser listener");
         if (fireLaserButton != null) {
             fireLaserButton.addActionListener(listener);
         }
     }
-    public void setQuitGameAction(ActionListener listener) {
-        quitGame.addActionListener(listener);
-    }
+
+
+
 
     private String mapDirection(Direction dir) {
         return switch (dir) {
@@ -302,6 +360,116 @@ public class GamePanel extends JPanel {
             case RIGHT -> "EAST";
         };
     }
+
+    public void setTilesToRender(List<RenderableTile> tiles) {
+        this.tilesToRender = tiles;
+    }
+    public void addDrawable(Drawable drawable) {
+        drawables.add(drawable);
+    }
+    private RenderableTile findMatchingTile(int x, int y) {
+        for (RenderableTile tile : tilesToRender) {
+            if (tile.getX() == x && tile.getY() == y) {
+                return tile;
+            }
+        }
+        return null;
+    }
+    public void setTokenImages(Map<String, BufferedImage> images) {
+        tokenImages.clear();
+        tokenImages.putAll(images);
+    }
+    public void switchToScreen(DisplayManager screen) {
+        this.currentScreen = screen;
+        screen.show();
+        repaint();
+    }
+    public void setMainMenuVisible(boolean visible) {
+        singlePlayer.setVisible(visible);
+        multiplayer.setVisible(visible);
+        quitGame.setVisible(visible);
+    }
+
+    public void setLevelSelectVisible(boolean visible) {
+        levelScrollPane.setVisible(visible);
+    }
+
+    public void setBackButtonVisible(boolean visible) {
+        backButton.setVisible(visible);
+    }
+    public void clearDrawables() {
+        drawables.clear();
+    }
+    public List<Drawable> getDrawables() {
+        return drawables;
+    }
+
+    public void setSinglePlayerAction(Runnable action) {
+        this.singlePlayerAction = action;
+    }
+    public Map<String, BufferedImage> getTokenImages() {
+        return tokenImages;
+    }
+
+    private static class RenderToken extends Token implements ITurnableToken {
+        private final Direction direction;
+
+        public RenderToken(Direction direction) {
+            this.direction = direction;
+        }
+
+        @Override
+        public Direction getDirection() {
+            return direction;
+        }
+
+        @Override
+        public void setDirection(Direction direction) {
+            // No-op for rendering
+        }
+
+        @Override
+        public boolean isTurnable() {
+            return false;
+        }
+        @Override
+        public boolean isTurned() {
+            return false; // Or true, depending on what your renderers expect
+        }
+        @Override
+        public void setTurnable(boolean turnable) {
+            // no-op for dummy token
+        }
+    }
+
+    public void setTokenRenderers(Map<String, TokenRenderer> renderers) {
+        tokenRenderers.clear();
+        tokenRenderers.putAll(renderers);
+    }
+    public void setStaticRenderers(Map<String, TokenRenderer> renderers) {
+        staticRenderers.clear();
+        staticRenderers.putAll(renderers);
+    }
+
+    public void setTurnableRenderers(Map<String, ITurnableTokenRenderer> renderers) {
+        turnableRenderers.clear();
+        turnableRenderers.putAll(renderers);
+    }
+    private static class StaticDummyToken extends Token {}
+
+
+    public void setTurnableTokenRenderers(Map<String, ITurnableTokenRenderer> renderers) {
+        turnableRenderers.clear();
+        turnableRenderers.putAll(renderers);
+    }
+    private List<PositionDirection> laserPath = new ArrayList<>();
+
+    public void setLaserPath(List<PositionDirection> path) {
+        this.laserPath = path;
+        repaint();
+    }
+
+
 
 
 

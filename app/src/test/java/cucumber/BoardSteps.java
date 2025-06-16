@@ -537,13 +537,13 @@ public class BoardSteps {
     }
 
     @Given("I activate the level's laser")
-    public void iActivateTheLevelSLaser() {
-        level.getTriggerableLaser().ifPresent(laser -> {
-            laser.trigger(true);
-            this.laser = laser; // Save the active laser for further checks
-        });
-        if (laser == null) {
-            throw new IllegalStateException("No triggerable laser found in the level");
-        }
+    public void iActivateTheLevelsLaser() {
+        LevelEngine.triggerLaserToken(level, true);
+        laser = level.getActiveLaser().get();
+    }
+
+    @And("the level's laser forms a beam path")
+    public void theLevelsLaserFormsABeamPath() {
+        actualBeamPath = LevelEngine.fireLaserToken(level);
     }
 }

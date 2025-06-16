@@ -20,7 +20,7 @@ Feature: Level Completion
 
   Scenario: Level is incomplete if any requirement is unmet
     Given I activate the level's laser
-    And the laser forms a beam path
+    And the level's laser forms a beam path
     Then the laser beam should pass through the following position directions:
       | x | y | dir   |
       | 1 | 2 | DOWN |
@@ -36,7 +36,7 @@ Feature: Level Completion
     # We turn the Double Mirror token to be a backslash mirror
     And I turn the Double Mirror token to face up
     When I activate the level's laser
-    And the laser forms a beam path
+    And the level's laser forms a beam path
     Then the level should be complete
     Then the laser beam should pass through the following position directions:
       | x | y | dir   |

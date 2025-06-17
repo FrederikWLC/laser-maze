@@ -14,7 +14,7 @@ import model.domain.engine.LevelEngine;
 import model.domain.level.Level;
 import model.domain.level.builder.LevelBuilder;
 import model.domain.token.*;
-import model.domain.token.builder.TokenBuilder;
+import model.domain.token.builder.*;
 
 import java.util.List;
 
@@ -173,7 +173,7 @@ public class BoardSteps {
 
     @And("a Cell Blocker token is preplaced on the board at \\({int}, {int})")
     public void aCellBlockerTokenIsPreplacedOnTheBoardAt(int x, int y) {
-        cellBlocker = TokenBuilder.of(CellBlockerToken::new)
+        cellBlocker = new CellBlockerTokenBuilder()
                 .withPosition(x,y)
                 .build();
         BoardEngine.placeToken(board,cellBlocker, new Position(x, y));
@@ -182,31 +182,31 @@ public class BoardSteps {
     public void placeTokenOnTheBoard(String tokenName, int x, int y, Direction direction, boolean movable, boolean turnable) {
         switch (tokenName.toLowerCase()) {
             case "laser":
-                laser = TokenBuilder.of(LaserToken::new).withMutability(movable,turnable)
+                laser = new LaserTokenBuilder().withMutability(movable,turnable)
                         .withPosition(x,y)
                         .withDirection(direction).build();
                 BoardEngine.placeToken(board, laser, new Position(x, y));
                 break;
             case "double mirror":
-                doubleMirror = TokenBuilder.of(DoubleMirrorToken::new).withMutability(movable,turnable)
+                doubleMirror = new DoubleMirrorTokenBuilder().withMutability(movable,turnable)
                         .withPosition(x,y)
                         .withDirection(direction).build();
                 BoardEngine.placeToken(board, doubleMirror, new Position(x, y));
                 break;
             case "target mirror":
-                targetMirror = TokenBuilder.of(TargetMirrorToken::new).withMutability(movable,turnable)
+                targetMirror = new TargetMirrorTokenBuilder().withMutability(movable,turnable)
                         .withPosition(x,y)
                         .withDirection(direction).build();
                 BoardEngine.placeToken(board, targetMirror, new Position(x, y));
                 break;
             case "beam splitter":
-                beamSplitter = TokenBuilder.of(BeamSplitterToken::new).withMutability(movable,turnable)
+                beamSplitter = new BeamSplitterTokenBuilder().withMutability(movable,turnable)
                         .withPosition(x,y)
                         .withDirection(direction).build();
                 BoardEngine.placeToken(board, beamSplitter, new Position(x, y));
                 break;
             case "checkpoint":
-                checkpoint = TokenBuilder.of(CheckpointToken::new).withMutability(movable,turnable)
+                checkpoint = new CheckpointTokenBuilder().withMutability(movable,turnable)
                         .withPosition(x,y)
                         .withDirection(direction).build();
                 BoardEngine.placeToken(board,checkpoint, new Position(x, y)) ;
@@ -304,22 +304,22 @@ public class BoardSteps {
                     Boolean turnable = Boolean.parseBoolean(row.get("turnable"));
                             switch (row.get("token").toLowerCase()) {
                                 case "laser":
-                                    preplacedToken = TokenBuilder.of(LaserToken::new).withMutability(false,turnable)
+                                    preplacedToken = new LaserTokenBuilder().withMutability(false,turnable)
                                             .withPosition(Integer.parseInt(row.get("x")), Integer.parseInt(row.get("y")))
                                             .withDirection(Direction.valueOf(row.get("dir").toUpperCase())).build();
                                     return preplacedToken;
                                 case "cell blocker":
-                                    preplacedToken = TokenBuilder.of(CellBlockerToken::new)
+                                    preplacedToken = new CellBlockerTokenBuilder()
                                             .withPosition(Integer.parseInt(row.get("x")), Integer.parseInt(row.get("y")))
                                             .build();
                                     return preplacedToken;
                                 case "double mirror":
-                                    preplacedToken = TokenBuilder.of(DoubleMirrorToken::new).withMutability(false,turnable)
+                                    preplacedToken = new DoubleMirrorTokenBuilder().withMutability(false,turnable)
                                             .withPosition(Integer.parseInt(row.get("x")), Integer.parseInt(row.get("y")))
                                             .withDirection(Direction.valueOf(row.get("dir").toUpperCase())).build();
                                     return preplacedToken;
                                 case "target mirror":
-                                    TokenBuilder tempBuild = TokenBuilder.of(TargetMirrorToken::new).withMutability(false,turnable)
+                                    TargetMirrorTokenBuilder tempBuild = new TargetMirrorTokenBuilder().withMutability(false,turnable)
                                             .withPosition(Integer.parseInt(row.get("x")), Integer.parseInt(row.get("y")))
                                             .withDirection(Direction.valueOf(row.get("dir").toUpperCase()));
                                     if (row.containsKey("is required") && Boolean.parseBoolean(row.get("is required"))) {
@@ -327,12 +327,12 @@ public class BoardSteps {
                                     }
                                     return tempBuild.build();
                                 case "beam splitter":
-                                    preplacedToken = TokenBuilder.of(BeamSplitterToken::new).withMutability(false,turnable)
+                                    preplacedToken = new BeamSplitterTokenBuilder().withMutability(false,turnable)
                                             .withPosition(Integer.parseInt(row.get("x")), Integer.parseInt(row.get("y")))
                                             .withDirection(Direction.valueOf(row.get("dir").toUpperCase())).build();
                                     return preplacedToken;
                                 case "checkpoint":
-                                    preplacedToken = TokenBuilder.of(CheckpointToken::new).withMutability(false,turnable)
+                                    preplacedToken = new CheckpointTokenBuilder().withMutability(false,turnable)
                                             .withPosition(Integer.parseInt(row.get("x")), Integer.parseInt(row.get("y")))
                                             .withDirection(Direction.valueOf(row.get("dir").toUpperCase())).build();
                                     return preplacedToken;
@@ -354,25 +354,25 @@ public class BoardSteps {
                             Boolean turnable;
                             switch (row.get("token").toLowerCase()) {
                                 case "laser":
-                                    requiredToken = TokenBuilder.of(LaserToken::new).withMutability(true,true)
+                                    requiredToken = new LaserTokenBuilder().withMutability(true,true)
                                             .build();
                                     return requiredToken;
                                 case "double mirror":
-                                    requiredToken = TokenBuilder.of(DoubleMirrorToken::new).withMutability(true,true)
+                                    requiredToken = new DoubleMirrorTokenBuilder().withMutability(true,true)
                                             .build();
                                     return requiredToken;
                                 case "target mirror":
-                                    TokenBuilder tempBuild = TokenBuilder.of(TargetMirrorToken::new)
+                                    TargetMirrorTokenBuilder tempBuild = new TargetMirrorTokenBuilder()
                                             .withMutability(true,true);
                                     if (row.containsKey("is required") && Boolean.parseBoolean(row.get("is required"))) {
                                         return tempBuild.withRequiredTarget().build();
                                     }
                                     return tempBuild.build();
                                 case "beam splitter":
-                                    requiredToken = TokenBuilder.of(BeamSplitterToken::new).withMutability(true,true).build();
+                                    requiredToken = new BeamSplitterTokenBuilder().withMutability(true,true).build();
                                     return requiredToken;
                                 case "checkpoint":
-                                    requiredToken = TokenBuilder.of(CheckpointToken::new).withMutability(true,true).build();
+                                    requiredToken = new CheckpointTokenBuilder().withMutability(true,true).build();
                                     return requiredToken;
                                 default:
                                     throw new IllegalArgumentException("Invalid token type: " + row.get("tokenName"));

@@ -1,6 +1,6 @@
 package view;
 
-import model.Direction;
+import model.domain.board.Direction;
 
 
 public class RenderableTile {

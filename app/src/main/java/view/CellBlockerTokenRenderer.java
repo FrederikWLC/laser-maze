@@ -1,8 +1,6 @@
 package view;
 
-import model.CellBlockerToken;
-import model.IToken;
-import model.Token;
+import model.domain.token.Token;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;

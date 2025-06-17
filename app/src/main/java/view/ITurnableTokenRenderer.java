@@ -1,7 +1,7 @@
 package view;
 
-import model.Direction;
-import model.ITurnableToken;
+import model.domain.board.Direction;
+import model.domain.token.ITurnableToken;
 import java.awt.Graphics2D;
 
 public interface ITurnableTokenRenderer {

@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+
+
 public class TitleScreenManager implements DisplayManager {
 
     private final GamePanel panel;
@@ -20,16 +22,21 @@ public class TitleScreenManager implements DisplayManager {
         panel.addDrawable(new BackgroundRenderer(background));
         panel.addDrawable(new TitleRenderer("LASER MAZE", 160));
 
-        panel.setMainMenuVisible(true);
-        panel.setLevelSelectVisible(false);
-        panel.setBackButtonVisible(false);
+        panel.getSinglePlayerButton().setVisible(true);
+        panel.getMultiplayerButton().setVisible(true);
+        panel.getQuitGameButton().setVisible(true);
+
+        panel.getLevelScrollPane().setVisible(false);
+        panel.getBackButton().setVisible(false);
+
+        panel.repaint();
     }
+
 
     @Override
     public void draw(Graphics2D g) {
-        for (Drawable d : panel.getDrawables()) {
-            d.draw(g);
-        }
+        panel.getDrawableManager().drawAll(g);
+
     }
 
 

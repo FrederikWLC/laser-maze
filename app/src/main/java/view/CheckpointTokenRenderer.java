@@ -1,6 +1,6 @@
 package view;
 
-import model.domain.token.ITurnableToken;
+import model.domain.token.base.ITurnableToken;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

@@ -1,12 +1,12 @@
 package model.domain.engine;
 
-import model.domain.token.LaserToken;
+import model.domain.token.impl.LaserToken;
 import model.domain.board.PositionDirection;
 import model.domain.board.Tile;
-import model.domain.token.Token;
+import model.domain.token.base.Token;
 import model.domain.board.Board;
-import model.domain.token.ICheckpointToken;
-import model.domain.token.ITargetToken;
+import model.domain.token.base.ICheckpointToken;
+import model.domain.token.base.ITargetToken;
 
 import java.util.List;
 import java.util.stream.Stream;

@@ -1,6 +1,6 @@
 package view;
 
-import model.domain.token.Token;
+import model.domain.token.base.Token;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;

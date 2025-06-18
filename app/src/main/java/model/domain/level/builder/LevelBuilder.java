@@ -1,7 +1,7 @@
 package model.domain.level.builder;
 
 import model.domain.level.Level;
-import model.domain.token.Token;
+import model.domain.token.base.Token;
 import model.domain.board.Board;
 import model.domain.board.builder.BoardBuilder;
 

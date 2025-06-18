@@ -2,7 +2,8 @@ package model.persistence;
 
 import model.domain.level.Level;
 import model.domain.level.builder.LevelBuilder;
-import model.domain.token.Token;
+import model.domain.token.base.Token;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;

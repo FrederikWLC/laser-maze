@@ -1,194 +1,42 @@
 package controller;
 
-import model.domain.board.Direction;
-import model.domain.board.PositionDirection;
-import model.domain.board.Tile;
-import model.domain.level.Level;
-import model.domain.token.ITurnableToken;
-import model.persistence.LevelLoader;
 import view.GamePanel;
-
-import java.util.List;
+import view.util.TokenImageLoader;
 
 import javax.swing.*;
 
-import model.domain.board.Board;
-
-import model.domain.token.Token;
-
-import java.util.ArrayList;
-import view.RenderableTile;
-
-import java.util.Map;
-import java.util.HashMap;
-import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
-
-import view.TokenRenderer;
-import view.LaserTokenRenderer;
-import view.TargetMirrorTokenRenderer;
-import view.DoubleMirrorTokenRenderer;
-import view.CellBlockerTokenRenderer;
-import view.SplitterBeamTokenRenderer;
-import view.CheckpointTokenRenderer;
-import view.DisplayManager;
-import view.TitleScreenManager;
-import view.LevelSelectScreenManager;
-import view.BoardScreenManager;
-import view.ITurnableTokenRenderer;
-
-import view.util.TokenImageLoader;
-
-
-
-
 public class MainController {
-    private GamePanel gamePanel;
-    private Board board;
-    private GameController gameController;
+    private final GamePanel gamePanel;
+    private final JFrame window;
+    private final ScreenController screenController;
+    private final LevelController levelController;
 
-    private enum ScreenState { MENU, LEVEL_SELECT, BOARD }
-    private ScreenState currentScreen = ScreenState.MENU;
-    private int currentLevel = -1;
+    public MainController() {
+        this.window = new JFrame("Laser Maze");
+        this.gamePanel = new GamePanel(new TokenImageLoader());
 
+        this.screenController = new ScreenController(gamePanel, this);
+        this.levelController = new LevelController(gamePanel, screenController);
+    }
 
     public void startGame() {
         SwingUtilities.invokeLater(() -> {
-            JFrame window = new JFrame("Laser Maze");
-            window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            window.setResizable(false);
-
-            TokenImageLoader loader = new TokenImageLoader();
-            gamePanel = new GamePanel(loader);
-
-
-            gamePanel.setOnQuitClick(() -> System.exit(0));
-            gamePanel.setOnLevelSelectClick(this::loadLevel);
-
-            Map<String, ITurnableTokenRenderer> turnableRenderers = new HashMap<>();
-            Map<String, TokenRenderer> staticRenderers = new HashMap<>();
-
-            BufferedImage bgImage = null;
-            try {
-                bgImage = ImageIO.read(getClass().getResource("/background/thelasermaze.jpeg"));
-            } catch (Exception ex) {
-                System.err.println("Could not load title screen background image.");
-            }
-
-
-            DisplayManager titleScreen = new TitleScreenManager(gamePanel, bgImage);
-            DisplayManager levelSelectScreen = new LevelSelectScreenManager(gamePanel);
-
-
-
-            gamePanel.setOnSinglePlayerClick(() -> {
-                gamePanel.switchToScreen(levelSelectScreen);
-            });
-            gamePanel.setOnBackClick(() -> gamePanel.switchToScreen(titleScreen));
-
-
-
-            gamePanel.switchToScreen(titleScreen);
-
-
-
-            Map<String, BufferedImage> tokenImages = gamePanel.getTokenImages();
-
-            turnableRenderers.put("LaserToken", new LaserTokenRenderer(tokenImages));
-            turnableRenderers.put("TargetMirrorToken", new TargetMirrorTokenRenderer(tokenImages));
-            turnableRenderers.put("DoubleMirrorToken", new DoubleMirrorTokenRenderer(tokenImages));
-            staticRenderers.put("CellBlockerToken", new CellBlockerTokenRenderer(tokenImages));
-            turnableRenderers.put("BeamSplitterToken", new SplitterBeamTokenRenderer(tokenImages));
-            turnableRenderers.put("CheckpointToken", new CheckpointTokenRenderer(tokenImages));
-
-
-            gamePanel.setTokenImages(tokenImages);
-
-            gamePanel.setStaticRenderers(staticRenderers);
-            gamePanel.setTurnableRenderers(turnableRenderers);
-
-
-
-            window.add(gamePanel);
-            window.pack();
-            window.setLocationRelativeTo(null);
-            window.setVisible(true);
-
-
-
+            setupWindow();
+            screenController.setupScreens(this::loadLevel);
+            screenController.showTitleScreen();
         });
     }
 
-   // public void loadLevel(int levelNumber) {
-  //      Level level =LevelLoader.load(levelNumber);// or dynamic size per level
-   //     Board board = level.getBoard();
-   //     //gamePanel.setBoard(board); obsolete
-  //      gamePanel.showBoard();
-  //  }
-   public void loadLevel(int levelNumber) {
-       Level level = LevelLoader.load(levelNumber);
-       Board board = level.getBoard();
-
-       // Convert board model to renderable tiles
-       List<RenderableTile> renderableTiles = convertBoardToRenderableTiles(board);
-
-       // Pass tiles to GamePanel for rendering
-       gamePanel.setTilesToRender(renderableTiles);
-       gamePanel.setTokenImages(gamePanel.getTokenImages()); // Assuming images already loaded
-
-       // Create and switch to the board screen
-       DisplayManager boardScreen = new BoardScreenManager(gamePanel, renderableTiles, gamePanel.getTokenImages());
-       gamePanel.switchToScreen(boardScreen);
-
-       // Setup game controller with loaded level
-       this.gameController = new GameController(level);
-
-       List<RenderableTile> initialTiles = convertBoardToRenderableTiles(board);
-       gamePanel.setTilesToRender(initialTiles);
-
-       // Setup Fire Laser button action with the new controller
-       setupFireLaserAction();
-
-       // Add input listeners for token interaction
-       InputHandler inputHandler = new InputHandler(gameController, gamePanel, this);
-       gamePanel.addMouseListener(inputHandler);
-       gamePanel.addMouseMotionListener(inputHandler);
-
-
-
-       gamePanel.repaint();
-   }
-
-    public List<RenderableTile> convertBoardToRenderableTiles(Board board) {
-        List<RenderableTile> renderables = new ArrayList<>();
-        for (int x = 0; x < board.getWidth(); x++) {
-            for (int y = 0; y < board.getHeight(); y++) {
-                Tile tile = board.getTile(x, y);
-                if (!tile.isEmpty()) {
-                    Token token = tile.getToken();
-                    String tokenType = token.getClass().getSimpleName();
-                    Direction direction = token instanceof ITurnableToken turnable ? turnable.getDirection() : null;
-                    renderables.add(new RenderableTile(x, y, tokenType, direction));
-                }
-            }
-        }
-        return renderables;
-    }
-    private void setupFireLaserAction() {
-        gamePanel.setOnFireLaserClick(e -> {
-            System.out.println("Fire Laser button clicked!");
-            gameController.triggerLaser(true);
-            List<PositionDirection> path = gameController.getCurrentLaserPath();
-            System.out.println("Laser path:");
-            for (PositionDirection pd : path) {
-                System.out.println(" -> " + pd);
-            }
-            gamePanel.setLaserPath(path);
-        });
+    private void setupWindow() {
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setResizable(false);
+        window.add(gamePanel);
+        window.pack();
+        window.setLocationRelativeTo(null);
+        window.setVisible(true);
     }
 
-
-
-
-
+    public void loadLevel(int levelNumber) {
+        levelController.loadLevel(levelNumber);
+    }
 }

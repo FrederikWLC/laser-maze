@@ -35,3 +35,16 @@ Feature: Board setup
     Given the board is initialized with width 2 and height 2
     When I get the tile at position (1, 1)
     Then the tile's position should be (1, 1)
+
+  Scenario: Tile with a token is not empty
+    Given the board is initialized with width 5 and height 5
+    And a Cell Blocker token is preplaced on the board at (2, 3)
+    When I get the tile at position (2, 3)
+    Then the tile should exist and not be empty
+
+  Scenario: Getting a tile with a negative X coordinate throws an exception
+    Given the board is initialized with width 3 and height 3
+    When I try to get the tile at position (-1, 1)
+    Then an error should occur
+
+

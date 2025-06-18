@@ -12,37 +12,46 @@ public class BoardScreenManager implements DisplayManager {
     private final GamePanel panel;
     private final List<RenderableTile> tiles;
     private final Map<String, BufferedImage> tokenImages;
+    private final BoardRendererPanel boardRenderer;
+
 
     public BoardScreenManager(GamePanel panel, List<RenderableTile> tiles, Map<String, BufferedImage> tokenImages) {
         this.panel = panel;
         this.tiles = tiles;
         this.tokenImages = tokenImages;
+        this.boardRenderer = panel.getControlPanel().boardRenderer;
+
     }
 
     @Override
     public void show() {
         panel.clearDrawables();
         panel.addDrawable(new BackgroundRenderer(Color.BLACK));
-        panel.addDrawable(new EmptyTileRenderer(panel.getTokenImages().get("EmptyCell.png")));
-        panel.setTilesToRender(tiles);
-        panel.setTokenImages(tokenImages);
 
+        boardRenderer.setTilesToRender(tiles);
+        boardRenderer.setTokenImages(tokenImages);
+
+        // Create it once
         if (!panel.hasFireLaserButton()) {
             panel.createFireLaserButton();
         }
 
+        // Show it only on this screen
         panel.getFireLaserButton().setVisible(true);
-        panel.getFireLaserButton().setBackground(Color.ORANGE);
 
-        panel.getSinglePlayerButton().setVisible(false);
-        panel.getMultiplayerButton().setVisible(false);
-        panel.getQuitGameButton().setVisible(false);
-        panel.getLevelScrollPane().setVisible(false);
-        panel.getBackButton().setVisible(false);
+        // Hide unrelated UI
+        GameControlPanel controls = panel.getControlPanel();
+        controls.singlePlayer.setVisible(false);
+        controls.multiplayer.setVisible(false);
+        controls.quitGame.setVisible(false);
+        controls.levelScrollPane.setVisible(false);
+        controls.backButton.setVisible(false);
 
-        panel.getBoardRenderer().setVisible(true);
+        boardRenderer.setVisible(true);
         panel.repaint();
     }
+
+
 
 
     @Override

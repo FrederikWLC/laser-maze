@@ -10,6 +10,8 @@ import view.GamePanel;
 import view.RenderableTile;
 
 import java.util.List;
+import view.GamePanelUIBinder;
+
 
 public class LevelController {
     private final GamePanel gamePanel;
@@ -24,19 +26,43 @@ public class LevelController {
         Level level = LevelLoader.load(levelNumber);
         Board board = level.getBoard();
 
-        RenderableTileFactory tileFactory = new RenderableTileFactory(); // ✅ create factory
+        RenderableTileFactory tileFactory = new RenderableTileFactory();
         List<RenderableTile> tiles = tileFactory.convertBoardToRenderableTiles(board);
         gamePanel.setTilesToRender(tiles);
 
         GameController gameController = new GameController(level);
 
-        gamePanel.setOnFireLaserClick(e -> {
-            gameController.triggerLaser(true);
-            List<PositionDirection> path = gameController.getCurrentLaserPath();
-            gamePanel.setLaserPath(path);
-        });
+        if (!gamePanel.hasFireLaserButton()) {
+            gamePanel.createFireLaserButton();
 
-        // ✅ PASS factory to InputHandler, not MainController
+        }
+
+        GamePanelUIBinder binder = new GamePanelUIBinder(gamePanel);
+
+        binder.bindAll(
+                null, null, null, null,
+                e -> {
+                    System.out.println("Fire Laser button clicked!");
+                    gameController.triggerLaser(true);
+                    List<PositionDirection> path = gameController.getCurrentLaserPath();
+
+                    System.out.println("Laser path size: " + path.size());
+                    gamePanel.setLaserPath(path);
+
+                    gamePanel.getControlPanel().boardRenderer.setLaserPath(path);
+                    gamePanel.getControlPanel().boardRenderer.repaint();
+
+
+                    List<RenderableTile> updatedTiles = tileFactory.convertBoardToRenderableTiles(board);
+                    gamePanel.setTilesToRender(updatedTiles);
+                    gamePanel.getControlPanel().boardRenderer.setTilesToRender(updatedTiles);
+                    gamePanel.repaint();
+                    gamePanel.getControlPanel().boardRenderer.repaint();
+                },
+                null
+        );
+
+
         InputHandler inputHandler = new InputHandler(gameController, gamePanel, tileFactory);
         gamePanel.addMouseListener(inputHandler);
         gamePanel.addMouseMotionListener(inputHandler);

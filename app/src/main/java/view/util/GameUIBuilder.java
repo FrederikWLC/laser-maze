@@ -2,6 +2,7 @@ package view.util;
 
 import javax.swing.*;
 import java.awt.*;
+import view.GamePanel;
 
 public class GameUIBuilder {
 
@@ -33,4 +34,10 @@ public class GameUIBuilder {
         backButton.setVisible(false);
         panel.add(backButton);
     }
+    // GameUIBuilder.java
+    public void setupFireLaserButton(GamePanel gamePanel, JButton fireLaserButton) {
+        fireLaserButton.setBounds(20, 20, 120, 30);
+        gamePanel.add(fireLaserButton);
+    }
+
 }

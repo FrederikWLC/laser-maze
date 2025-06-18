@@ -18,7 +18,9 @@ public class LaserTokenRenderer extends TurnableTokenRenderer {
     public void render(Graphics2D g2d, ITurnableToken token, int x, int y, int size) {
         Direction dir = token.getDirection();
         String key = "RedLaser-GENERATOR_ON_" + getDirString(dir) + ".png";
+
         BufferedImage img = tokenImages.get(key);
+
         if (img != null) {
             g2d.drawImage(img, x, y, size, size, null);
         } else {

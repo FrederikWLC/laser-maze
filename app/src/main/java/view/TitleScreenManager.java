@@ -22,12 +22,18 @@ public class TitleScreenManager implements DisplayManager {
         panel.addDrawable(new BackgroundRenderer(background));
         panel.addDrawable(new TitleRenderer("LASER MAZE", 160));
 
-        panel.getSinglePlayerButton().setVisible(true);
-        panel.getMultiplayerButton().setVisible(true);
-        panel.getQuitGameButton().setVisible(true);
+        GameControlPanel controls = panel.getControlPanel();
+        controls.singlePlayer.setVisible(true);
+        controls.multiplayer.setVisible(true);
+        controls.quitGame.setVisible(true);
 
-        panel.getLevelScrollPane().setVisible(false);
-        panel.getBackButton().setVisible(false);
+        controls.levelScrollPane.setVisible(false);
+        controls.backButton.setVisible(false);
+
+        if (panel.hasFireLaserButton()) {
+            panel.getFireLaserButton().setVisible(false);
+        }
+
 
         panel.repaint();
     }

@@ -10,6 +10,8 @@ import model.domain.board.Direction;
 import model.domain.board.PositionDirection;
 import model.domain.token.Token;
 import model.domain.token.ITurnableToken;
+import java.util.HashMap;
+import view.dto.ViewOnlyToken;
 
 
 public class BoardRendererPanel extends JPanel {
@@ -22,7 +24,11 @@ public class BoardRendererPanel extends JPanel {
     private Map<String, ITurnableTokenRenderer> turnableRenderers;
 
     public BoardRendererPanel() {
+
         setOpaque(false); // We want background to show through if needed
+        staticRenderers = new HashMap<>();
+        turnableRenderers = new HashMap<>();
+        tokenImages = new HashMap<>();
     }
 
     // Setters
@@ -37,15 +43,19 @@ public class BoardRendererPanel extends JPanel {
     }
 
     public void setTokenImages(Map<String, BufferedImage> images) {
+
         this.tokenImages = images;
     }
 
     public void setStaticRenderers(Map<String, TokenRenderer> renderers) {
+
         this.staticRenderers = renderers;
+
     }
 
     public void setTurnableRenderers(Map<String, ITurnableTokenRenderer> renderers) {
         this.turnableRenderers = renderers;
+
     }
 
     @Override
@@ -66,6 +76,7 @@ public class BoardRendererPanel extends JPanel {
                     drawToken(g2d, match.getTokenType(), match.getDirection(), x, y, tileSize);
                 } else {
                     BufferedImage emptyTile = tokenImages.get("EmptyCell.png");
+
                     if (emptyTile != null) {
                         g2d.drawImage(emptyTile, x, y, tileSize, tileSize, null);
                     } else {
@@ -77,6 +88,7 @@ public class BoardRendererPanel extends JPanel {
                 g2d.setColor(Color.BLACK);
                 g2d.drawRect(x, y, tileSize, tileSize);
             }
+
         }
 
         // Draw laser path
@@ -106,15 +118,18 @@ public class BoardRendererPanel extends JPanel {
         TokenRenderer staticRenderer = staticRenderers.get(tokenType);
         ITurnableTokenRenderer turnableRenderer = turnableRenderers.get(tokenType);
 
+
         if (turnableRenderer != null) {
-            ITurnableToken dummy = new GamePanel.RenderToken(direction);
+            ITurnableToken dummy = new ViewOnlyToken(direction);
             turnableRenderer.render(g2d, dummy, x, y, tileSize);
         } else if (staticRenderer != null) {
-            Token dummy = new GamePanel.StaticDummyToken();
+            Token dummy = new Token() {};
             staticRenderer.render(g2d, dummy, x, y, tileSize);
         } else {
             g2d.setColor(Color.MAGENTA);
             g2d.drawString("?", x + tileSize / 2 - 4, y + tileSize / 2 + 4);
         }
+
+
     }
 }

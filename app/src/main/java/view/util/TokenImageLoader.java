@@ -42,6 +42,9 @@ public class TokenImageLoader {
                 System.err.println("Failed to load: " + name);
             }
         }
+        for (String key : images.keySet()) {
+        }
+
 
         return images;
     }

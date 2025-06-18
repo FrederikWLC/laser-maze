@@ -5,14 +5,10 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.List;
-import java.util.function.IntConsumer;
+
 import java.util.Map;
 import java.util.HashMap;
 import model.domain.board.Position;
-import model.domain.token.ITurnableToken;
-
-import model.domain.token.Token;
-import model.domain.board.Direction;
 import model.domain.board.PositionDirection;
 
 import view.util.TokenImageLoader;
@@ -24,7 +20,8 @@ public class GamePanel extends JPanel {
     private JButton singlePlayer;
     private JButton multiplayer;
     private JButton backButton;
-    private JButton fireLaserButton;
+    private JButton fireLaserButton; // add this if missing
+
 
     private JScrollPane levelScrollPane;
     private JPanel levelListPanel;
@@ -34,55 +31,53 @@ public class GamePanel extends JPanel {
     private DisplayManager currentScreen;
 
     private BoardRendererPanel boardRenderer;
-
-    private ActionListener fireLaserListener;
-
-
     private final DrawableManager drawableManager = new DrawableManager();
 
-
     private BufferedImage backgroundImage;
-
 
     private final Map<String, BufferedImage> tokenImages = new HashMap<>();
     private final Map<String, TokenRenderer> staticRenderers = new HashMap<>();
     private final Map<String, ITurnableTokenRenderer> turnableRenderers = new HashMap<>();
 
+    private final GameRenderer rendererManager = new GameRenderer();
+    private final GameRenderer gameRenderer = new GameRenderer();
+    private GameControlPanel controlPanel;
 
 
 
-    public GamePanel(TokenImageLoader loader) {
+
+
+
+    public GamePanel(TokenImageLoader loader, GameControlPanel controlPanel) {
         tokenImages.putAll(loader.loadTokenImages());
         backgroundImage = loader.loadBackgroundImage();
 
         setPreferredSize(new Dimension(800, 600));
         setLayout(null); // Absolute positioning
 
-        boardRenderer = new BoardRendererPanel();
-        boardRenderer.setBounds(0, 0, 800, 600); // Full size, or just board area
-        boardRenderer.setOpaque(false);
-        add(boardRenderer);
-        boardRenderer.setVisible(false); // Hidden unless in game view
+        add(controlPanel);
+        this.controlPanel = controlPanel;
+        this.boardRenderer = controlPanel.boardRenderer;
 
 
 
-        singlePlayer = new JButton("Single Player");
-        multiplayer = new JButton("Multiplayer");
-        quitGame = new JButton("Quit Game");
+        add(controlPanel.boardRenderer);
+        controlPanel.boardRenderer.setBounds(0, 0, 800, 600);
+        controlPanel.boardRenderer.setVisible(false); // Default hidden
 
-        levelListPanel = new JPanel();
-        levelScrollPane = new JScrollPane(levelListPanel);
-        backButton = new JButton("Back");
+        this.singlePlayer = controlPanel.singlePlayer;
+        this.multiplayer = controlPanel.multiplayer;
+        this.quitGame = controlPanel.quitGame;
+        this.backButton = controlPanel.backButton;
+        this.levelScrollPane = controlPanel.levelScrollPane;
+        this.levelListPanel = controlPanel.levelListPanel;
 
+        createFireLaserButton();
 
         GameUIBuilder uiBuilder = new GameUIBuilder();
-        uiBuilder.setupTitleButtons(this, singlePlayer, multiplayer, quitGame);
-        uiBuilder.setupLevelSelectScreen(this, levelListPanel, levelScrollPane, backButton);
-
-
+        uiBuilder.setupTitleButtons(this, controlPanel.singlePlayer, controlPanel.multiplayer, controlPanel.quitGame);
+        uiBuilder.setupLevelSelectScreen(this, controlPanel.levelListPanel, controlPanel.levelScrollPane, controlPanel.backButton);
     }
-
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -111,31 +106,9 @@ public class GamePanel extends JPanel {
         }
         return new Position(col, row);
     }
-
-    public void setOnLevelSelectClick(IntConsumer action) {
-        for (Component comp : levelListPanel.getComponents()) {
-            if (comp instanceof JButton button) {
-                String text = button.getText(); // "Level 1", etc.
-                int levelNumber = Integer.parseInt(text.replace("Level ", ""));
-                button.addActionListener(e -> action.accept(levelNumber));
-            }
-        }
-    }
-
-
-
-    public void setOnQuitClick(Runnable action) {
-        quitGame.addActionListener(e -> action.run());
-    }
-    public void setOnFireLaserClick(ActionListener listener) {
-        this.fireLaserListener = listener;
-        if (fireLaserButton != null) {
-            fireLaserButton.addActionListener(listener);
-        }
-    }
     public void setTilesToRender(List<RenderableTile> tiles) {
 
-        boardRenderer.setTilesToRender(tiles);
+        gameRenderer.setTilesToRender(tiles);
     }
     public void addDrawable(Drawable drawable) {
 
@@ -143,7 +116,7 @@ public class GamePanel extends JPanel {
     }
 
     public void setTokenImages(Map<String, BufferedImage> images) {
-        boardRenderer.setTokenImages(images);
+        gameRenderer.setTokenImages(images);
     }
     public void switchToScreen(DisplayManager screen) {
         this.currentScreen = screen;
@@ -154,106 +127,47 @@ public class GamePanel extends JPanel {
 
         drawableManager.clear();
     }
-
-    public void setOnSinglePlayerClick(Runnable action) {
-        singlePlayer.addActionListener(e -> action.run());
-    }
-
-
     public Map<String, BufferedImage> getTokenImages() {
 
         return tokenImages;
     }
 
-    public static class RenderToken extends Token implements ITurnableToken {
-        private final Direction direction;
-
-        public RenderToken(Direction direction) {
-            this.direction = direction;
-        }
-
-        @Override
-        public Direction getDirection() {
-            return direction;
-        }
-
-        @Override
-        public void setDirection(Direction direction) {
-            // No-op for rendering
-        }
-
-        @Override
-        public boolean isTurnable() {
-            return false;
-        }
-        @Override
-        public boolean isTurned() {
-            return false; // Or true, depending on what your renderers expect
-        }
-        @Override
-        public void setTurnable(boolean turnable) {
-            // no-op for dummy token
-        }
-    }
     public void setStaticRenderers(Map<String, TokenRenderer> renderers) {
+        gameRenderer.setStaticRenderers(renderers);
         boardRenderer.setStaticRenderers(renderers);
     }
     public void setTurnableRenderers(Map<String, ITurnableTokenRenderer> renderers) {
+        gameRenderer.setTurnableRenderers(renderers);
         boardRenderer.setTurnableRenderers(renderers);
     }
-    public static class StaticDummyToken extends Token {
-    }
     public void setLaserPath(List<PositionDirection> path) {
-        boardRenderer.setLaserPath(path);
+        gameRenderer.setLaserPath(path);
     }
-    public void setOnMultiplayerClick(Runnable action) {
-        multiplayer.addActionListener(e -> action.run());
+    public DrawableManager getDrawableManager() {
+        return drawableManager;
     }
-    public JButton getSinglePlayerButton() {
-        return singlePlayer;
-    }
-
-    public JButton getMultiplayerButton() {
-        return multiplayer;
-    }
-
-    public JButton getQuitGameButton() {
-        return quitGame;
-    }
-
-    public JScrollPane getLevelScrollPane() {
-        return levelScrollPane;
-    }
-
-    public JButton getBackButton() {
-        return backButton;
-    }
-
-    public JButton getFireLaserButton() {
-        return fireLaserButton;
+    public GameControlPanel getControlPanel() {
+        return controlPanel;
     }
 
     public boolean hasFireLaserButton() {
         return fireLaserButton != null;
     }
 
+    public void setFireLaserListener(ActionListener listener) {
+        if (fireLaserButton != null) {
+            fireLaserButton.addActionListener(listener);
+        }
+    }
     public void createFireLaserButton() {
-        fireLaserButton = new JButton("Fire Laser");
-        fireLaserButton.setBounds(20, 20, 120, 30);
-        add(fireLaserButton);
+        if (fireLaserButton == null) {
+            fireLaserButton = new JButton("Fire Laser");
+            fireLaserButton.setBounds(20, 20, 120, 30);
+            fireLaserButton.setVisible(false); // Initially hidden
+            add(fireLaserButton); // Add once
+        }
     }
-
-    public BoardRendererPanel getBoardRenderer() {
-        return boardRenderer;
+    public JButton getFireLaserButton() {
+        return fireLaserButton;
     }
-    public void setOnBackClick(Runnable action) {
-        backButton.addActionListener(e -> action.run());
-    }
-    public DrawableManager getDrawableManager() {
-        return drawableManager;
-    }
-
-
-
-
 }

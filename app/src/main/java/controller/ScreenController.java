@@ -20,11 +20,16 @@ public class ScreenController {
     }
 
     public void setupScreens(IntConsumer onLevelSelectClick) {
-        gamePanel.setOnQuitClick(() -> System.exit(0));
-        gamePanel.setOnLevelSelectClick(onLevelSelectClick);
+        GamePanelUIBinder binder = new GamePanelUIBinder(gamePanel);
+        binder.bindAll(
+                () -> gamePanel.switchToScreen(levelSelectScreen), // single player
+                () -> {}, // multiplayer (if unused for now)
+                () -> System.exit(0), // quit
+                () -> gamePanel.switchToScreen(titleScreen), // back
+                null, // fireLaser (set later in LevelController)
+                onLevelSelectClick
+        );
 
-        gamePanel.setOnSinglePlayerClick(() -> gamePanel.switchToScreen(levelSelectScreen));
-        gamePanel.setOnBackClick(() -> gamePanel.switchToScreen(titleScreen));
 
         try {
             BufferedImage bg = ImageIO.read(getClass().getResource("/background/thelasermaze.jpeg"));
@@ -52,4 +57,9 @@ public class ScreenController {
     public MainController getMainController() {
         return mainController;
     }
+
+    public void bindFireLaserListener(java.awt.event.ActionListener fireLaserListener) {
+        gamePanel.setFireLaserListener(fireLaserListener);
+    }
+
 }

@@ -14,12 +14,14 @@ public class LevelSelectScreenManager implements DisplayManager {
 
     @Override
     public void show() {
-        panel.getSinglePlayerButton().setVisible(false);
-        panel.getMultiplayerButton().setVisible(false);
-        panel.getQuitGameButton().setVisible(false);
+        GameControlPanel controls = panel.getControlPanel();
 
-        panel.getLevelScrollPane().setVisible(true);
-        panel.getBackButton().setVisible(true);
+        controls.singlePlayer.setVisible(false);
+        controls.multiplayer.setVisible(false);
+        controls.quitGame.setVisible(false);
+
+        controls.levelScrollPane.setVisible(true);
+        controls.backButton.setVisible(true);
 
         panel.repaint();
     }

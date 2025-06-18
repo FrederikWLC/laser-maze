@@ -38,6 +38,10 @@ public class InputHandler implements MouseListener, MouseMotionListener {
 
         gamePanel.setTilesToRender(updatedTiles);
         gamePanel.repaint();
+
+        gamePanel.getControlPanel().boardRenderer.setTilesToRender(updatedTiles);
+        gamePanel.getControlPanel().boardRenderer.repaint();
+
     }
 
     @Override

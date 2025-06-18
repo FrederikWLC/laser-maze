@@ -34,7 +34,6 @@ public class LevelEngine {
         List<Token> tokens = new ArrayList<>(level.getRequiredTokens()); // create mutable copy
         tokens.remove(token);
         BoardEngine.placeToken(level.getBoard(), token, position);
-        level.setRequiredTokens(tokens);
     }
 
     public static boolean updateAndCheckLevelCompletionState(Level level) {

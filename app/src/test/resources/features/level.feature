@@ -7,12 +7,11 @@ Feature: Level
     Given a new game is started
     # If no position, then token is not preplaced
     And the level is initialized with id 69, required target number 3, a board with width 5 and height 5, and the following tokens:
-      | token           | x  | y  | dir   | turnable | movable |
-      | Target Mirror   | 4  | 0  | LEFT  | false    | false   |
-      | Checkpoint      | 2  | 2  | UP    | true     | false   |
-      | Double Mirror   |    |    |       | true     | true    |
-      | Beam Splitter   |    |    |       | true     | true    |
-
+      | token           | x  | y  | dir   | turnable | movable | is required |
+      | Target Mirror   | 4  | 0  | LEFT  | false    | false   | true        |
+      | Checkpoint      | 2  | 2  | DOWN  | false    | false   |             |
+      | Double Mirror   |    |    |       | true     | true    |             |
+      | Beam Splitter   |    |    |       | true     | true    |             |
     Then the level's id should be 69
     And the level's required target number should be 3
     And the level's board should have width 5 and height 5

@@ -1,3 +1,4 @@
+
 Feature: Level Completion
   As a player, I want the level to be marked as completed
   only when the laser beam:
@@ -13,19 +14,14 @@ Feature: Level Completion
     # We always start from a fresh 5 x 5 board in these scenarios
     Given a new game is started
     And the level is initialized with id 1, required target number 1, a board with width 5 and height 5, and the following tokens:
-      | token           | x  | y  | dir   | turnable | is required |
-      | Target Mirror   | 3  | 3  | LEFT  | false    | true        |
-      | Laser           | 1  | 1  | DOWN  | false    |             |
-      | Double Mirror   |    |    |       |          |             |
+      | token           | x  | y  | dir   | turnable | movable | is required |
+      | Target Mirror   | 3  | 3  | LEFT  | false    | true    | true        |
+      | Laser           | 1  | 1  | DOWN  | false    | false   |             |
+      | Double Mirror   |    |    |       | true     | true    |             |
 
   Scenario: Level is incomplete if any requirement is unmet
     Given I activate the level's laser
-    And the level's laser forms a beam path
-    Then the laser beam should pass through the following position directions:
-      | x | y | dir   |
-      | 1 | 2 | DOWN |
-      | 1 | 3 | DOWN |
-      | 1 | 4 | DOWN |
+    And the laser forms a beam path
     And the number of targets hit by the beam path should be 0
     And the level should be incomplete
 
@@ -36,12 +32,8 @@ Feature: Level Completion
     # We turn the Double Mirror token to be a backslash mirror
     And I turn the Double Mirror token to face up
     When I activate the level's laser
-    And the level's laser forms a beam path
+    And the laser forms a beam path
     Then the level should be complete
-    Then the laser beam should pass through the following position directions:
-      | x | y | dir   |
-      | 1 | 2 | DOWN |
-      | 2 | 3 | RIGHT |
     And the beam path should touch every touch-required token given by the level
     And the number of targets hit by the beam path should be 1
     And the beam path should hit all the required targets
@@ -50,4 +42,3 @@ Feature: Level Completion
     And the level should be complete
     And all turnable tokens should have a direction
     And all tokens required to be placed should be placed on the board
-

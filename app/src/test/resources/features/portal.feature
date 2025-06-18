@@ -12,33 +12,58 @@ Feature: Portal
     # will be built in the test as twins.
     # without an even amount of Portal tokens, the test will throw an error.
     And the level is initialized with id 69, required target number 0, a board with width 5 and height 5, and the following tokens:
-      | token           | preplaced | x  | y  | dir   | turnable |
-      | Portal          | true      | 4  | 0  | LEFT  | false    |
-      | Portal          | true      | 0  | 4  | RIGHT | false    |
-      | Laser           | false     |    |    |       |          |
+      | token           | x  | y  | dir   | turnable | movable |
+      | Laser           | 2  | 3  | UP    | false    | false   |
+      | Portal          | 2  | 1  | DOWN  | true     | false   |
+      | Portal          | 1  | 3  | UP    | false    | false   |
+    And the first pair of the level's Portal tokens are each other's twins
+    Then the first pair of the level's Portal tokens should be each other's twins
+    
+    Given the token on the board at (1, 3) should be a Portal token
+    Then the Portal token's blue opening side should face up
+    And the Portal token's red opening side should face down
 
   # Laser travels from blue opening side of a Portal A and exits on blue opening side of Portal B
-  Scenario: Laser hits non-opening side of a Portal
-    Given a completely mutable Laser token is placed on the board at (2, 4) facing up
-    When I activate the laser
+  Scenario: Teleport through the Blue opening
+    Given the token on the board at (2, 1) should be a Portal token
+    And the Portal token's blue opening side should face down
+    And the Portal token's red opening side should face up
+    When I activate the level's laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
       | x | y | dir |
-      | 2 | 3 | UP |
-      # Hits non-opening side of Portal and stops
-
-  # Laser travels in a straight line through the opening side of the portal
-  Scenario: Laser hits opening side of a Portal
-    Given a completely mutable Laser token is placed on the board at (2, 4) facing up
-    And I turn the Portal token to face down
-    When I activate the laser
-    And the laser forms a beam path
-    Then the laser beam should pass through the following position directions:
-      | x | y | dir |
-      | 2 | 3 | UP |
-      # Hits opening side of Portal and goes through it
       | 2 | 2 | UP |
-      # continues straight
-      | 2 | 1 | UP |
-      | 2 | 0 | UP |
+      # Hits blue opening side of Portal at (2,1) and goes through it, spawning at other Portal
+      | 1 | 2 | UP |
+      | 1 | 1 | UP |
+      | 1 | 0 | UP |
+      # Hits wall and stops
 
+
+  # Laser travels from red opening side of a Portal A and exits on red opening side of Portal B
+  Scenario: Teleport through the Red opening
+    Given the token on the board at (2, 1) should be a Portal token
+    When I turn the Portal token to face up
+    Then the Portal token's red opening side should face down
+    And the Portal token's blue opening side should face up
+    When I activate the level's laser
+    And the laser forms a beam path
+    Then the laser beam should pass through the following position directions:
+      | x | y | dir |
+      | 2 | 2 | UP |
+      # Hits blue opening side of Portal at (2,1) and goes through it, spawning at other Portal
+      | 1 | 4 | DOWN |
+
+
+  # Laser travels until hitting the non-opening side of a Portal A and stops
+  Scenario: Teleportation through non-opening side of the portal
+    Given the token on the board at (2, 1) should be a Portal token
+    When I turn the Portal token to face right
+    Then the Portal token's blue opening side should face right
+    And the Portal token's red opening side should face left
+    When I activate the level's laser
+    And the laser forms a beam path
+    Then the laser beam should pass through the following position directions:
+      | x | y | dir |
+      | 2 | 2 | UP |
+      # Hits non-opening side of Portal and stops

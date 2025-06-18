@@ -13,7 +13,7 @@ public class MutableTwinTokenBuilder<B extends MutableTwinTokenBuilder<B,T>, T e
     public MutableTwinTokenBuilder(T tokenA, T tokenB) {
         this.tokenA = tokenA;
         this.tokenA = tokenB;
-    }a
+    }
 
     public B withPositionA(int x, int y) {
         this.tokenA.setPosition(new Position(x, y));

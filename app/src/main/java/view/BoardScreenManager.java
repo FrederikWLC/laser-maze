@@ -22,21 +22,31 @@ public class BoardScreenManager implements DisplayManager {
     @Override
     public void show() {
         panel.clearDrawables();
-
         panel.addDrawable(new BackgroundRenderer(Color.BLACK));
+        panel.addDrawable(new EmptyTileRenderer(panel.getTokenImages().get("EmptyCell.png")));
+        panel.setTilesToRender(tiles);
+        panel.setTokenImages(tokenImages);
 
-        panel.setMainMenuVisible(false);
-        panel.setLevelSelectVisible(false);
-        panel.setBackButtonVisible(false);
+        if (!panel.hasFireLaserButton()) {
+            panel.createFireLaserButton();
+        }
 
-        panel.setTilesToRender(tiles);  // Tell GamePanel what to draw
+        panel.getFireLaserButton().setVisible(true);
+        panel.getFireLaserButton().setBackground(Color.ORANGE);
+
+        panel.getSinglePlayerButton().setVisible(false);
+        panel.getMultiplayerButton().setVisible(false);
+        panel.getQuitGameButton().setVisible(false);
+        panel.getLevelScrollPane().setVisible(false);
+        panel.getBackButton().setVisible(false);
+
+        panel.getBoardRenderer().setVisible(true);
+        panel.repaint();
     }
+
 
     @Override
     public void draw(Graphics2D g) {
-        for (Drawable d : panel.getDrawables()) {
-            d.draw(g);
-        }
-
+        panel.getDrawableManager().drawAll(g);
     }
 }

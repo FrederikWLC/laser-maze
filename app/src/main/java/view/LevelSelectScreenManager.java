@@ -14,21 +14,20 @@ public class LevelSelectScreenManager implements DisplayManager {
 
     @Override
     public void show() {
-        panel.clearDrawables();  // Clear background/title from previous screen
+        panel.getSinglePlayerButton().setVisible(false);
+        panel.getMultiplayerButton().setVisible(false);
+        panel.getQuitGameButton().setVisible(false);
 
+        panel.getLevelScrollPane().setVisible(true);
+        panel.getBackButton().setVisible(true);
 
-        panel.addDrawable(new BackgroundRenderer(Color.BLUE));
-
-
-        panel.setMainMenuVisible(false);
-        panel.setLevelSelectVisible(true);
-        panel.setBackButtonVisible(true);
+        panel.repaint();
     }
+
 
     @Override
     public void draw(Graphics2D g) {
-        for (Drawable d : panel.getDrawables()) {
-            d.draw(g);
-        }
+        panel.getDrawableManager().drawAll(g);
+
     }
 }

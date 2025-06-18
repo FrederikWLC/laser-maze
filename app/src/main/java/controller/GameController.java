@@ -7,9 +7,9 @@ import model.domain.board.Tile;
 import model.domain.engine.BoardEngine;
 import model.domain.engine.LevelEngine;
 import model.domain.level.Level;
-import model.domain.token.ILaserToken;
-import model.domain.token.ITurnableToken;
-import model.domain.token.Token;
+import model.domain.token.base.ILaserToken;
+import model.domain.token.base.ITurnableToken;
+import model.domain.token.base.Token;
 
 import java.util.List;
 

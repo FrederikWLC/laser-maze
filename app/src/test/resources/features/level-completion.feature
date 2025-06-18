@@ -13,10 +13,10 @@ Feature: Level Completion
     # We always start from a fresh 5 x 5 board in these scenarios
     Given a new game is started
     And the level is initialized with id 1, required target number 1, a board with width 5 and height 5, and the following tokens:
-      | token           | preplaced | x  | y  | dir   | turnable | is required |
-      | Target Mirror   | true      | 3  | 3  | LEFT  | false    | true        |
-      | Laser           | true      | 1  | 1  | DOWN  | false    |             |
-      | Double Mirror   | false     |    |    |       |          |             |
+      | token           | x  | y  | dir   | turnable | is required |
+      | Target Mirror   | 3  | 3  | LEFT  | false    | true        |
+      | Laser           | 1  | 1  | DOWN  | false    |             |
+      | Double Mirror   |    |    |       |          |             |
 
   Scenario: Level is incomplete if any requirement is unmet
     Given I activate the level's laser

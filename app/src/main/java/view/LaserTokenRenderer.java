@@ -1,7 +1,7 @@
 package view;
 
 import model.domain.board.Direction;
-import model.domain.token.ITurnableToken;
+import model.domain.token.base.ITurnableToken;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;

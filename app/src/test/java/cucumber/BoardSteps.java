@@ -13,10 +13,16 @@ import model.domain.engine.LaserEngine;
 import model.domain.engine.LevelEngine;
 import model.domain.level.Level;
 import model.domain.level.builder.LevelBuilder;
-import model.domain.token.*;
-import model.domain.token.builder.*;
+import model.domain.token.base.ITurnableToken;
+import model.domain.token.base.MutableToken;
+import model.domain.token.base.Token;
+import model.domain.token.builder.impl.*;
+import model.domain.token.impl.*;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,9 +38,10 @@ public class BoardSteps {
     TargetMirrorToken targetMirror;
     BeamSplitterToken beamSplitter;
     CheckpointToken checkpoint;
+    PortalToken portal;
     List<PositionDirection> actualBeamPath;
 
-    @ParameterType("(?i)laser|cell blocker|double mirror|target mirror|beam splitter|checkpoint")
+    @ParameterType("(?i)laser|cell blocker|double mirror|target mirror|beam splitter|checkpoint|portal")
     public Token token(String name) {
         switch (name.toLowerCase()) {
             case "laser":
@@ -49,12 +56,14 @@ public class BoardSteps {
                 return beamSplitter;
             case "checkpoint":
                 return checkpoint;
+            case "portal":
+                return portal;
         }
 
         throw new IllegalArgumentException("Unknown token type: " + name);
     }
 
-    @ParameterType("(?i)laser|cell blocker|double mirror|target mirror|beam splitter|checkpoint")
+    @ParameterType("(?i)laser|cell blocker|double mirror|target mirror|beam splitter|checkpoint|portal")
     public Class<? extends Token> tokenType(String name) {
         switch (name.toLowerCase()) {
             case "laser":
@@ -69,6 +78,9 @@ public class BoardSteps {
                 return BeamSplitterToken.class;
             case "checkpoint":
                 return CheckpointToken.class;
+            case "portal":
+                return PortalToken.class;
+
         }
         throw new IllegalArgumentException("Unknown token type: " + name);
     }
@@ -211,8 +223,9 @@ public class BoardSteps {
                         .withDirection(direction).build();
                 BoardEngine.placeToken(board,checkpoint, new Position(x, y)) ;
                 break;
+
             default:
-                throw new IllegalArgumentException("Unknown token type: " + tokenName);
+                throw new IllegalArgumentException("Invalid token type: " + tokenName);
         }
     }
 
@@ -293,18 +306,19 @@ public class BoardSteps {
         assertEquals(direction, ((ITurnableToken) token).getDirection(), "Token should not change direction");
     }
 
-    public List<Token> getPreplacedTokensFromTable(DataTable table) {
+    public List<Token> getPreplacedSeparateTokensFromTable(DataTable table) {
         return table.asMaps(String.class, String.class)
                 .stream()
                 // keep only rows where preplaced == true
-                .filter(row -> Boolean.parseBoolean(row.get("preplaced")))
+                .filter(row -> row.get("x") != null && row.get("y") != null)
                 .map(row -> {
                     // Only consider turnable column if not immutable
                     Token preplacedToken;
                     Boolean turnable = Boolean.parseBoolean(row.get("turnable"));
+                    Boolean movable = Boolean.parseBoolean(row.get("movable"));
                             switch (row.get("token").toLowerCase()) {
                                 case "laser":
-                                    preplacedToken = new LaserTokenBuilder().withMutability(false,turnable)
+                                    preplacedToken = new LaserTokenBuilder().withMutability(movable,turnable)
                                             .withPosition(Integer.parseInt(row.get("x")), Integer.parseInt(row.get("y")))
                                             .withDirection(Direction.valueOf(row.get("dir").toUpperCase())).build();
                                     return preplacedToken;
@@ -314,12 +328,12 @@ public class BoardSteps {
                                             .build();
                                     return preplacedToken;
                                 case "double mirror":
-                                    preplacedToken = new DoubleMirrorTokenBuilder().withMutability(false,turnable)
+                                    preplacedToken = new DoubleMirrorTokenBuilder().withMutability(movable,turnable)
                                             .withPosition(Integer.parseInt(row.get("x")), Integer.parseInt(row.get("y")))
                                             .withDirection(Direction.valueOf(row.get("dir").toUpperCase())).build();
                                     return preplacedToken;
                                 case "target mirror":
-                                    TargetMirrorTokenBuilder tempBuild = new TargetMirrorTokenBuilder().withMutability(false,turnable)
+                                    TargetMirrorTokenBuilder tempBuild = new TargetMirrorTokenBuilder().withMutability(movable,turnable)
                                             .withPosition(Integer.parseInt(row.get("x")), Integer.parseInt(row.get("y")))
                                             .withDirection(Direction.valueOf(row.get("dir").toUpperCase()));
                                     if (row.containsKey("is required") && Boolean.parseBoolean(row.get("is required"))) {
@@ -327,12 +341,12 @@ public class BoardSteps {
                                     }
                                     return tempBuild.build();
                                 case "beam splitter":
-                                    preplacedToken = new BeamSplitterTokenBuilder().withMutability(false,turnable)
+                                    preplacedToken = new BeamSplitterTokenBuilder().withMutability(movable,turnable)
                                             .withPosition(Integer.parseInt(row.get("x")), Integer.parseInt(row.get("y")))
                                             .withDirection(Direction.valueOf(row.get("dir").toUpperCase())).build();
                                     return preplacedToken;
                                 case "checkpoint":
-                                    preplacedToken = new CheckpointTokenBuilder().withMutability(false,turnable)
+                                    preplacedToken = new CheckpointTokenBuilder().withMutability(movable,turnable)
                                             .withPosition(Integer.parseInt(row.get("x")), Integer.parseInt(row.get("y")))
                                             .withDirection(Direction.valueOf(row.get("dir").toUpperCase())).build();
                                     return preplacedToken;
@@ -344,35 +358,37 @@ public class BoardSteps {
                 ).toList();
     }
 
-    public List<Token> getRequiredTokensFromTable(DataTable table) {
+
+    public List<Token> getRequiredSeparateTokensFromTable(DataTable table) {
         return table.asMaps(String.class, String.class)
                 .stream()
                 // keep only rows where preplaced == false
-                .filter(row -> !Boolean.parseBoolean(row.get("preplaced")))
+                .filter(row -> row.get("x") == null || row.get("y") == null)
                 .map(row -> {
                             Token requiredToken;
-                            Boolean turnable;
+                            Boolean turnable = Boolean.parseBoolean(row.get("turnable"));
+                            Boolean movable = Boolean.parseBoolean(row.get("movable"));
                             switch (row.get("token").toLowerCase()) {
                                 case "laser":
-                                    requiredToken = new LaserTokenBuilder().withMutability(true,true)
+                                    requiredToken = new LaserTokenBuilder().withMutability(movable,turnable)
                                             .build();
                                     return requiredToken;
                                 case "double mirror":
-                                    requiredToken = new DoubleMirrorTokenBuilder().withMutability(true,true)
+                                    requiredToken = new DoubleMirrorTokenBuilder().withMutability(movable,turnable)
                                             .build();
                                     return requiredToken;
                                 case "target mirror":
                                     TargetMirrorTokenBuilder tempBuild = new TargetMirrorTokenBuilder()
-                                            .withMutability(true,true);
+                                            .withMutability(movable,turnable);
                                     if (row.containsKey("is required") && Boolean.parseBoolean(row.get("is required"))) {
                                         return tempBuild.withRequiredTarget().build();
                                     }
                                     return tempBuild.build();
                                 case "beam splitter":
-                                    requiredToken = new BeamSplitterTokenBuilder().withMutability(true,true).build();
+                                    requiredToken = new BeamSplitterTokenBuilder().withMutability(movable,turnable).build();
                                     return requiredToken;
                                 case "checkpoint":
-                                    requiredToken = new CheckpointTokenBuilder().withMutability(true,true).build();
+                                    requiredToken = new CheckpointTokenBuilder().withMutability(movable,turnable).build();
                                     return requiredToken;
                                 default:
                                     throw new IllegalArgumentException("Invalid token type: " + row.get("tokenName"));
@@ -382,12 +398,19 @@ public class BoardSteps {
                 ).toList();
     }
 
+    public List<Token> getSeparateTokensFromTable(DataTable table) {
+        return Stream.of(
+                getPreplacedSeparateTokensFromTable(table),
+                getRequiredSeparateTokensFromTable(table)
+        ).flatMap(List::stream).toList();
+    }
 
     @Then("the level's id should be {int}")
     public void theLevelsIdShouldBe(int id) {
         assertEquals(id, level.getId(),
                 "Expected level id: " + id + ", but was: " + level.getId());
     }
+
 
     @And("the level's required target number should be {int}")
     public void theLevelsRequiredTargetNumberShouldBe(int n) {
@@ -423,6 +446,8 @@ public class BoardSteps {
             beamSplitter = t;
         } else if (token instanceof CheckpointToken t) {
             checkpoint = t;
+        } else if (token instanceof PortalToken t) {
+            portal = t;
         } else {
             throw new IllegalArgumentException("Unknown token type: " + token.getClass());
         }
@@ -454,11 +479,15 @@ public class BoardSteps {
 
     @And("the level is initialized with id {int}, required target number {int}, a board with width {int} and height {int}, and the following tokens:")
     public void theLevelIsInitializedWithIdRequiredTargetNumberABoardWithWidthAndHeightAndTheFollowingTokens(int id, int n, int width, int height, DataTable table) {
+        List<Token> tokens = Stream.of(
+                getPreplacedNonTwinTokensFromTable(table),
+                getRequiredNonTwinTokensFromTable(table),
+                getTwinTokensFromTable(table)
+        ).flatMap(List::stream).toList();
         level = new LevelBuilder(id)
                 .withBoardDimensions(width, height)
                 .withRequiredTargetNumber(n)
-                .withPreplaced(getPreplacedTokensFromTable(table))
-                .withRequired(getRequiredTokensFromTable(table))
+                .withTokens(tokens)
                 .build();
         board = level.getBoard();
     }
@@ -554,4 +583,6 @@ public class BoardSteps {
     public void theLevelsLaserFormsABeamPath() {
         actualBeamPath = LevelEngine.fireLaserToken(level);
     }
+
+
 }

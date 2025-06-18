@@ -1,8 +1,8 @@
 package model.domain.level;
 
-import model.domain.token.Token;
+import model.domain.token.base.Token;
 import model.domain.board.Board;
-import model.domain.token.LaserToken;
+import model.domain.token.impl.LaserToken;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,8 +14,6 @@ public class Level {
     int currentTargetNumber = 0;
     Board board;
     List<Token> tokens;
-    List<Token> requiredTokens;
-
 
     public Level(int id, Board board) {
         this.id = id;
@@ -78,11 +76,10 @@ public class Level {
         this.tokens = tokens;
     }
 
-    public void setRequiredTokens(List<Token> requiredTokens) {
-        this.requiredTokens = requiredTokens;
-    }
     public List<Token> getRequiredTokens() {
-        return requiredTokens;
+        return getTokens().stream()
+                .filter(token -> !token.isPlaced())
+                .toList();
     }
 
     public void setRequiredTargetNumber(int requiredTargetNumber) {

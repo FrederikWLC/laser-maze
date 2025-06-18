@@ -1,8 +1,8 @@
 package model.persistence;
 
 import model.domain.board.Direction;
-import model.domain.token.*;
-import model.domain.token.builder.*;
+import model.domain.token.base.Token;
+import model.domain.token.builder.impl.*;
 
 import java.util.List;
 import java.util.stream.Stream;

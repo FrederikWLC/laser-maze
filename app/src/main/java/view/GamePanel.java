@@ -11,9 +11,9 @@ import java.util.function.IntConsumer;
 import java.util.Map;
 import java.util.HashMap;
 import model.domain.board.Position;
-import model.domain.token.ITurnableToken;
+import model.domain.token.base.ITurnableToken;
 
-import model.domain.token.Token;
+import model.domain.token.base.Token;
 import model.domain.board.Direction;
 import model.domain.board.PositionDirection;
 

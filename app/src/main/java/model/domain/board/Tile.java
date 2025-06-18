@@ -1,6 +1,6 @@
 package model.domain.board;
 
-import model.domain.token.Token;
+import model.domain.token.base.Token;
 
 public class Tile {
     private final int x;

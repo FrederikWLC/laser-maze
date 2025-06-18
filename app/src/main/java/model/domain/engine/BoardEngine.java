@@ -4,8 +4,8 @@ import model.domain.board.Board;
 import model.domain.board.Direction;
 import model.domain.board.Position;
 import model.domain.board.Tile;
-import model.domain.token.ITurnableToken;
-import model.domain.token.Token;
+import model.domain.token.base.ITurnableToken;
+import model.domain.token.base.Token;
 
 import java.util.List;
 

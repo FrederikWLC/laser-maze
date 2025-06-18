@@ -4,7 +4,7 @@ import model.domain.board.Direction;
 import model.domain.board.PositionDirection;
 import model.domain.board.Tile;
 import model.domain.level.Level;
-import model.domain.token.ITurnableToken;
+import model.domain.token.base.ITurnableToken;
 import model.persistence.LevelLoader;
 import view.GamePanel;
 
@@ -14,7 +14,7 @@ import javax.swing.*;
 
 import model.domain.board.Board;
 
-import model.domain.token.Token;
+import model.domain.token.base.Token;
 
 import java.util.ArrayList;
 import view.RenderableTile;
@@ -84,9 +84,6 @@ public class MainController {
 
             gamePanel.switchToScreen(titleScreen);
 
-
-
-
             turnableRenderers.put("LaserToken", new LaserTokenRenderer(tokenImages));
             turnableRenderers.put("TargetMirrorToken", new TargetMirrorTokenRenderer(tokenImages));
             turnableRenderers.put("DoubleMirrorToken", new DoubleMirrorTokenRenderer(tokenImages));
@@ -102,8 +99,6 @@ public class MainController {
             window.pack();
             window.setLocationRelativeTo(null);
             window.setVisible(true);
-
-
 
         });
     }
@@ -187,8 +182,6 @@ public class MainController {
        InputHandler inputHandler = new InputHandler(gameController, gamePanel, this);
        gamePanel.addMouseListener(inputHandler);
        gamePanel.addMouseMotionListener(inputHandler);
-
-
 
        gamePanel.repaint();
    }

@@ -6,11 +6,13 @@ Feature: Level
     # We always start from a fresh 5 x 5 board in these scenarios
     Given a new game is started
     And the level is initialized with id 1, required target number 3, a board with width 5 and height 5, and the following tokens:
-      | token           | preplaced | x  | y  | dir   | turnable |
-      | Target Mirror   | true      | 4  | 0  | LEFT  | false    |
-      | Checkpoint      | true      | 2  | 2  | UP    | true     |
-      | Double Mirror   | false     |    |    |       |          |
-      | Beam Splitter   | false     |    |    |       |          |
+
+      | token           | x  | y  | dir   | turnable | movable | is required |
+      | Target Mirror   | 4  | 0  | LEFT  | false    | false   | true        |
+      | Checkpoint      | 2  | 2  | DOWN  | false    | false   |             |
+      | Double Mirror   |    |    |       | true     | true    |             |
+      | Beam Splitter   |    |    |       | true     | true    |             |
+
 
     Then the level's id should be 1
     And the level's required target number should be 3

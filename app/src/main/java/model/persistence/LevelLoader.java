@@ -3,9 +3,9 @@ package model.persistence;
 import model.domain.level.Level;
 import model.domain.level.builder.LevelBuilder;
 import model.domain.token.Token;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class LevelLoader {
     public static List<Level> loadAll() {
@@ -24,13 +24,12 @@ public class LevelLoader {
     public static Level load(int id) {
         List<Token> preplacedTokens = LevelStorage.getPreplacedTokensFor(id);
         List<Token> requiredTokens = LevelStorage.getRequiredTokensFor(id);
+        List<Token> tokens = Stream.concat(requiredTokens.stream(),preplacedTokens.stream()).toList();
         int targetNumberRequired = LevelStorage.getRequiredTargetNumberFor(id);
 
         return new LevelBuilder(id)
-                .withPreplaced(preplacedTokens)
-                .withRequired(requiredTokens)
+                .withTokens(tokens)
                 .withRequiredTargetNumber(targetNumberRequired)
                 .build();
     }
 }
-

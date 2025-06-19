@@ -14,15 +14,18 @@ public class InputHandler implements MouseListener, MouseMotionListener {
     private final GameController gameController;
     private final GamePanel gamePanel;
     private final RenderableTileFactory tileFactory;
+    private final SoundManager soundManager;
 
-    public InputHandler(GameController gameController, GamePanel gamePanel, RenderableTileFactory tileFactory) {
+    public InputHandler(GameController gameController, GamePanel gamePanel, RenderableTileFactory tileFactory, SoundManager soundManager) {
         this.gameController = gameController;
         this.gamePanel = gamePanel;
         this.tileFactory = tileFactory;
+        this.soundManager = soundManager;
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        soundManager.play(SoundManager.Sound.CLICK, false);
         Position clicked = gamePanel.screenToBoard(e.getX(), e.getY());
 
         Token token = gameController.getTokenAt(clicked);

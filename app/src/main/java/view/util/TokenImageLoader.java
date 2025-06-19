@@ -36,7 +36,9 @@ public class TokenImageLoader {
                 "YellowBridge-default_BRIDGE.png",
 
                 "WhiteObstacle-NONE-Dark.png",
-                "EmptyCell.png"
+                "EmptyCell.png",
+                "LASER-BEAM-HORIZONTAL.png",
+                "LASER-BEAM-VERTICAL.png"
         };
 
         for (String name : filenames) {

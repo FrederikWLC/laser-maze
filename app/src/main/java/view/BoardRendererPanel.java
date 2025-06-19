@@ -23,6 +23,9 @@ public class BoardRendererPanel extends JPanel {
     private Map<String, TokenRenderer> staticRenderers;
     private Map<String, ITurnableTokenRenderer> turnableRenderers;
 
+    private int visibleLaserSegments = 0;
+
+
     public BoardRendererPanel() {
 
         setOpaque(false); // We want background to show through if needed
@@ -93,13 +96,25 @@ public class BoardRendererPanel extends JPanel {
 
         // Draw laser path
         if (laserPath != null && !laserPath.isEmpty()) {
-            g2d.setColor(Color.RED);
             for (PositionDirection pd : laserPath) {
                 int x = 100 + pd.getPosition().getX() * tileSize;
                 int y = 100 + pd.getPosition().getY() * tileSize;
-                g2d.fillRect(x + 30, y + 30, 20, 20);
+
+                Direction dir = pd.getDirection(); // Assuming this exists
+                boolean isVertical = (dir == Direction.UP || dir == Direction.DOWN);
+                String imageKey = "LASER-BEAM-" + (isVertical ? "VERTICAL" : "HORIZONTAL") + ".png";
+
+                BufferedImage beamImage = tokenImages.get(imageKey);
+                if (beamImage != null) {
+                    g2d.drawImage(beamImage, x, y, tileSize, tileSize, null);
+                } else {
+                    // fallback in case image is missing
+                    g2d.setColor(Color.RED);
+                    g2d.fillRect(x + 30, y + 30, 20, 20);
+                }
             }
         }
+
 
         g2d.dispose();
     }

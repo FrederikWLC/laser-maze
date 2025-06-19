@@ -2,9 +2,9 @@ package model.domain.engine;
 
 import model.domain.board.Position;
 import model.domain.board.PositionDirection;
-import model.domain.token.Token;
+import model.domain.token.base.Token;
 import model.domain.level.Level;
-import model.domain.token.LaserToken;
+import model.domain.token.impl.LaserToken;
 
 import java.util.ArrayList;
 import java.util.List;

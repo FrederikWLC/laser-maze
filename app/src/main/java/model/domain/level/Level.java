@@ -1,8 +1,8 @@
 package model.domain.level;
 
-import model.domain.token.Token;
+import model.domain.token.base.Token;
 import model.domain.board.Board;
-import model.domain.token.LaserToken;
+import model.domain.token.impl.LaserToken;
 
 import java.util.List;
 import java.util.Optional;

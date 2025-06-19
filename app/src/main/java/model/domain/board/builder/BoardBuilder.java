@@ -2,7 +2,7 @@ package model.domain.board.builder;
 
 import model.domain.board.Board;
 import model.domain.engine.BoardEngine;
-import model.domain.token.Token;
+import model.domain.token.base.Token;
 
 import java.util.List;
 

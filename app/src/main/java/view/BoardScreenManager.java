@@ -12,31 +12,50 @@ public class BoardScreenManager implements DisplayManager {
     private final GamePanel panel;
     private final List<RenderableTile> tiles;
     private final Map<String, BufferedImage> tokenImages;
+    private final BoardRendererPanel boardRenderer;
+
 
     public BoardScreenManager(GamePanel panel, List<RenderableTile> tiles, Map<String, BufferedImage> tokenImages) {
         this.panel = panel;
         this.tiles = tiles;
         this.tokenImages = tokenImages;
+        this.boardRenderer = panel.getControlPanel().boardRenderer;
+
     }
 
     @Override
     public void show() {
         panel.clearDrawables();
-
         panel.addDrawable(new BackgroundRenderer(Color.BLACK));
 
-        panel.setMainMenuVisible(false);
-        panel.setLevelSelectVisible(false);
-        panel.setBackButtonVisible(false);
+        boardRenderer.setTilesToRender(tiles);
+        boardRenderer.setTokenImages(tokenImages);
 
-        panel.setTilesToRender(tiles);  // Tell GamePanel what to draw
+        // Create it once
+        if (!panel.hasFireLaserButton()) {
+            panel.createFireLaserButton();
+        }
+
+        // Show it only on this screen
+        panel.getFireLaserButton().setVisible(true);
+
+        // Hide unrelated UI
+        GameControlPanel controls = panel.getControlPanel();
+        controls.singlePlayer.setVisible(false);
+        controls.multiplayer.setVisible(false);
+        controls.quitGame.setVisible(false);
+        controls.levelScrollPane.setVisible(false);
+        controls.backButton.setVisible(false);
+
+        boardRenderer.setVisible(true);
+        panel.repaint();
     }
+
+
+
 
     @Override
     public void draw(Graphics2D g) {
-        for (Drawable d : panel.getDrawables()) {
-            d.draw(g);
-        }
-
+        panel.getDrawableManager().drawAll(g);
     }
 }

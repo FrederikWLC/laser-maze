@@ -1,29 +1,29 @@
 package controller;
+
 import model.domain.board.Position;
 import model.domain.token.base.Token;
-import view.*;
+import view.GamePanel;
+import view.RenderableTile;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.List;
 
-
 public class InputHandler implements MouseListener, MouseMotionListener {
     private final GameController gameController;
     private final GamePanel gamePanel;
-    private final MainController mainController;
+    private final RenderableTileFactory tileFactory;
 
-    public InputHandler(GameController gameController, GamePanel gamePanel, MainController mainController) {
+    public InputHandler(GameController gameController, GamePanel gamePanel, RenderableTileFactory tileFactory) {
         this.gameController = gameController;
         this.gamePanel = gamePanel;
-        this.mainController = mainController;
+        this.tileFactory = tileFactory;
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-
-        Position clicked = gamePanel.screenToBoard(e.getX(), e.getY());;
+        Position clicked = gamePanel.screenToBoard(e.getX(), e.getY());
 
         Token token = gameController.getTokenAt(clicked);
         if (token == null) {
@@ -32,16 +32,45 @@ public class InputHandler implements MouseListener, MouseMotionListener {
         }
 
         gameController.rotateTokenClockwise(token);
-        List<RenderableTile> updatedTiles = mainController.convertBoardToRenderableTiles(gameController.getLevel().getBoard());
+        List<RenderableTile> updatedTiles = tileFactory.convertBoardToRenderableTiles(
+                gameController.getLevel().getBoard()
+        );
+
         gamePanel.setTilesToRender(updatedTiles);
         gamePanel.repaint();
+
+        gamePanel.getControlPanel().boardRenderer.setTilesToRender(updatedTiles);
+        gamePanel.getControlPanel().boardRenderer.repaint();
+
     }
 
+    @Override
+    public void mousePressed(MouseEvent e) {
+        // Optional: implement if you need drag/selection behavior
+    }
 
-    @Override public void mousePressed(MouseEvent e) {}
-    @Override public void mouseReleased(MouseEvent e) {}
-    @Override public void mouseEntered(MouseEvent e) {}
-    @Override public void mouseExited(MouseEvent e) {}
-    @Override public void mouseDragged(MouseEvent e) {}
-    @Override public void mouseMoved(MouseEvent e) {}
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        // Optional
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        // Optional
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        // Optional
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        // Optional: implement if you want drag movement for tokens
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        // Optional: implement hover effects if needed
+    }
 }

@@ -19,7 +19,9 @@ public class TargetMirrorTokenRenderer extends TurnableTokenRenderer {
         Direction dir = token.getDirection();
 
         String key = "PurpleTarget-TARGET_ON_" + getDirString(dir) + ".png";
+
         BufferedImage img = tokenImages.get(key);
+
         if (img != null) {
             g2d.drawImage(img, x, y, size, size, null);
         } else {

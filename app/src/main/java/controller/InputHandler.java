@@ -1,7 +1,7 @@
 package controller;
 
 import model.domain.board.Position;
-import model.domain.token.Token;
+import model.domain.token.base.Token;
 import view.GamePanel;
 import view.RenderableTile;
 

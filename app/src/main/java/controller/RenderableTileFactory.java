@@ -3,8 +3,8 @@ package controller;
 import model.domain.board.Board;
 import model.domain.board.Direction;
 import model.domain.board.Tile;
-import model.domain.token.ITurnableToken;
-import model.domain.token.Token;
+import model.domain.token.base.ITurnableToken;
+import model.domain.token.base.Token;
 import view.RenderableTile;
 
 import java.util.ArrayList;

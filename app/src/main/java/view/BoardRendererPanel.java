@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import model.domain.board.Direction;
 import model.domain.board.PositionDirection;
-import model.domain.token.Token;
-import model.domain.token.ITurnableToken;
+import model.domain.token.base.Token;
+import model.domain.token.base.ITurnableToken;
 import java.util.HashMap;
 import view.dto.ViewOnlyToken;
 

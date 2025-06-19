@@ -1,8 +1,8 @@
 package view.dto;
 
 import model.domain.board.Direction;
-import model.domain.token.ITurnableToken;
-import model.domain.token.Token;
+import model.domain.token.base.ITurnableToken;
+import model.domain.token.base.Token;
 
 public class ViewOnlyToken extends Token implements ITurnableToken {
     private final Direction direction;
@@ -32,3 +32,5 @@ public class ViewOnlyToken extends Token implements ITurnableToken {
     @Override
     public void setTurnable(boolean turnable) { }
 }
+
+

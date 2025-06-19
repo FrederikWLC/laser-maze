@@ -14,12 +14,18 @@ public final class LevelBuilder {
     private int height = 5; // default board height
     private List<Token> tokens = List.of();
     private int requiredTargetNumber = 1;
+    private Board board;
 
     public LevelBuilder(int id) { this.id = id; }
 
     public LevelBuilder withBoardDimensions(int width, int height) {
         this.width = width;
         this.height = height;
+        return this;
+    }
+
+    public LevelBuilder withBoard(Board board) {
+        this.board = board;
         return this;
     }
 
@@ -34,13 +40,18 @@ public final class LevelBuilder {
         List<Token> preplacedTokens = tokens.stream()
                 .filter(Token::isPlaced)
                 .toList();
-        Board board = new BoardBuilder().
-                withDimensions(width,height).
-                withPreplacedTokens(preplacedTokens).build();
-        Level lvl = new Level(id,board);
+
+        // Use existing board if one was provided; otherwise build a new one
+        Board finalBoard = (this.board != null)
+                ? this.board
+                : new BoardBuilder()
+                .withDimensions(width, height)
+                .withPreplacedTokens(preplacedTokens)
+                .build();
+
+        Level lvl = new Level(id, finalBoard);
         lvl.setTokens(tokens);
         lvl.setRequiredTargetNumber(requiredTargetNumber);
         return lvl;
-
     }
 }

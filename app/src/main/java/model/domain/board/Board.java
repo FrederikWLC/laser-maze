@@ -1,9 +1,6 @@
 package model.domain.board;
 
-public class Board {
-    private final int height;
-    private final int width;
-    private final Tile[][]  tiles;
+public class Board extends TileContainer{
 
     public Board(int width, int height) {
         this.width = width;
@@ -16,19 +13,4 @@ public class Board {
         }
     }
 
-    public Tile getTile(int x, int y) {
-        // bounds-check first
-        if (x < 0 || y < 0
-                || x >= width
-                || y >= height) {   // assumes a rectangular board
-        throw new IndexOutOfBoundsException(
-                "Tile coordinates out of bounds: (" + x + ", " + y + ")");
-        }
-        return tiles[x][y];                  // safe access
-    }
-
-    public int getWidth() { return width; }
-
-    public int getHeight() { return height; }
-    
 }

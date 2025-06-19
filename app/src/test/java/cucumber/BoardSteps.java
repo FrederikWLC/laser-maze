@@ -24,44 +24,24 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class BoardSteps {
-    // Fields to hold the current state of the board, tokens, and exceptions referred to in the steps:
+public class BoardSteps extends BaseSteps {
     public Exception exception;
-    public Level level;
-    public Board board;
     public Tile tile;
-    public Token token;
-    public LaserToken laser;
-    public CellBlockerToken cellBlocker;
-    public DoubleMirrorToken doubleMirror;
-    public TargetMirrorToken targetMirror;
-    public BeamSplitterToken beamSplitter;
-    public CheckpointToken checkpoint;
-    public PortalToken portal;
     public List<PositionDirection> actualBeamPath;
 
     @ParameterType("(?i)laser|cell blocker|double mirror|target mirror|beam splitter|checkpoint|portal")
     public Token token(String name) {
-        switch (name.toLowerCase()) {
-            case "laser":
-                return laser;
-            case "cell blocker":
-                return cellBlocker;
-            case "double mirror":
-                return doubleMirror;
-            case "target mirror":
-                return targetMirror;
-            case "beam splitter":
-                return beamSplitter;
-            case "checkpoint":
-                return checkpoint;
-            case "portal":
-                return portal;
-        }
-
-        throw new IllegalArgumentException("Unknown token type: " + name);
+        return switch (name.toLowerCase()) {
+            case "laser" -> laser;
+            case "cell blocker" -> cellBlocker;
+            case "double mirror" -> doubleMirror;
+            case "target mirror" -> targetMirror;
+            case "beam splitter" -> beamSplitter;
+            case "checkpoint" -> checkpoint;
+            case "portal" -> portal;
+            default -> throw new IllegalArgumentException("Unknown token type: " + name);
+        };
     }
-
     @ParameterType("(?i)laser|cell blocker|double mirror|target mirror|beam splitter|checkpoint|portal")
     public Class<? extends Token> tokenType(String name) {
         switch (name.toLowerCase()) {
@@ -107,7 +87,7 @@ public class BoardSteps {
 
     @Given("^a new game is started$")
     public void aNewGameIsStarted() {
-
+        // Placeholder for game start initialization if needed
     }
 
     @When("^the board is initialized with width (\\d+) and height (\\d+)$")
@@ -128,11 +108,16 @@ public class BoardSteps {
         assertEquals(expectedCount, emptyTileCount);
     }
 
-
     @Then("the tile should exist and be empty")
     public void theTileShouldExistAndBeEmpty() {
         assertNotNull(tile);
         assertTrue(tile.isEmpty());
+    }
+
+    @Then("the tile should exist and not be empty")
+    public void theTileShouldExistAndNotBeEmpty() {
+        assertNotNull(tile);
+        assertFalse(tile.isEmpty());
     }
 
     @When("I try to get the tile at position \\({int}, {int})")
@@ -158,7 +143,6 @@ public class BoardSteps {
     @Then("the board width should be {int}")
     public void theBoardWidthShouldBe(int expectedWidth) {
         assertEquals(expectedWidth, board.getWidth());
-
     }
 
     @And("the board height should be {int}")
@@ -174,6 +158,7 @@ public class BoardSteps {
 
     @When("I activate the laser")
     public void iActivateTheLaser() {
+        assertNotNull(laser, "Laser was not initialized. Ensure it's placed and saved via saveTokenAsType()");
         laser.trigger(true);
     }
 
@@ -182,14 +167,24 @@ public class BoardSteps {
         actualBeamPath = LaserEngine.fire(laser, board);
     }
 
+    @And("the level's laser forms a beam path")
+    public void theLevelsLaserFormsABeamPath() {
+        actualBeamPath = LevelEngine.fireLaserToken(level);
+    }
+
+    @Then("a laser should be present on the board")
+    public void aLaserShouldBePresent() {
+        assertNotNull(laser, "No laser assigned via saveTokenAsType()");
+    }
+
+
     @Then("the laser beam should pass through the following position directions:")
     public void theLaserBeamShouldPassThroughTheFollowingPositionDirections(DataTable table) {
-
         List<PositionDirection> expected = table.asMaps(String.class, String.class)
                 .stream()
                 .map(row -> new PositionDirection(
                         new Position(Integer.parseInt(row.get("x")),
-                        Integer.parseInt(row.get("y"))),
+                                Integer.parseInt(row.get("y"))),
                         Direction.valueOf(row.get("dir").toUpperCase())))
                 .toList();
 
@@ -322,125 +317,6 @@ public class BoardSteps {
                 ).toList();
     }
 
-
-    @Then("the level's id should be {int}")
-    public void theLevelsIdShouldBe(int id) {
-        assertEquals(id, level.getId(),
-                "Expected level id: " + id + ", but was: " + level.getId());
-    }
-
-
-    @And("the level's required target number should be {int}")
-    public void theLevelsRequiredTargetNumberShouldBe(int n) {
-        assertEquals(n, level.getRequiredTargetNumber(),
-                "Expected required target number: " + n + ", but was: " + level.getRequiredTargetNumber());
-    }
-
-    @And("the level's board should have width {int} and height {int}")
-    public void theLevelsBoardShouldHaveWidthAndHeight(int width, int height) {
-        assertEquals(width, level.getBoard().getWidth(),
-                "Expected board width: " + width + ", but was: " + level.getBoard().getWidth());
-        assertEquals(height, level.getBoard().getHeight(),
-                "Expected board height: " + height + ", but was: " + level.getBoard().getHeight());
-    }
-
-    @Given("I place token {int} \\(from the required tokens) on the board at \\({int}, {int})")
-    public void iPlaceTokenFromTheRequiredTokensOnTheBoardAt(int i, int x, int y) {
-        token = level.getRequiredTokens().get(i);
-        LevelEngine.placeRequiredToken(level, token, new Position(x, y));
-        saveTokenAsType(token); // Save the token as its specific type for further checks
-    }
-
-    public void saveTokenAsType(Token token) {
-        if (token instanceof LaserToken t) {
-            laser = t;
-        } else if (token instanceof CellBlockerToken t) {
-            cellBlocker = t;
-        } else if (token instanceof DoubleMirrorToken t) {
-            doubleMirror = t;
-        } else if (token instanceof TargetMirrorToken t) {
-            targetMirror = t;
-        } else if (token instanceof BeamSplitterToken t) {
-            beamSplitter = t;
-        } else if (token instanceof CheckpointToken t) {
-            checkpoint = t;
-        } else if (token instanceof PortalToken t) {
-            portal = t;
-        } else {
-            throw new IllegalArgumentException("Unknown token type: " + token.getClass());
-        }
-    }
-
-    @Then("the token on the board at \\({int}, {int}) should be a {tokenType} token")
-    public void theTokenOnTheBoardAtShouldBeAToken(int x, int y, Class<? extends Token> tokenType) {
-        Tile tile = board.getTile(x, y);
-        // set token to the one on the board for further checks
-        token = tile.getToken();
-        assertEquals(tokenType,token.getClass(),
-                "Token at (" + x + ", " + y + ") should be a Double Mirror token, but is: " + tile.getToken());
-        // set token of specific type to the one on the board for further checks
-        saveTokenAsType(token);
-    }
-
-    @And("the token should be turnable without direction")
-    public void theTokenShouldBeTurnableWithoutDirection() {
-            assertTrue(token.isTurnable(), "Token should be turnable, but is not");
-            assertNull(((ITurnableToken) token).getDirection(),
-                    "Token should not have a direction, but is: " + ((ITurnableToken) token).getDirection());
-    }
-
-    @And("the remaining number of required tokens to be placed should be {int}")
-    public void theRemainingNumberOfRequiredTokensShouldBe(int i) {
-        assertEquals(i, level.getRequiredTokens().size(),
-                "Remaining required tokens to be placed should be " + i + ", but is: " + level.getRequiredTokens().size());
-    }
-
-    @And("the level is initialized with id {int}, required target number {int}, a board with width {int} and height {int}, and the following tokens:")
-    public void theLevelIsInitializedWithIdRequiredTargetNumberABoardWithWidthAndHeightAndTheFollowingTokens(int id, int n, int width, int height, DataTable table) {
-        level = new LevelBuilder(id)
-                .withBoardDimensions(width, height)
-                .withRequiredTargetNumber(n)
-                .withTokens(getTokensFromTable(table))
-                .build();
-        board = level.getBoard();
-    }
-
-    @And("the level's tokens should be:")
-    public void theLevelSTokensShouldBe(DataTable table) {
-        List<? extends Class<? extends Token>> expectedTokenTypes = table.asMaps(String.class, String.class)
-                .stream()
-                .map(row -> {
-                    Class<? extends Token> ttype = tokenType(row.get("token"));
-                    return ttype;
-                })
-                .toList();
-
-        List<? extends Class<? extends Token>> actualTokenTypes = level.getTokens()
-                .stream()
-                .map(tk -> {
-                    Class<? extends Token> ttype = tk.getClass();
-                    return ttype;
-                })
-                .toList();
-
-        assertEquals(expectedTokenTypes, actualTokenTypes,
-                "Level token types do not match expected token types");
-    }
-
-
-
-    @Then("the level should be incomplete")
-    public void theLevelShouldBeIncomplete() {
-        LevelEngine.updateAndCheckLevelCompletionState(level);
-        assertFalse(level.isComplete(), "Level should not be complete, but is");
-    }
-
-    @Then("the level should be complete")
-    public void theLevelShouldBeComplete() {
-        LevelEngine.updateAndCheckLevelCompletionState(level);
-        assertTrue(level.isComplete(), "Level should be complete, but is not");
-    }
-
     @And("the number of targets hit by the beam path should be {int}")
     public void theNumberOfTargetsHitShouldBe(int n) {
         int actualHitCount = LaserEngine.getTargetHitNumber(actualBeamPath, level.getTokens());
@@ -454,7 +330,6 @@ public class BoardSteps {
         assertTrue(allRequiredTargetsHit, "Beam path does not hit all required targets");
     }
 
-
     @And("the beam path should touch every touch-required token given by the level")
     public void theBeamPathTouchesEveryTokenOnTheBoardExceptTheOnesNotTouchRequired() {
         boolean allTouchRequiredTokensTouched = LaserEngine.areAllTouchRequiredTokensTouched(actualBeamPath, level.getTokens());
@@ -466,7 +341,6 @@ public class BoardSteps {
         boolean allCheckpointsPenetrated = LaserEngine.areAllCheckpointsPenetrated(actualBeamPath, level.getTokens());
         assertTrue(allCheckpointsPenetrated, "Beam path does not pass through all checkpoints");
     }
-
 
     @And("all turnable tokens should have a direction")
     public void allTurnableTokensShouldHaveADirection() {
@@ -492,33 +366,6 @@ public class BoardSteps {
         laser = level.getActiveLaser().get();
     }
 
-    @And("the level's laser forms a beam path")
-    public void theLevelsLaserFormsABeamPath() {
-        actualBeamPath = LevelEngine.fireLaserToken(level);
-    }
-
-    @Then("the tile should exist and not be empty")
-    public void theTileShouldExistAndNotBeEmpty() {
-        assertNotNull(tile);
-        assertFalse(tile.isEmpty());
-    }
-
-    public List<MutableTwinToken> getTwinPairOfType(Class<? extends MutableTwinToken> tokenType,List<Token> tokens) {
-        List<MutableTwinToken> pair = tokens.stream()
-                .filter(tokenType::isInstance)
-                .map(t -> (MutableTwinToken)t)
-                .limit(2)
-                .toList();
-
-        if (pair.size() < 2) {
-            throw new IllegalStateException(
-                    "Expected at least two " + tokenType.getSimpleName() + "s, but found " + pair.size()
-            );
-        }
-
-        return pair;
-    }
-
 
     @And("the first pair of the level's {tokenType} tokens are each other's twins")
     public void theFirstPairOfTheLevelsTokensAreEachOthersTwins(Class<? extends MutableTwinToken> tokenType) {
@@ -542,11 +389,100 @@ public class BoardSteps {
 
     @Then("the Portal token's blue opening side should face {direction}")
     public void thePortalTokenSBlueOpeningSideShouldFaceUp(Direction direction) {
-        assertEquals(direction,portal.getBluePortalDirection());
+        assertEquals(direction, portal.getBluePortalDirection());
     }
 
     @Then("the Portal token's red opening side should face {direction}")
     public void thePortalTokenSRedOpeningSideShouldFaceUp(Direction direction) {
-        assertEquals(direction,portal.getRedPortalDirection());
+        assertEquals(direction, portal.getRedPortalDirection());
     }
+
+    //Step definitions that should be  moved to a separate file (but it might be impossible):
+
+    @And("the level is initialized with id {int}, required target number {int}, a board with width {int} and height {int}, and the following tokens:")
+    public void theLevelIsInitializedWithIdRequiredTargetNumberABoardWithWidthAndHeightAndTheFollowingTokens(
+            int id, int reqTargets, int w, int h, DataTable table) {
+        level = new LevelBuilder(id)
+                .withBoardDimensions(w, h)
+                .withRequiredTargetNumber(reqTargets)
+                .withTokens(getTokensFromTable(table))
+                .build();
+        board = level.getBoard();
+    }
+
+    @Then("the level's id should be {int}")
+    public void theLevelsIdShouldBe(int id) {
+        assertEquals(id, level.getId(),
+                "Expected level id: " + id + ", but was: " + level.getId());
+    }
+
+    @And("the level's required target number should be {int}")
+    public void theLevelsRequiredTargetNumberShouldBe(int n) {
+        assertEquals(n, level.getRequiredTargetNumber(),
+                "Expected required target number: " + n + ", but was: " + level.getRequiredTargetNumber());
+    }
+
+    @And("the level's board should have width {int} and height {int}")
+    public void theLevelsBoardShouldHaveWidthAndHeight(int width, int height) {
+        assertEquals(width, level.getBoard().getWidth(),
+                "Expected board width: " + width + ", but was: " + level.getBoard().getWidth());
+        assertEquals(height, level.getBoard().getHeight(),
+                "Expected board height: " + height + ", but was: " + level.getBoard().getHeight());
+    }
+
+    @And("the level's tokens should be:")
+    public void theLevelSTokensShouldBe(DataTable table) {
+        List<Class<? extends Token>> expected = table.asMaps(String.class, String.class).stream()
+                .map(row -> tokenType(row.get("token")))
+                .collect(java.util.stream.Collectors.toList());  // 👈 fix here
+
+        List<Class<? extends Token>> actual = level.getTokens().stream()
+                .map(Token::getClass)
+                .collect(java.util.stream.Collectors.toList());  // 👈 fix here
+
+        assertEquals(expected, actual, "Level token types do not match expected");
+    }
+
+    @Given("I place token {int} \\(from the required tokens) on the board at \\({int}, {int})")
+    public void iPlaceTokenFromTheRequiredTokensOnTheBoardAt(int idx, int x, int y) {
+        token = level.getRequiredTokens().get(idx);
+        LevelEngine.placeRequiredToken(level, token, new Position(x, y));
+        saveTokenAsType(token);
+    }
+
+    @Then("the token on the board at \\({int}, {int}) should be a {tokenType} token")
+    public void theTokenOnTheBoardAtShouldBeAToken(int x, int y, Class<? extends Token> type) {
+        Tile t = board.getTile(x, y);
+        token = t.getToken();
+        assertEquals(type, token.getClass(),
+                "Token at (" + x + "," + y + ") should be " + type.getSimpleName());
+        saveTokenAsType(token);
+    }
+
+    @And("the token should be turnable without direction")
+    public void theTokenShouldBeTurnableWithoutDirection() {
+        assertTrue(token.isTurnable(), "Token should be turnable");
+        assertNull(((ITurnableToken) token).getDirection(),
+                "Token should not have a direction");
+    }
+
+    @And("the remaining number of required tokens to be placed should be {int}")
+    public void theRemainingNumberOfRequiredTokensShouldBe(int count) {
+        assertEquals(count, level.getRequiredTokens().size(),
+                "Remaining required tokens to be placed should be " + count);
+    }
+    @Then("the level should be incomplete")
+    public void theLevelShouldBeIncomplete() {
+        LevelEngine.updateAndCheckLevelCompletionState(level);
+        assertFalse(level.isComplete(), "Level should not be complete, but is");
+    }
+
+    @Then("the level should be complete")
+    public void theLevelShouldBeComplete() {
+        LevelEngine.updateAndCheckLevelCompletionState(level);
+        assertTrue(level.isComplete(), "Level should be complete, but is not");
+    }
+
+
+
 }

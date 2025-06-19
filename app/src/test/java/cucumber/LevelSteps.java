@@ -6,14 +6,18 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import model.domain.board.Position;
+import model.domain.board.PositionDirection;
 import model.domain.board.Tile;
+import model.domain.engine.LaserEngine;
 import model.domain.engine.LevelEngine;
 import model.domain.level.builder.LevelBuilder;
+import model.domain.token.base.ITargetToken;
 import model.domain.token.base.ITurnableToken;
 import model.domain.token.base.Token;
 import model.domain.token.impl.*;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -100,31 +104,95 @@ public class LevelSteps extends BaseSteps {
 
     @Given("a level is created with board size {int} by {int}")
     public void aLevelIsCreatedWithBoardSizeBy(int width, int height) {
-        // TODO: Implement this
+        board = new model.domain.board.builder.BoardBuilder()
+                .withDimensions(width, height)
+                .build();
+
+        level = new LevelBuilder(1)
+                .withBoard(board)
+                .withRequiredTargetNumber(0)
+                .build();
     }
 
     @And("the inventory contains:")
-    public void theInventoryContains() {
-        // TODO: Implement this
+    public void theInventoryContains(DataTable table) {
+        List<Token> tokens = table.asMaps(String.class, String.class)
+                .stream()
+                .flatMap(row -> {
+                    int count = Integer.parseInt(row.get("count"));
+                    String tokenName = row.get("token");
+                    return java.util.stream.IntStream.range(0, count)
+                            .mapToObj(i -> buildToken(tokenName, null, null, null, true, true));
+                })
+                .toList();
+
+        inventory = new model.domain.board.Inventory(tokens);
+
+        level = new LevelBuilder(level.getId())
+                .withBoard(board)
+                .withTokens(tokens)
+                .withRequiredTargetNumber(level.getRequiredTargetNumber())
+                .build();
     }
 
     @Then("the level should have a board of width {int} and height {int}")
     public void theLevelShouldHaveABoardOfWidthAndHeight(int width, int height) {
-        // TODO: Implement this
+        assertNotNull(level.getBoard());
+        assertEquals(width, level.getBoard().getWidth());
+        assertEquals(height, level.getBoard().getHeight());
     }
 
     @And("the inventory should have {int} TargetMirrorTokens")
     public void theInventoryShouldHaveTargetMirrorTokens(int count) {
-        // TODO: Implement this
+        int actual = inventory.countTokensByType("TargetMirrorToken");
+        assertEquals(count, actual,
+                "Expected " + count + " TargetMirrorTokens, but found " + actual);
     }
 
     @Given("the board contains:")
-    public void theBoardContains() {
-        // TODO: Implement this
+    public void theBoardContains(DataTable table) {
+        List<Map<String, String>> rows = table.asMaps(String.class, String.class);
+
+        for (Map<String, String> row : rows) {
+            String tokenType = row.get("token");
+            int x = Integer.parseInt(row.get("x"));
+            int y = Integer.parseInt(row.get("y"));
+            String dir = row.get("dir");
+
+            Token token = buildToken(tokenType, null, null,
+                    dir == null || dir.isEmpty() ? null : direction(dir), true, true);
+
+            Position pos = new Position(x, y);
+            model.domain.engine.BoardEngine.placeToken(board, token, pos);
+
+            saveTokenAsType(token);
+        }
     }
 
     @When("I place a TargetMirrorToken at board position \\({int}, {int})")
     public void iPlaceATargetMirrorTokenAtBoardPosition(int x, int y) {
-        // TODO: Implement this
+        token = inventory.getTokenByType("TargetMirrorToken");
+        assertNotNull(token, "No TargetMirrorToken available in inventory");
+        Position pos = new Position(x, y);
+        model.domain.engine.BoardEngine.placeToken(board, token, pos);
+        inventory.removeToken(token);
+    }
+
+    @Then("the target at \\({int}, {int}) should be activated")
+    public void theTargetAtShouldBeActivated(int x, int y) {
+        Tile tile = board.getTile(x, y);
+        Token token = tile.getToken();
+
+        assertNotNull(token, "No token found at (" + x + "," + y + ")");
+        assertTrue(token instanceof ITargetToken, "Expected a target token at (" + x + "," + y + ")");
+
+        // Get beam path using LevelEngine (safe wrapper)
+        List<PositionDirection> beamPath = LevelEngine.fireLaserToken(level);
+
+        boolean activated = beamPath.stream()
+                .filter(posDir -> posDir.getPosition().getX() == x && posDir.getPosition().getY() == y)
+                .anyMatch(posDir -> ((ITargetToken) token).isHit(posDir));
+
+        assertTrue(activated, "Target at (" + x + "," + y + ") was not activated");
     }
 }

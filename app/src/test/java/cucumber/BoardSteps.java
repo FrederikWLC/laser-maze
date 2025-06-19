@@ -31,26 +31,17 @@ public class BoardSteps extends BaseSteps {
 
     @ParameterType("(?i)laser|cell blocker|double mirror|target mirror|beam splitter|checkpoint|portal")
     public Token token(String name) {
-        switch (name.toLowerCase()) {
-            case "laser":
-                return laser;
-            case "cell blocker":
-                return cellBlocker;
-            case "double mirror":
-                return doubleMirror;
-            case "target mirror":
-                return targetMirror;
-            case "beam splitter":
-                return beamSplitter;
-            case "checkpoint":
-                return checkpoint;
-            case "portal":
-                return portal;
-        }
-
-        throw new IllegalArgumentException("Unknown token type: " + name);
+        return switch (name.toLowerCase()) {
+            case "laser" -> laser;
+            case "cell blocker" -> cellBlocker;
+            case "double mirror" -> doubleMirror;
+            case "target mirror" -> targetMirror;
+            case "beam splitter" -> beamSplitter;
+            case "checkpoint" -> checkpoint;
+            case "portal" -> portal;
+            default -> throw new IllegalArgumentException("Unknown token type: " + name);
+        };
     }
-
     @ParameterType("(?i)laser|cell blocker|double mirror|target mirror|beam splitter|checkpoint|portal")
     public Class<? extends Token> tokenType(String name) {
         switch (name.toLowerCase()) {
@@ -167,6 +158,7 @@ public class BoardSteps extends BaseSteps {
 
     @When("I activate the laser")
     public void iActivateTheLaser() {
+        assertNotNull(laser, "Laser was not initialized. Ensure it's placed and saved via saveTokenAsType()");
         laser.trigger(true);
     }
 
@@ -179,6 +171,12 @@ public class BoardSteps extends BaseSteps {
     public void theLevelsLaserFormsABeamPath() {
         actualBeamPath = LevelEngine.fireLaserToken(level);
     }
+
+    @Then("a laser should be present on the board")
+    public void aLaserShouldBePresent() {
+        assertNotNull(laser, "No laser assigned via saveTokenAsType()");
+    }
+
 
     @Then("the laser beam should pass through the following position directions:")
     public void theLaserBeamShouldPassThroughTheFollowingPositionDirections(DataTable table) {

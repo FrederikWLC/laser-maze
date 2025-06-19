@@ -471,6 +471,18 @@ public class BoardSteps extends BaseSteps {
         assertEquals(count, level.getRequiredTokens().size(),
                 "Remaining required tokens to be placed should be " + count);
     }
+    @Then("the level should be incomplete")
+    public void theLevelShouldBeIncomplete() {
+        LevelEngine.updateAndCheckLevelCompletionState(level);
+        assertFalse(level.isComplete(), "Level should not be complete, but is");
+    }
+
+    @Then("the level should be complete")
+    public void theLevelShouldBeComplete() {
+        LevelEngine.updateAndCheckLevelCompletionState(level);
+        assertTrue(level.isComplete(), "Level should be complete, but is not");
+    }
+
 
 
 }

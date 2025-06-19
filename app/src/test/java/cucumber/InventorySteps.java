@@ -1,6 +1,7 @@
 package cucumber;
 
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.*;
 import model.domain.board.Board;
 import model.domain.board.Inventory;
@@ -10,6 +11,7 @@ import model.domain.board.builder.BoardBuilder;
 import model.domain.engine.BoardEngine;
 import model.domain.level.builder.LevelBuilder;
 import model.domain.token.base.Token;
+import model.domain.token.builder.base.TokenBuilder;
 
 import java.util.List;
 import java.util.Map;
@@ -79,7 +81,7 @@ public class InventorySteps extends BaseSteps {
     public void theBoardShouldHaveATokenAt(String tokenName, int x, int y) {
         Tile tile = board.getTile(x, y);
         assertNotNull(tile.getToken(), "No token found at board position");
-        Class<? extends Token> expectedType = tokenType(tokenName);
+        Class<? extends Token> expectedType = getTokenType(tokenName);
         assertTrue(expectedType.isInstance(tile.getToken()),
                 "Expected " + expectedType.getSimpleName() + " but found: " + tile.getToken().getClass().getSimpleName());
     }

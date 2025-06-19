@@ -15,20 +15,25 @@ public class TokenImageLoader {
                 "RedLaser-GENERATOR_ON_EAST.png",
                 "RedLaser-GENERATOR_ON_SOUTH.png",
                 "RedLaser-GENERATOR_ON_WEST.png",
+                "RedLaser-GENERATOR_ON_default.png",
 
                 "PurpleTarget-TARGET_ON_NORTH.png",
                 "PurpleTarget-TARGET_ON_EAST.png",
                 "PurpleTarget-TARGET_ON_SOUTH.png",
                 "PurpleTarget-TARGET_ON_WEST.png",
+                "PurpleTarget-TARGET_ON_default.png",
 
                 "GreenMirror-BACKSLASH_MIRROR.png",
                 "GreenMirror-SLASH_MIRROR.png",
+                "GreenMirror-default_MIRROR.png",
 
                 "BlueMirror-BACKSLASH_MIRROR.png",
                 "BlueMirror-SLASH_MIRROR.png",
+                "BlueMirror-default_MIRROR.png",
 
                 "YellowBridge-HORIZONTAL_BRIDGE.png",
                 "YellowBridge-VERTICAL_BRIDGE.png",
+                "YellowBridge-default_BRIDGE.png",
 
                 "WhiteObstacle-NONE-Dark.png",
                 "EmptyCell.png"

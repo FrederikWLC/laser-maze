@@ -35,5 +35,13 @@ public class CheckpointTokenRenderer extends TurnableTokenRenderer {
             g2d.fillRect(x, y, tileSize, tileSize); // fallback
         }
     }
+    @Override
+    public String getDirString(Direction dir) {
+        return switch (dir) {
+            case UP,DOWN -> "HORIZONTAL_BRIDGE";
+            case LEFT,RIGHT -> "VERTICAL_BRIDGE";
+            case null -> "default_BRIDGE";
+        };
+    }
 
 }

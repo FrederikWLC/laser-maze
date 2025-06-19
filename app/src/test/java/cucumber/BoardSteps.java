@@ -53,18 +53,46 @@ public class BoardSteps extends BaseSteps {
 
     @ParameterType("(?i)laser|cell blocker|double mirror|target mirror|beam splitter|checkpoint|portal")
     public Class<? extends Token> tokenType(String name) {
-        return switch (name.toLowerCase()) {
-            case "laser" -> LaserToken.class;
-            case "cell blocker" -> CellBlockerToken.class;
-            case "double mirror" -> DoubleMirrorToken.class;
-            case "target mirror" -> TargetMirrorToken.class;
-            case "beam splitter" -> BeamSplitterToken.class;
-            case "checkpoint" -> CheckpointToken.class;
-            case "portal" -> PortalToken.class;
-            default -> throw new IllegalArgumentException("Unknown token type: " + name);
-        };
+        switch (name.toLowerCase()) {
+            case "laser":
+                return LaserToken.class;
+            case "cell blocker":
+                return CellBlockerToken.class;
+            case "double mirror":
+                return DoubleMirrorToken.class;
+            case "target mirror":
+                return TargetMirrorToken.class;
+            case "beam splitter":
+                return BeamSplitterToken.class;
+            case "checkpoint":
+                return CheckpointToken.class;
+            case "portal":
+                return PortalToken.class;
+
+        }
+        throw new IllegalArgumentException("Unknown token type: " + name);
     }
 
+    @ParameterType("(?i)laser|cell blocker|double mirror|target mirror|beam splitter|checkpoint|portal")
+    public TokenBuilder tokenBuilder(String name) {
+        switch (name.toLowerCase()) {
+            case "laser":
+                return new LaserTokenBuilder();
+            case "cell blocker":
+                return new CellBlockerTokenBuilder();
+            case "double mirror":
+                return new DoubleMirrorTokenBuilder();
+            case "target mirror":
+                return new TargetMirrorTokenBuilder();
+            case "beam splitter":
+                return new BeamSplitterTokenBuilder();
+            case "checkpoint":
+                return new CheckpointTokenBuilder();
+            case "portal":
+                return new PortalTokenBuilder();
+        }
+        throw new IllegalArgumentException("Unknown token type: " + name);
+    }
 
     @Given("^a new game is started$")
     public void aNewGameIsStarted() {

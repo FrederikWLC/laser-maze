@@ -127,9 +127,4 @@ public class LevelSteps extends BaseSteps {
     public void iPlaceATargetMirrorTokenAtBoardPosition(int x, int y) {
         // TODO: Implement this
     }
-
-    @Then("the target at \\({int}, {int}) should be activated")
-    public void theTargetAtShouldBeActivated(int x, int y) {
-        // TODO: Implement this
-    }
 }

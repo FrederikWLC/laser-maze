@@ -11,12 +11,16 @@ import model.domain.board.builder.BoardBuilder;
 import model.domain.engine.BoardEngine;
 import model.domain.engine.LaserEngine;
 import model.domain.engine.LevelEngine;
+import model.domain.level.Level;
+import model.domain.level.builder.LevelBuilder;
 import model.domain.token.base.*;
 import model.domain.token.builder.base.*;
 import model.domain.token.builder.impl.*;
 import model.domain.token.impl.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,6 +28,28 @@ public class BoardSteps extends BaseSteps {
     public Exception exception;
     public Tile tile;
     public List<PositionDirection> actualBeamPath;
+
+    @ParameterType("(?i)laser|cell blocker|double mirror|target mirror|beam splitter|checkpoint|portal")
+    public Token token(String name) {
+        switch (name.toLowerCase()) {
+            case "laser":
+                return laser;
+            case "cell blocker":
+                return cellBlocker;
+            case "double mirror":
+                return doubleMirror;
+            case "target mirror":
+                return targetMirror;
+            case "beam splitter":
+                return beamSplitter;
+            case "checkpoint":
+                return checkpoint;
+            case "portal":
+                return portal;
+        }
+
+        throw new IllegalArgumentException("Unknown token type: " + name);
+    }
 
     @ParameterType("(?i)laser|cell blocker|double mirror|target mirror|beam splitter|checkpoint|portal")
     public Class<? extends Token> tokenType(String name) {
@@ -92,6 +118,7 @@ public class BoardSteps extends BaseSteps {
     @Then("an error should occur")
     public void anErrorShouldOccur() {
         assertNotNull(exception);
+        assertTrue(exception instanceof Exception);
     }
 
     @Then("the board width should be {int}")
@@ -105,14 +132,9 @@ public class BoardSteps extends BaseSteps {
     }
 
     @Then("the tile's position should be \\({int}, {int})")
-    public void theTileSPositionShouldBe(int x, int y) {
-        assertEquals(x, tile.getX());
-        assertEquals(y, tile.getY());
-    }
-
-    @Then("the tile should return null")
-    public void theTileShouldReturnNull() {
-        assertNull(tile);
+    public void theTileSPositionShouldBe(int expectedX, int expectedY) {
+        assertEquals(expectedX, tile.getX());
+        assertEquals(expectedY, tile.getY());
     }
 
     @When("I activate the laser")
@@ -145,44 +167,198 @@ public class BoardSteps extends BaseSteps {
                         " but was " + actualBeamPath);
     }
 
+    @Then("the tile should return null")
+    public void theTileShouldReturnNull() {
+        assertNull(tile);
+    }
+
+    @And("a Cell Blocker token is preplaced on the board at \\({int}, {int})")
+    public void aCellBlockerTokenIsPreplacedOnTheBoardAt(int x, int y) {
+        cellBlocker = new CellBlockerTokenBuilder()
+                .withPosition(x,y)
+                .build();
+        BoardEngine.placeToken(board,cellBlocker, new Position(x, y));
+    }
+
+    public Token buildToken(String tokenName, Integer x, Integer y, Direction direction, boolean movable, boolean turnable) {
+        TokenBuilder tokenBuilder = tokenBuilder(tokenName);
+        if (IMutableToken.class.isAssignableFrom(tokenType(tokenName))) {
+            tokenBuilder = ((MutableTokenBuilder) tokenBuilder).withMutability(movable, turnable).withDirection(direction);
+        }
+        if (x != null && y != null) {
+            tokenBuilder = tokenBuilder.withPosition(x, y);
+        }
+        return tokenBuilder.build();
+    }
+
+    public void placeTokenOnTheBoard(Board board, String tokenName, int x, int y, Direction direction, boolean movable, boolean turnable) {
+        token = buildToken(tokenName, x, y, direction, movable, turnable);
+        saveTokenAsType(token);
+        BoardEngine.placeToken(board,token, new Position(x, y)) ;
+    }
+
+    @Given("a completely mutable {tokenName} token is placed on the board at \\({int}, {int}) facing {direction}")
+    public void aCompletelyMutableTokenIsPlacedOnTheBoardAtFacing(String tokenName,int x, int y, Direction direction) {
+        placeTokenOnTheBoard(board,tokenName,x,y,direction,true,true);
+    }
+
+    @Given("a turnable {tokenName} token is preplaced on the board at \\({int}, {int}) facing {direction}")
+    public void aTurnableTokenIsPreplacedOnTheBoardAtFacing(String tokenName,int x, int y, Direction direction) {
+        placeTokenOnTheBoard(board,tokenName,x,y,direction,false,true);
+    }
+
+    @Given("an immutable {tokenName} token is preplaced on the board at \\({int}, {int}) facing {direction}")
+    public void anImmutableTokenIsPreplacedOnTheBoardAtFacing(String tokenName,int x, int y, Direction direction) {
+        placeTokenOnTheBoard(board,tokenName,x,y,direction,false,false);
+    }
+
+    @Then("the {token} token should be movable")
+    public void theTokenShouldBeMovable(Token token) {
+        assertTrue(token.isMovable(), "Token should be movable, but is not");
+    }
+
+    @Then("the {token} token should be turnable")
+    public void theTokenShouldBeTurnable(Token token) {
+        assertTrue(token.isTurnable(), "Token should be turnable, but is not");
+    }
+
+    @Then("the {token} token should be immovable")
+    public void theTokenShouldBeImmovable(Token token) {
+        assertFalse(token.isMovable(), "Token should be immovable, but is movable");
+    }
+
+    @Then("the {token} token should be immutable")
+    public void theTokenShouldBeImmutable(Token token) {
+        assertFalse(token.isMovable(), "Token should be immutable, but is mutable");
+        assertFalse(token.isTurnable(),
+                "Token should be immutable, but is turnable");
+    }
+
+    @Given("I try to move the {token} token to \\({int}, {int})")
+    public void iTryToMoveTheTokenTo(Token token, int x, int y) {
+        try {
+            BoardEngine.moveToken(board, token, new Position(x, y));
+        } catch (Exception e) {
+            exception = e;
+        }
+    }
+
+    @Given("I move the {token} token to \\({int}, {int})")
+    public void iMoveTheTokenTo(Token token, int x, int y) {
+        BoardEngine.moveToken(board, token, new Position(x, y));
+    }
+
+    @Then("the {token} token should be at \\({int}, {int})")
+    public void theTokenShouldRemainAt(Token token, int x, int y) {
+        Tile tokenTile = board.getTile(x, y);
+        assertEquals(token,tokenTile.getToken(), "Token should be in position:"+ " (" + x + ", " + y + ")");
+        assertEquals(new Position(x, y),token.getPosition(),"Token should not change position:" + " (" + x + ", " + y + ")");
+    }
+
+    @Given("I try to turn the {token} token to face {direction}")
+    public void iTryToTurnTheTokenToFace(Token token, Direction direction) {
+        try {
+            BoardEngine.turnToken((MutableToken) token, direction);
+        } catch (Exception e) {
+            exception = e;
+        }
+    }
+
+    @Given("I turn the {token} token to face {direction}")
+    public void iTurnTheTokenToFace(Token token, Direction direction) {
+            BoardEngine.turnToken((MutableToken) token, direction);
+    }
+
+    @Then("the {token} token should face {direction}")
+    public void theTokenShouldFace(Token token, Direction direction) {
+        assertEquals(direction, ((ITurnableToken) token).getDirection(), "Token should not change direction");
+    }
+
+    public List<Token> getTokensFromTable(DataTable table) {
+        return table.asMaps(String.class, String.class)
+                .stream()
+                // keep only rows where preplaced == true
+                .map(row -> {
+                    Boolean turnable = Boolean.parseBoolean(row.get("turnable"));
+                    Boolean movable = Boolean.parseBoolean(row.get("movable"));
+                    Integer x = row.get("x") != null ? Integer.parseInt(row.get("x")) : null;
+                    Integer y = row.get("y") != null ? Integer.parseInt(row.get("y")) : null;
+                    Direction dir = row.get("dir") != null ? Direction.valueOf(row.get("dir").toUpperCase()) : null;
+                    return buildToken(row.get("token"),
+                            x,y,dir,
+                            movable, turnable);
+                    }
+                ).toList();
+    }
+
     @And("the number of targets hit by the beam path should be {int}")
-    public void theNumberOfTargetsHitShouldBe(int expected) {
-        int actual = LaserEngine.getTargetHitNumber(actualBeamPath, level.getTokens());
-        assertEquals(expected, actual);
+    public void theNumberOfTargetsHitShouldBe(int n) {
+        int actualHitCount = LaserEngine.getTargetHitNumber(actualBeamPath, level.getTokens());
+        assertEquals(n,actualHitCount,
+                "Number of targets hit should be " + n + ", but is: " + actualHitCount);
     }
 
     @And("the beam path should hit all the required targets")
     public void theBeamPathHitsAllTheRequiredTargets() {
-        assertTrue(LaserEngine.areAllRequiredTargetsHit(actualBeamPath, level.getTokens()));
+        boolean allRequiredTargetsHit = LaserEngine.areAllRequiredTargetsHit(actualBeamPath, level.getTokens());
+        assertTrue(allRequiredTargetsHit, "Beam path does not hit all required targets");
     }
 
     @And("the beam path should touch every touch-required token given by the level")
     public void theBeamPathTouchesEveryTokenOnTheBoardExceptTheOnesNotTouchRequired() {
-        assertTrue(LaserEngine.areAllTouchRequiredTokensTouched(actualBeamPath, level.getTokens()));
+        boolean allTouchRequiredTokensTouched = LaserEngine.areAllTouchRequiredTokensTouched(actualBeamPath, level.getTokens());
+        assertTrue(allTouchRequiredTokensTouched, "Beam path does not touch all touch-required tokens");
     }
 
     @And("the beam path should pass through all checkpoints")
     public void theBeamPathShouldPassThroughAllCheckpoints() {
-        assertTrue(LaserEngine.areAllCheckpointsPenetrated(actualBeamPath, level.getTokens()));
+        boolean allCheckpointsPenetrated = LaserEngine.areAllCheckpointsPenetrated(actualBeamPath, level.getTokens());
+        assertTrue(allCheckpointsPenetrated, "Beam path does not pass through all checkpoints");
     }
 
     @And("all turnable tokens should have a direction")
     public void allTurnableTokensShouldHaveADirection() {
-        level.getTokens().stream()
-                .filter(t -> t instanceof ITurnableToken)
-                .map(t -> (ITurnableToken) t)
-                .forEach(t -> assertNotNull(t.getDirection()));
+        for (Token token : level.getTokens()) {
+            if (token instanceof ITurnableToken turnableToken) {
+                assertNotNull(turnableToken.getDirection(),
+                        "Token " + token.getClass().getSimpleName() + " should have a direction, but does not");
+            }
+        }
     }
 
     @And("all tokens required to be placed should be placed on the board")
     public void allTokensRequiredToBePlacedShouldBePlacedOnTheBoard() {
-        level.getRequiredTokens().forEach(t -> assertTrue(t.isPlaced()));
+        for (Token token : level.getRequiredTokens()) {
+            assertTrue(token.isPlaced(),
+                    "Token " + token.getClass().getSimpleName() + " should be placed on the board, but is not");
+        }
     }
 
     @Given("I activate the level's laser")
     public void iActivateTheLevelsLaser() {
         LevelEngine.triggerLaserToken(level, true);
-        laser = level.getActiveLaser().orElseThrow();
+        laser = level.getActiveLaser().get();
+    }
+
+
+    @And("the first pair of the level's {tokenType} tokens are each other's twins")
+    public void theFirstPairOfTheLevelsTokensAreEachOthersTwins(Class<? extends MutableTwinToken> tokenType) {
+        List<MutableTwinToken> pair = getTwinPairOfType(tokenType, level.getTokens());
+        MutableTwinToken first  = pair.get(0);
+        MutableTwinToken second = pair.get(1);
+        first.setTwin(second);
+        second.setTwin(first);
+    }
+
+    @And("the first pair of the level's {tokenType} tokens should be each other's twins")
+    public void theFirstPairOfTheLevelsTokensShouldBeEachOthersTwins(Class<? extends MutableTwinToken> tokenType) {
+        List<MutableTwinToken> pair = getTwinPairOfType(tokenType, level.getTokens());
+        MutableTwinToken first  = pair.get(0);
+        MutableTwinToken second = pair.get(1);
+        assertEquals(second, first.getTwin(),
+                "First " + tokenType.getSimpleName() + "'s twin should be the second token of same type, but is: " + first.getTwin());
+        assertEquals(first, second.getTwin(),
+                "Second " + tokenType.getSimpleName() +"token's twin should be the first token of same type, but is: " + second.getTwin());
     }
 
     @Then("the Portal token's blue opening side should face {direction}")
@@ -194,4 +370,8 @@ public class BoardSteps extends BaseSteps {
     public void thePortalTokenSRedOpeningSideShouldFaceUp(Direction direction) {
         assertEquals(direction, portal.getRedPortalDirection());
     }
+
+    //Step definitions that need to be moved to a separate file:
+
+
 }

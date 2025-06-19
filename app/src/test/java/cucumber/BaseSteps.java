@@ -4,6 +4,7 @@ package cucumber;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.ParameterType;
 import model.domain.board.*;
+import model.domain.engine.BoardEngine;
 import model.domain.level.Level;
 import model.domain.token.base.*;
 import model.domain.token.builder.base.*;
@@ -15,6 +16,7 @@ import java.util.List;
 public abstract class BaseSteps {
     public Level level;
     public Board board;
+    public Inventory inventory;
     public Tile tile;
     public Token token;
     public LaserToken laser;
@@ -85,6 +87,29 @@ public abstract class BaseSteps {
                     return buildToken(row.get("token"), x, y, dir, movable, turnable);
                 })
                 .toList();
+    }
+
+    public void placeTokenOnTheBoard(Board board, String tokenName, int x, int y, Direction direction, boolean movable, boolean turnable) {
+        token = buildToken(tokenName, x, y, direction, movable, turnable);
+        saveTokenAsType(token);
+        BoardEngine.placeToken(board,token, new Position(x, y)) ;
+    }
+
+
+    public List<MutableTwinToken> getTwinPairOfType(Class<? extends MutableTwinToken> tokenType,List<Token> tokens) {
+        List<MutableTwinToken> pair = tokens.stream()
+                .filter(tokenType::isInstance)
+                .map(t -> (MutableTwinToken)t)
+                .limit(2)
+                .toList();
+
+        if (pair.size() < 2) {
+            throw new IllegalStateException(
+                    "Expected at least two " + tokenType.getSimpleName() + "s, but found " + pair.size()
+            );
+        }
+
+        return pair;
     }
 
 

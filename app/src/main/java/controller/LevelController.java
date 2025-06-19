@@ -16,6 +16,8 @@ import view.GamePanelUIBinder;
 public class LevelController {
     private final GamePanel gamePanel;
     private final ScreenController screenController;
+    private final SoundManager soundManager = new SoundManager();
+
 
     public LevelController(GamePanel gamePanel, ScreenController screenController) {
         this.gamePanel = gamePanel;
@@ -25,6 +27,8 @@ public class LevelController {
     public void loadLevel(int levelNumber) {
         Level level = LevelLoader.load(levelNumber);
         Board board = level.getBoard();
+        soundManager.play(SoundManager.Sound.BACKGROUND, true);
+
 
         RenderableTileFactory tileFactory = new RenderableTileFactory();
         List<RenderableTile> tiles = tileFactory.convertBoardToRenderableTiles(board);
@@ -42,6 +46,7 @@ public class LevelController {
         binder.bindAll(
                 null, null, null, null,
                 e -> {
+                    soundManager.play(SoundManager.Sound.LASER, false);
                     System.out.println("Fire Laser button clicked!");
                     gameController.triggerLaser(true);
                     List<PositionDirection> path = gameController.getCurrentLaserPath();
@@ -63,7 +68,7 @@ public class LevelController {
         );
 
 
-        InputHandler inputHandler = new InputHandler(gameController, gamePanel, tileFactory);
+        InputHandler inputHandler = new InputHandler(gameController, gamePanel, tileFactory, soundManager);
         gamePanel.addMouseListener(inputHandler);
         gamePanel.addMouseMotionListener(inputHandler);
 

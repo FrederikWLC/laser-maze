@@ -28,6 +28,7 @@ public class DoubleMirrorTokenRenderer extends TurnableTokenRenderer {
         return switch (dir) {
             case UP,DOWN -> "BACKSLASH";
             case LEFT,RIGHT -> "SLASH";
+            case null -> "default";
         };
     }
 }

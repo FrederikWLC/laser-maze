@@ -397,7 +397,80 @@ public class BoardSteps extends BaseSteps {
         assertEquals(direction, portal.getRedPortalDirection());
     }
 
-    //Step definitions that need to be moved to a separate file:
+    //Step definitions that should be  moved to a separate file (but it might be impossible):
+
+    @And("the level is initialized with id {int}, required target number {int}, a board with width {int} and height {int}, and the following tokens:")
+    public void theLevelIsInitializedWithIdRequiredTargetNumberABoardWithWidthAndHeightAndTheFollowingTokens(
+            int id, int reqTargets, int w, int h, DataTable table) {
+        level = new LevelBuilder(id)
+                .withBoardDimensions(w, h)
+                .withRequiredTargetNumber(reqTargets)
+                .withTokens(getTokensFromTable(table))
+                .build();
+        board = level.getBoard();
+    }
+
+    @Then("the level's id should be {int}")
+    public void theLevelsIdShouldBe(int id) {
+        assertEquals(id, level.getId(),
+                "Expected level id: " + id + ", but was: " + level.getId());
+    }
+
+    @And("the level's required target number should be {int}")
+    public void theLevelsRequiredTargetNumberShouldBe(int n) {
+        assertEquals(n, level.getRequiredTargetNumber(),
+                "Expected required target number: " + n + ", but was: " + level.getRequiredTargetNumber());
+    }
+
+    @And("the level's board should have width {int} and height {int}")
+    public void theLevelsBoardShouldHaveWidthAndHeight(int width, int height) {
+        assertEquals(width, level.getBoard().getWidth(),
+                "Expected board width: " + width + ", but was: " + level.getBoard().getWidth());
+        assertEquals(height, level.getBoard().getHeight(),
+                "Expected board height: " + height + ", but was: " + level.getBoard().getHeight());
+    }
+
+    @And("the level's tokens should be:")
+    public void theLevelSTokensShouldBe(DataTable table) {
+        List<Class<? extends Token>> expected = table.asMaps(String.class, String.class).stream()
+                .map(row -> tokenType(row.get("token")))
+                .collect(java.util.stream.Collectors.toList());  // 👈 fix here
+
+        List<Class<? extends Token>> actual = level.getTokens().stream()
+                .map(Token::getClass)
+                .collect(java.util.stream.Collectors.toList());  // 👈 fix here
+
+        assertEquals(expected, actual, "Level token types do not match expected");
+    }
+
+    @Given("I place token {int} \\(from the required tokens) on the board at \\({int}, {int})")
+    public void iPlaceTokenFromTheRequiredTokensOnTheBoardAt(int idx, int x, int y) {
+        token = level.getRequiredTokens().get(idx);
+        LevelEngine.placeRequiredToken(level, token, new Position(x, y));
+        saveTokenAsType(token);
+    }
+
+    @Then("the token on the board at \\({int}, {int}) should be a {tokenType} token")
+    public void theTokenOnTheBoardAtShouldBeAToken(int x, int y, Class<? extends Token> type) {
+        Tile t = board.getTile(x, y);
+        token = t.getToken();
+        assertEquals(type, token.getClass(),
+                "Token at (" + x + "," + y + ") should be " + type.getSimpleName());
+        saveTokenAsType(token);
+    }
+
+    @And("the token should be turnable without direction")
+    public void theTokenShouldBeTurnableWithoutDirection() {
+        assertTrue(token.isTurnable(), "Token should be turnable");
+        assertNull(((ITurnableToken) token).getDirection(),
+                "Token should not have a direction");
+    }
+
+    @And("the remaining number of required tokens to be placed should be {int}")
+    public void theRemainingNumberOfRequiredTokensShouldBe(int count) {
+        assertEquals(count, level.getRequiredTokens().size(),
+                "Remaining required tokens to be placed should be " + count);
+    }
 
 
 }

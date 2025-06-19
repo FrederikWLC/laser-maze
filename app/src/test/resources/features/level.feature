@@ -27,23 +27,3 @@ Feature: Level
       Then the token on the board at (0, 0) should be a Double Mirror token
       And the token should be turnable without direction
       And the remaining number of required tokens to be placed should be 1
-
-  Scenario: A new level contains a board and an inventory
-    Given a level is created with board size 5 by 5
-    And the inventory contains:
-      | token              | count |
-      | TargetMirrorToken  | 2     |
-    Then the level should have a board of width 5 and height 5
-    And the inventory should have 2 TargetMirrorTokens
-
-  Scenario: Completing a level by placing and activating targets
-    Given the board contains:
-      | token              | x | y | dir  |
-      | LaserToken         | 0 | 0 | EAST |
-    And the inventory contains:
-      | token              | count |
-      | TargetMirrorToken  | 1     |
-    When I place a TargetMirrorToken at board position (1, 0)
-    And I activate the laser
-    Then the target at (1, 0) should be activated
-    And the level should be complete

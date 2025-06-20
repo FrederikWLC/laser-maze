@@ -26,9 +26,35 @@ public abstract class BaseSteps {
     public BeamSplitterToken beamSplitter;
     public CheckpointToken checkpoint;
     public PortalToken portal;
+    public Exception exception;
+    public List<PositionDirection> actualBeamPath;
 
+    public Token getSavedToken(String name) {
+        return switch (name.toLowerCase()) {
+            case "laser" -> laser;
+            case "cell blocker" -> cellBlocker;
+            case "double mirror" -> doubleMirror;
+            case "target mirror" -> targetMirror;
+            case "beam splitter" -> beamSplitter;
+            case "checkpoint" -> checkpoint;
+            case "portal" -> portal;
+            default -> throw new IllegalArgumentException("Unknown token type: " + name);
+        };
+    }
 
-    public TokenBuilder tokenBuilder(String name) {
+    public Class<? extends Token> getTokenType(String name) {
+        return switch (name.toLowerCase()) {
+            case "laser", "lasertoken" -> LaserToken.class;
+            case "cell blocker", "cellblockertoken" -> CellBlockerToken.class;
+            case "double mirror", "doublemirrortoken" -> DoubleMirrorToken.class;
+            case "target mirror", "targetmirrortoken" -> TargetMirrorToken.class;
+            case "beam splitter", "beamsplittertoken" -> BeamSplitterToken.class;
+            case "checkpoint", "checkpointtoken" -> CheckpointToken.class;
+            case "portal", "portaltoken" -> PortalToken.class;
+            default -> throw new IllegalArgumentException("Unknown token type: " + name);
+        };
+    }
+    public TokenBuilder getTokenBuilder(String name) {
         return switch (name.toLowerCase()) {
             case "laser", "lasertoken" -> new LaserTokenBuilder();
             case "cell blocker", "cellblockertoken" -> new CellBlockerTokenBuilder();
@@ -41,22 +67,9 @@ public abstract class BaseSteps {
         };
     }
 
-    public Class<? extends Token> tokenType(String name) {
-        return switch (name.toLowerCase()) {
-            case "laser", "lasertoken" -> LaserToken.class;
-            case "cell blocker", "cellblockertoken" -> CellBlockerToken.class;
-            case "double mirror", "doublemirrortoken" -> DoubleMirrorToken.class;
-            case "target mirror", "targetmirrortoken" -> TargetMirrorToken.class;
-            case "beam splitter", "beamsplittertoken" -> BeamSplitterToken.class;
-            case "checkpoint", "checkpointtoken" -> CheckpointToken.class;
-            case "portal", "portaltoken" -> PortalToken.class;
-            default -> throw new IllegalArgumentException("Unknown token type: " + name);
-        };
-    }
-
     public Token buildToken(String tokenName, Integer x, Integer y, Direction direction, boolean movable, boolean turnable) {
-        TokenBuilder builder = tokenBuilder(tokenName);
-        if (IMutableToken.class.isAssignableFrom(tokenType(tokenName))) {
+        TokenBuilder builder = getTokenBuilder(tokenName);
+        if (IMutableToken.class.isAssignableFrom(getTokenType(tokenName))) {
             builder = ((MutableTokenBuilder) builder).withMutability(movable, turnable).withDirection(direction);
         }
         if (x != null && y != null) {
@@ -112,15 +125,6 @@ public abstract class BaseSteps {
         return pair;
     }
 
-    protected Direction direction(String dir) {
-        return switch (dir.trim().toUpperCase()) {
-            case "UP", "NORTH"    -> Direction.UP;
-            case "DOWN", "SOUTH"  -> Direction.DOWN;
-            case "LEFT", "WEST"   -> Direction.LEFT;
-            case "RIGHT", "EAST"  -> Direction.RIGHT;
-            default -> throw new IllegalArgumentException("Invalid direction string: " + dir);
-        };
-    }
 
 
 }

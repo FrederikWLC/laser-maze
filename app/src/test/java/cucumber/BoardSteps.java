@@ -25,64 +25,20 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class BoardSteps extends BaseSteps {
-    public Exception exception;
-    public Tile tile;
-    public List<PositionDirection> actualBeamPath;
 
     @ParameterType("(?i)laser|cell blocker|double mirror|target mirror|beam splitter|checkpoint|portal")
     public Token token(String name) {
-        return switch (name.toLowerCase()) {
-            case "laser" -> laser;
-            case "cell blocker" -> cellBlocker;
-            case "double mirror" -> doubleMirror;
-            case "target mirror" -> targetMirror;
-            case "beam splitter" -> beamSplitter;
-            case "checkpoint" -> checkpoint;
-            case "portal" -> portal;
-            default -> throw new IllegalArgumentException("Unknown token type: " + name);
-        };
-    }
-    @ParameterType("(?i)laser|cell blocker|double mirror|target mirror|beam splitter|checkpoint|portal")
-    public Class<? extends Token> tokenType(String name) {
-        switch (name.toLowerCase()) {
-            case "laser":
-                return LaserToken.class;
-            case "cell blocker":
-                return CellBlockerToken.class;
-            case "double mirror":
-                return DoubleMirrorToken.class;
-            case "target mirror":
-                return TargetMirrorToken.class;
-            case "beam splitter":
-                return BeamSplitterToken.class;
-            case "checkpoint":
-                return CheckpointToken.class;
-            case "portal":
-                return PortalToken.class;
-
-        }
-        throw new IllegalArgumentException("Unknown token type: " + name);
+        return getSavedToken(name);
     }
 
     @ParameterType("(?i)laser|cell blocker|double mirror|target mirror|beam splitter|checkpoint|portal")
     public TokenBuilder tokenBuilder(String name) {
-        switch (name.toLowerCase()) {
-            case "laser":
-                return new LaserTokenBuilder();
-            case "cell blocker":
-                return new CellBlockerTokenBuilder();
-            case "double mirror":
-                return new DoubleMirrorTokenBuilder();
-            case "target mirror":
-                return new TargetMirrorTokenBuilder();
-            case "beam splitter":
-                return new BeamSplitterTokenBuilder();
-            case "checkpoint":
-                return new CheckpointTokenBuilder();
-            case "portal":
-                return new PortalTokenBuilder();
-        }
-        throw new IllegalArgumentException("Unknown token type: " + name);
+        return getTokenBuilder(name);
+    }
+
+    @ParameterType("(?i)laser|cell blocker|double mirror|target mirror|beam splitter|checkpoint|portal")
+    public Class<? extends Token> tokenType(String name) {
+        return getTokenType(name);
     }
 
     @Given("^a new game is started$")
@@ -207,8 +163,8 @@ public class BoardSteps extends BaseSteps {
     }
 
     public Token buildToken(String tokenName, Integer x, Integer y, Direction direction, boolean movable, boolean turnable) {
-        TokenBuilder tokenBuilder = tokenBuilder(tokenName);
-        if (IMutableToken.class.isAssignableFrom(tokenType(tokenName))) {
+        TokenBuilder tokenBuilder = getTokenBuilder(tokenName);
+        if (IMutableToken.class.isAssignableFrom(getTokenType(tokenName))) {
             tokenBuilder = ((MutableTokenBuilder) tokenBuilder).withMutability(movable, turnable).withDirection(direction);
         }
         if (x != null && y != null) {
@@ -433,7 +389,7 @@ public class BoardSteps extends BaseSteps {
     @And("the level's tokens should be:")
     public void theLevelSTokensShouldBe(DataTable table) {
         List<Class<? extends Token>> expected = table.asMaps(String.class, String.class).stream()
-                .map(row -> tokenType(row.get("token")))
+                .map(row -> getTokenType(row.get("token")))
                 .collect(java.util.stream.Collectors.toList());  // 👈 fix here
 
         List<Class<? extends Token>> actual = level.getTokens().stream()
@@ -482,7 +438,6 @@ public class BoardSteps extends BaseSteps {
         LevelEngine.updateAndCheckLevelCompletionState(level);
         assertTrue(level.isComplete(), "Level should be complete, but is not");
     }
-
 
 
 }

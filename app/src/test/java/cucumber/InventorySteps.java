@@ -22,7 +22,7 @@ public class InventorySteps extends BaseSteps {
 
     @Given("a level is initialized with:")
     public void aLevelIsInitializedWith(DataTable table) {
-        board = new BoardBuilder().withDimensions(5, 5).build(); // Fix: initialize board here
+        board = new BoardBuilder().withDimensions(5, 5).build();
 
         List<Token> tokens = table.asMaps(String.class, String.class)
                 .stream()
@@ -34,7 +34,14 @@ public class InventorySteps extends BaseSteps {
                 })
                 .toList();
 
-        inventory = new Inventory(tokens);
+        inventory = new Inventory();
+
+        for (int i = 0; i < tokens.size(); i++) {
+            Token t = tokens.get(i);
+            Position p = new Position(i, 0);
+            t.setPosition(p);
+            inventory.getTile(p.getX(), p.getY()).setToken(t);
+        }
 
         level = new LevelBuilder(0)
                 .withBoard(board)
@@ -44,7 +51,6 @@ public class InventorySteps extends BaseSteps {
 
         board = level.getBoard();
     }
-
     @Then("the inventory should contain {int} tokens total")
     public void theInventoryShouldContainTokensTotal(int expectedCount) {
         assertEquals(expectedCount, inventory.getTotalTokenCount(),

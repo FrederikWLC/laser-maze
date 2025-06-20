@@ -2,6 +2,8 @@ package controller;
 
 import model.domain.board.Board;
 import model.domain.board.PositionDirection;
+import model.domain.board.TileContainer;
+import model.domain.board.builder.InventoryBuilder;
 import model.domain.level.Level;
 import model.persistence.LevelLoader;
 import model.domain.token.base.Token;
@@ -19,7 +21,7 @@ public class LevelController {
     private final GamePanel gamePanel;
     private final ScreenController screenController;
     private final SoundManager soundManager = new SoundManager();
-    private int currentLevelNumber = -1;
+    private int currentLevelNumber;
 
     public LevelController(GamePanel gamePanel, ScreenController screenController) {
         this.gamePanel = gamePanel;
@@ -29,38 +31,53 @@ public class LevelController {
     public void loadLevel(int levelNumber) {
         this.currentLevelNumber = levelNumber;
 
-        // 🔁 Reset any old UI or listeners before reloading
+
         gamePanel.resetBoardUI();
         gamePanel.clearMouseListeners();
         gamePanel.createControlButtons();
         gamePanel.showBoardUI();
 
-        // ✅ Load level data
+
         Level level = LevelLoader.load(levelNumber);
         Board board = level.getBoard();
 
-        // 🔊 Start fresh background music
+
         soundManager.stopBackground(); // ensure old track doesn't stack
         soundManager.play(SoundManager.Sound.BACKGROUND, true);
 
-        // 🎨 Prepare renderable tiles
+        TileContainer inventory = InventoryBuilder.buildInventory(level.getRequiredTokens());
+        level.setInventory(inventory);
+
         RenderableTileFactory tileFactory = new RenderableTileFactory();
+
+        gamePanel.setInventory(inventory);
+        List<RenderableTile> inventoryTiles = tileFactory.convertBoardToRenderableTiles(inventory);
+        gamePanel.setInventoryTilesToRender(inventoryTiles);
+
+
         List<RenderableTile> tiles = tileFactory.convertBoardToRenderableTiles(board);
         gamePanel.setTilesToRender(tiles);
 
-        // 🎮 Setup game logic
         GameController gameController = new GameController(level);
 
-        // 🔫 Fire Laser button behavior
+        if (!gamePanel.hasFireLaserButton()) {
+            gamePanel.createFireLaserButton();
+
+        }
+
         GamePanelUIBinder binder = new GamePanelUIBinder(gamePanel);
+
         binder.bindAll(
                 null, null, null, null,
                 e -> {
                     soundManager.play(SoundManager.Sound.LASER, false);
+                    System.out.println("Fire Laser button clicked!");
                     gameController.triggerLaser(true);
                     List<PositionDirection> path = gameController.getCurrentLaserPath();
 
+                    System.out.println("Laser path size: " + path.size());
                     gamePanel.setLaserPath(path);
+
                     gamePanel.getControlPanel().boardRenderer.setLaserPath(path);
                     gamePanel.getControlPanel().boardRenderer.repaint();
 
@@ -73,16 +90,22 @@ public class LevelController {
                 null
         );
 
-        // 🖱️ Attach fresh input handler
-        InputHandler inputHandler = new InputHandler(gameController, gamePanel, tileFactory, soundManager);
+        TokenDragController dragController = new TokenDragController();
+        InputHandler inputHandler = new InputHandler(
+                gameController,
+                gamePanel,
+                tileFactory,
+                soundManager,
+                inventory,
+                dragController
+        );
         gamePanel.addMouseListener(inputHandler);
         gamePanel.addMouseMotionListener(inputHandler);
 
-        // 🖥️ Show board
         screenController.showBoardScreen(tiles);
         gamePanel.repaint();
 
-        // 🔘 Control buttons setup
+        //control buttons
         JButton restart = gamePanel.getRestartButton();
         JButton exit = gamePanel.getExitButton();
         JButton saveExit = gamePanel.getSaveAndExitButton();

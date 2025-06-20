@@ -51,6 +51,7 @@ public class InputHandler implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        soundManager.play(SoundManager.Sound.CLICK, false);
         Position clicked = gamePanel.screenToBoard(e.getX(), e.getY());
         if (clicked == null) return;
 

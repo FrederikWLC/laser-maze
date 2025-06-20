@@ -58,7 +58,6 @@ public class LevelController {
         List<RenderableTile> tiles = tileFactory.convertBoardToRenderableTiles(board);
         gamePanel.setTilesToRender(tiles);
 
-        // 🎮 Setup game logic
         GameController gameController = new GameController(level);
 
         if (!gamePanel.hasFireLaserButton()) {

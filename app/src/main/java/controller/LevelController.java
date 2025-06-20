@@ -19,7 +19,7 @@ public class LevelController {
     private final GamePanel gamePanel;
     private final ScreenController screenController;
     private final SoundManager soundManager = new SoundManager();
-
+    private int currentLevelNumber;
 
     public LevelController(GamePanel gamePanel, ScreenController screenController) {
         this.gamePanel = gamePanel;

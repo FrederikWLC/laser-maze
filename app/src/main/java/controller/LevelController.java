@@ -2,6 +2,8 @@ package controller;
 
 import model.domain.board.Board;
 import model.domain.board.PositionDirection;
+import model.domain.board.TileContainer;
+import model.domain.board.builder.InventoryBuilder;
 import model.domain.level.Level;
 import model.domain.token.base.ITurnableToken;
 import model.domain.token.base.Token;
@@ -29,8 +31,16 @@ public class LevelController {
         Board board = level.getBoard();
         soundManager.play(SoundManager.Sound.BACKGROUND, true);
 
+        TileContainer inventory = InventoryBuilder.buildInventory(level.getRequiredTokens());
+        level.setInventory(inventory); // You'll need a setter for this in Level
 
         RenderableTileFactory tileFactory = new RenderableTileFactory();
+
+        gamePanel.setInventory(inventory);
+        List<RenderableTile> inventoryTiles = tileFactory.convertBoardToRenderableTiles(inventory);
+        gamePanel.setInventoryTilesToRender(inventoryTiles);
+
+
         List<RenderableTile> tiles = tileFactory.convertBoardToRenderableTiles(board);
         gamePanel.setTilesToRender(tiles);
 
@@ -67,8 +77,15 @@ public class LevelController {
                 null
         );
 
-
-        InputHandler inputHandler = new InputHandler(gameController, gamePanel, tileFactory, soundManager);
+        TokenDragController dragController = new TokenDragController();
+        InputHandler inputHandler = new InputHandler(
+                gameController,
+                gamePanel,
+                tileFactory,
+                soundManager,
+                inventory,
+                dragController
+        );
         gamePanel.addMouseListener(inputHandler);
         gamePanel.addMouseMotionListener(inputHandler);
 

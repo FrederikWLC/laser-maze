@@ -25,6 +25,11 @@ public class BoardRendererPanel extends JPanel {
 
     private int visibleLaserSegments = 0;
 
+    private List<RenderableTile> inventoryTilesToRender;
+    private int inventoryStartX = 100;
+    private int inventoryStartY = 520; // below board
+    private int inventoryTileSize = 60;
+
 
     public BoardRendererPanel() {
 
@@ -37,6 +42,11 @@ public class BoardRendererPanel extends JPanel {
     // Setters
     public void setTilesToRender(List<RenderableTile> tiles) {
         this.tilesToRender = tiles;
+        repaint();
+    }
+
+    public void setInventoryTilesToRender(List<RenderableTile> tiles) {
+        this.inventoryTilesToRender = tiles;
         repaint();
     }
 
@@ -94,6 +104,28 @@ public class BoardRendererPanel extends JPanel {
 
         }
 
+        // Draw inventory tokens
+        for (int i = 0; i < 5; i++) {
+            int x = inventoryStartX + i * (inventoryTileSize + 10);
+            int y = inventoryStartY;
+
+            RenderableTile tile = findMatchingInventoryTile(i);
+            if (tile != null) {
+                drawToken(g2d, tile.getTokenType(), tile.getDirection(), x, y, inventoryTileSize);
+            } else {
+                BufferedImage emptyTile = tokenImages.get("EmptyCell.png");
+                if (emptyTile != null) {
+                    g2d.drawImage(emptyTile, x, y, inventoryTileSize, inventoryTileSize, null);
+                } else {
+                    g2d.setColor(Color.LIGHT_GRAY);
+                    g2d.fillRect(x, y, inventoryTileSize, inventoryTileSize);
+                }
+            }
+
+            g2d.setColor(Color.DARK_GRAY);
+            g2d.drawRect(x, y, inventoryTileSize, inventoryTileSize);
+        }
+
         // Draw laser path
         if (laserPath != null && !laserPath.isEmpty()) {
             for (PositionDirection pd : laserPath) {
@@ -123,6 +155,15 @@ public class BoardRendererPanel extends JPanel {
         if (tilesToRender == null) return null;
         for (RenderableTile tile : tilesToRender) {
             if (tile.getX() == x && tile.getY() == y) {
+                return tile;
+            }
+        }
+        return null;
+    }
+    private RenderableTile findMatchingInventoryTile(int x) {
+        if (inventoryTilesToRender == null) return null;
+        for (RenderableTile tile : inventoryTilesToRender) {
+            if (tile.getX() == x && tile.getY() == 0) {
                 return tile;
             }
         }

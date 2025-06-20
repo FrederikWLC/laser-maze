@@ -11,6 +11,7 @@ import java.util.HashMap;
 import model.domain.board.Position;
 import model.domain.board.PositionDirection;
 
+import model.domain.board.TileContainer;
 import view.util.TokenImageLoader;
 import view.util.GameUIBuilder;
 import view.rendering.DrawableManager;
@@ -256,5 +257,45 @@ public class GamePanel extends JPanel {
 
     public JButton getFireLaserButton() {
         return fireLaserButton;
+    }
+
+    private TileContainer inventory;
+
+    public void setInventory(TileContainer inventory) {
+        this.inventory = inventory;
+    }
+
+    public void setInventoryTilesToRender(List<RenderableTile> tiles) {
+        boardRenderer.setInventoryTilesToRender(tiles);
+    }
+
+    public Position screenToInventory(int pixelX, int pixelY) {
+        int tileSize = 60;
+        int padding = 10;
+        int offsetX = 100;
+        int offsetY = 520;
+
+        int x = pixelX - offsetX;
+        int y = pixelY - offsetY;
+
+        if (y < 0 || y > tileSize) return null;
+
+        int col = x / (tileSize + padding);
+        if (col < 0 || col >= 5) return null; // assuming max 5 inventory slots
+
+        return new Position(col, 0);
+    }
+    public boolean isInventoryArea(int pixelX, int pixelY) {
+        return pixelY >= 520 && pixelY <= 580; // matches inventoryStartY + tileSize
+    }
+    public boolean isBoardArea(int x, int y) {
+        int tileSize = ViewConfig.TILE_SIZE;
+        int boardX = ViewConfig.BOARD_OFFSET_X;
+        int boardY = ViewConfig.BOARD_OFFSET_Y;
+        int boardWidth = 5 * tileSize;
+        int boardHeight = 5 * tileSize;
+
+        return x >= boardX && x < boardX + boardWidth &&
+                y >= boardY && y < boardY + boardHeight;
     }
 }

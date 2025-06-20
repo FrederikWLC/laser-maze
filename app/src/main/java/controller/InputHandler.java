@@ -3,6 +3,7 @@ package controller;
 import model.domain.board.Position;
 import model.domain.board.TileContainer;
 import model.domain.token.base.Token;
+import model.domain.token.base.ITurnableToken;
 import view.GamePanel;
 import view.RenderableTile;
 
@@ -11,8 +12,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.List;
-import model.domain.token.base.ITurnableToken;
-
 
 public class InputHandler implements MouseListener, MouseMotionListener {
     private final GameController gameController;
@@ -50,15 +49,10 @@ public class InputHandler implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        soundManager.play(SoundManager.Sound.CLICK, false);
         Position clicked = gamePanel.screenToBoard(e.getX(), e.getY());
         if (clicked == null) return;
 
-        Token token = gameController.getTokenAt(clicked);
-        if (token == null) {
-            System.out.println("No token at: " + clicked);
-            return;
-        }
+        soundManager.play(SoundManager.Sound.CLICK, false);
 
         if (token instanceof ITurnableToken turnable && token.isTurnable()) {
             gameController.rotateTokenClockwise(turnable);

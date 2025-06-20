@@ -10,6 +10,7 @@ import java.util.function.IntConsumer;
 public class ScreenController {
     private final GamePanel gamePanel;
     private final MainController mainController;
+    private final SoundManager soundManager = new SoundManager();
 
     private DisplayManager titleScreen;
     private DisplayManager levelSelectScreen;
@@ -22,14 +23,21 @@ public class ScreenController {
     public void setupScreens(IntConsumer onLevelSelectClick) {
         GamePanelUIBinder binder = new GamePanelUIBinder(gamePanel);
         binder.bindAll(
-                () -> gamePanel.switchToScreen(levelSelectScreen), // single player
-                () -> {}, // multiplayer (if unused for now)
-                () -> System.exit(0), // quit
-                () -> gamePanel.switchToScreen(titleScreen), // back
-                null, // fireLaser (set later in LevelController)
+                () -> {
+                    soundManager.stopBackground();
+                    cleanupGameUI();
+                    gamePanel.switchToScreen(levelSelectScreen);
+                },
+                () -> {}, // Multiplayer
+                () -> System.exit(0),
+                () -> {
+                    soundManager.stopBackground();
+                    cleanupGameUI();
+                    gamePanel.switchToScreen(titleScreen);
+                },
+                null,
                 onLevelSelectClick
         );
-
 
         try {
             BufferedImage bg = ImageIO.read(getClass().getResource("/background/thelasermaze.jpeg"));
@@ -42,6 +50,8 @@ public class ScreenController {
     }
 
     public void showTitleScreen() {
+        soundManager.stopBackground(); // Ensure music stops
+        cleanupGameUI();
         gamePanel.switchToScreen(titleScreen);
     }
 
@@ -52,6 +62,7 @@ public class ScreenController {
                 gamePanel.getTokenImages()
         );
         gamePanel.switchToScreen(boardScreen);
+        gamePanel.showBoardUI(); // 👈 Show buttons + renderer again
     }
 
     public MainController getMainController() {
@@ -62,4 +73,10 @@ public class ScreenController {
         gamePanel.setFireLaserListener(fireLaserListener);
     }
 
+    private void cleanupGameUI() {
+        gamePanel.clearLaserPath();
+        gamePanel.clearGameplayButtons();
+        gamePanel.clearMouseListeners();
+        gamePanel.resetBoardUI();
+    }
 }

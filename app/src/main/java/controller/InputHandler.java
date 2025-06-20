@@ -55,7 +55,6 @@ public class InputHandler implements MouseListener, MouseMotionListener {
         if (clicked == null) return;
 
         soundManager.play(SoundManager.Sound.CLICK, false);
-        Position clicked = gamePanel.screenToBoard(e.getX(), e.getY());
 
         Token token = gameController.getTokenAt(clicked);
         if (token == null) {

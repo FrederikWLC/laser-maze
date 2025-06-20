@@ -30,6 +30,9 @@ public class BoardRendererPanel extends JPanel {
     private int inventoryStartY = 520; // below board
     private int inventoryTileSize = 60;
 
+    private Point dragMousePosition = null;
+    private Token currentlyDraggedToken = null;
+
 
     public BoardRendererPanel() {
 
@@ -69,6 +72,16 @@ public class BoardRendererPanel extends JPanel {
     public void setTurnableRenderers(Map<String, ITurnableTokenRenderer> renderers) {
         this.turnableRenderers = renderers;
 
+    }
+
+    //token dragging methods
+    public void setDragMousePosition(Point p) {
+        this.dragMousePosition = p;
+        repaint();
+    }
+
+    public void setCurrentlyDraggedToken(Token token) {
+        this.currentlyDraggedToken = token;
     }
 
     @Override
@@ -124,6 +137,20 @@ public class BoardRendererPanel extends JPanel {
 
             g2d.setColor(Color.DARK_GRAY);
             g2d.drawRect(x, y, inventoryTileSize, inventoryTileSize);
+        }
+
+        //Draw dragged token
+        if (dragMousePosition != null && currentlyDraggedToken != null) {
+            String type = currentlyDraggedToken.getClass().getSimpleName();
+            Direction dir = currentlyDraggedToken instanceof ITurnableToken turnable ? turnable.getDirection() : null;
+
+            int dragTileSize = 50; // smaller image
+            int x = dragMousePosition.x - dragTileSize / 2;
+            int y = dragMousePosition.y - dragTileSize / 2;
+
+            drawToken(g2d, type, dir, x, y, dragTileSize);
+
+            drawToken(g2d, type, dir, x, y, tileSize);
         }
 
         // Draw laser path

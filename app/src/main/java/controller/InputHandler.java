@@ -6,6 +6,7 @@ import model.domain.token.base.Token;
 import view.GamePanel;
 import view.RenderableTile;
 
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -20,6 +21,7 @@ public class InputHandler implements MouseListener, MouseMotionListener {
     private final SoundManager soundManager;
     private final TileContainer inventory;
     private final TokenDragController dragController;
+    private Point mousePosition = null;
 
     public InputHandler(GameController gameController, GamePanel gamePanel, RenderableTileFactory tileFactory, SoundManager soundManager, TileContainer inventory, TokenDragController dragController) {
         this.gameController = gameController;
@@ -46,21 +48,6 @@ public class InputHandler implements MouseListener, MouseMotionListener {
         gamePanel.getControlPanel().boardRenderer.repaint();
     }
 
-    /*
-    private void refreshBoardAndInventoryView() {
-        List<RenderableTile> updatedTiles = tileFactory.convertBoardToRenderableTiles(
-                gameController.getLevel().getBoard()
-        );
-        List<RenderableTile> boardTiles = tileFactory.convertBoardToRenderableTiles(gameController.getLevel().getBoard());
-
-
-        gamePanel.setTilesToRender(updatedTiles);
-        gamePanel.repaint();
-
-        gamePanel.getControlPanel().boardRenderer.setTilesToRender(updatedTiles);
-        gamePanel.getControlPanel().boardRenderer.repaint();
-    }
-*/
     @Override
     public void mouseClicked(MouseEvent e) {
         soundManager.play(SoundManager.Sound.CLICK, false);
@@ -92,6 +79,11 @@ public class InputHandler implements MouseListener, MouseMotionListener {
             dragController.startDrag(inventory, inventoryPos);
         }
 
+        // Provide dragged token to the renderer
+        Token dragged = dragController.getDraggedToken();
+        gamePanel.getControlPanel().boardRenderer.setCurrentlyDraggedToken(dragged);
+
+
         refreshBoardAndInventoryView();
     }
 
@@ -100,19 +92,26 @@ public class InputHandler implements MouseListener, MouseMotionListener {
         Position boardPos = gamePanel.screenToBoard(e.getX(), e.getY());
         Position inventoryPos = gamePanel.screenToInventory(e.getX(), e.getY());
 
+        // Try dropping in either valid area
         if (gamePanel.isBoardArea(e.getX(), e.getY())) {
             dragController.drop(gameController.getLevel().getBoard(), boardPos);
         } else if (gamePanel.isInventoryArea(e.getX(), e.getY())) {
             dragController.drop(inventory, inventoryPos);
         }
 
-        refreshBoardAndInventoryView();
+        // Clear ghost image always
+        gamePanel.getControlPanel().boardRenderer.setDragMousePosition(null);
+        gamePanel.getControlPanel().boardRenderer.setCurrentlyDraggedToken(null);
+        gamePanel.repaint();
 
+        refreshBoardAndInventoryView();
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        // Optional: implement if you want drag movement for tokens
+        mousePosition = e.getPoint(); // update cursor location
+        gamePanel.getControlPanel().boardRenderer.setDragMousePosition(mousePosition);
+        gamePanel.repaint();
     }
 
 

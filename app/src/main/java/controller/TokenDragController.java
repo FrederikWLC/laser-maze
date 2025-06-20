@@ -1,8 +1,10 @@
 package controller;
 
+import model.domain.board.Direction;
 import model.domain.board.Inventory;
 import model.domain.board.Position;
 import model.domain.board.TileContainer;
+import model.domain.token.base.ITurnableToken;
 import model.domain.token.base.Token;
 
 public class TokenDragController {
@@ -36,6 +38,10 @@ public class TokenDragController {
             return;
         }
 
+        if (draggedToken instanceof ITurnableToken turnable && turnable.getDirection() == null) {
+            turnable.setDirection(Direction.UP); // Safe default direction
+        }
+
         // Remove from source
         source.getTile(origin.getX(), origin.getY()).setToken(null);
 
@@ -46,10 +52,15 @@ public class TokenDragController {
         cancel();
     }
 
+    public Token getDraggedToken() {
+        return draggedToken;
+    }
+
 
     public void cancel() {
         draggedToken = null;
         origin = null;
         source = null;
     }
+
 }

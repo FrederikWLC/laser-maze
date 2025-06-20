@@ -11,11 +11,15 @@ import model.domain.token.base.ILaserToken;
 import model.domain.token.base.ITurnableToken;
 import model.domain.token.base.Token;
 
+import javax.swing.*;
 import java.util.List;
 
 public class GameController {
     private Level level;
     private List<PositionDirection> beamPath = List.of();
+    private JButton restartButton;
+    private JButton exitButton;
+    private JButton saveAndExitButton;
 
 
     public GameController(Level level) {
@@ -74,5 +78,19 @@ public class GameController {
 
     public Level getLevel() {
         return level;
+    }
+
+
+    // Add these getters:
+    public JButton getRestartButton() {
+        return restartButton;
+    }
+
+    public JButton getExitButton() {
+        return exitButton;
+    }
+
+    public JButton getSaveAndExitButton() {
+        return saveAndExitButton;
     }
 }

@@ -39,11 +39,17 @@ public class GameController {
         }
     }
 
-    public void rotateTokenClockwise(Token token) {
-        Direction current = ((ITurnableToken) token).getDirection();
-        Direction next = current.rotateClockwise();
-        rotateToken(token, next);
+    public void rotateTokenClockwise(ITurnableToken token) {
+        if (token == null) return;
+
+        Direction current = token.getDirection();
+        if (current == null) {
+            token.setDirection(Direction.UP);
+        } else {
+            token.setDirection(current.rotateClockwise());
+        }
     }
+
 
 
     public void rotateToken(Token token, Direction direction) {

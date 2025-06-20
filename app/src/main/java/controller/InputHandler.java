@@ -9,6 +9,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.List;
+import model.domain.token.base.ITurnableToken;
+
 
 public class InputHandler implements MouseListener, MouseMotionListener {
     private final GameController gameController;
@@ -34,7 +36,10 @@ public class InputHandler implements MouseListener, MouseMotionListener {
             return;
         }
 
-        gameController.rotateTokenClockwise(token);
+        if (token instanceof ITurnableToken turnable) {
+            gameController.rotateTokenClockwise(turnable);
+        }
+
         List<RenderableTile> updatedTiles = tileFactory.convertBoardToRenderableTiles(
                 gameController.getLevel().getBoard()
         );

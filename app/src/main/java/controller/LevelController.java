@@ -31,22 +31,22 @@ public class LevelController {
     public void loadLevel(int levelNumber) {
         this.currentLevelNumber = levelNumber;
 
-        // 🔁 Reset any old UI or listeners before reloading
+
         gamePanel.resetBoardUI();
         gamePanel.clearMouseListeners();
         gamePanel.createControlButtons();
         gamePanel.showBoardUI();
 
-        // ✅ Load level data
+
         Level level = LevelLoader.load(levelNumber);
         Board board = level.getBoard();
 
-        // 🔊 Start fresh background music
+
         soundManager.stopBackground(); // ensure old track doesn't stack
         soundManager.play(SoundManager.Sound.BACKGROUND, true);
 
         TileContainer inventory = InventoryBuilder.buildInventory(level.getRequiredTokens());
-        level.setInventory(inventory); // You'll need a setter for this in Level
+        level.setInventory(inventory);
 
         RenderableTileFactory tileFactory = new RenderableTileFactory();
 
@@ -106,7 +106,7 @@ public class LevelController {
         screenController.showBoardScreen(tiles);
         gamePanel.repaint();
 
-        // 🔘 Control buttons setup
+        //control buttons
         JButton restart = gamePanel.getRestartButton();
         JButton exit = gamePanel.getExitButton();
         JButton saveExit = gamePanel.getSaveAndExitButton();

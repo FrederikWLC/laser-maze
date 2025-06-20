@@ -3,9 +3,7 @@ package controller;
 import model.domain.board.Board;
 import model.domain.board.PositionDirection;
 import model.domain.level.Level;
-import model.domain.token.base.ITurnableToken;
-import model.domain.token.base.Token;
-import model.persistence.LevelLoader;
+import model.persistence.SavedLevelLoader;
 import view.GamePanel;
 import view.RenderableTile;
 
@@ -25,7 +23,7 @@ public class LevelController {
     }
 
     public void loadLevel(int levelNumber) {
-        Level level = LevelLoader.load(levelNumber);
+        Level level = SavedLevelLoader.load(levelNumber);
         Board board = level.getBoard();
         soundManager.play(SoundManager.Sound.BACKGROUND, true);
 

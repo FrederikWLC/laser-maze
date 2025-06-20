@@ -144,13 +144,11 @@ public class BoardRendererPanel extends JPanel {
             String type = currentlyDraggedToken.getClass().getSimpleName();
             Direction dir = currentlyDraggedToken instanceof ITurnableToken turnable ? turnable.getDirection() : null;
 
-            int dragTileSize = 50; // smaller image
+            int dragTileSize = 40; // smaller image
             int x = dragMousePosition.x - dragTileSize / 2;
             int y = dragMousePosition.y - dragTileSize / 2;
 
             drawToken(g2d, type, dir, x, y, dragTileSize);
-
-            drawToken(g2d, type, dir, x, y, tileSize);
         }
 
         // Draw laser path

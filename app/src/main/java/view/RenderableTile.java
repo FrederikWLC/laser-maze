@@ -13,8 +13,9 @@ public class RenderableTile {
     private boolean isTurnable;
     private boolean isMovable;
     private final Token token;
+    private final boolean isRequiredTarget;
 
-    public RenderableTile(int x, int y, String tokenType, Direction direction, Token token, boolean isTurnable, boolean isMovable) {
+    public RenderableTile(int x, int y, String tokenType, Direction direction, Token token, boolean isTurnable, boolean isMovable, boolean isRequiredTarget) {
         this.x = x;
         this.y = y;
         this.tokenType = tokenType;
@@ -22,6 +23,7 @@ public class RenderableTile {
         this.token = token;
         this.isTurnable = isTurnable;
         this.isMovable = isMovable;
+        this.isRequiredTarget = isRequiredTarget;
     }
 
     public int getX() { return x; }
@@ -42,6 +44,10 @@ public class RenderableTile {
         this.isTurnable = isTurnable;
     }
     public Token getToken() { return token; }
+
+    public boolean isRequiredTarget() {
+        return isRequiredTarget;
+    }
 
 }
 

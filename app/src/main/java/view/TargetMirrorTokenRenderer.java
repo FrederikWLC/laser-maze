@@ -12,6 +12,8 @@ import java.awt.AlphaComposite;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Color;
+import model.domain.token.base.ITargetToken;
+
 
 
 
@@ -26,7 +28,14 @@ public class TargetMirrorTokenRenderer extends TurnableTokenRenderer {
     public void render(Graphics2D g2d, ITurnableToken token, int x, int y, int size) {
 
         Direction dir = token.getDirection();
-        String key = "PurpleTarget-TARGET_ON_" + getDirString(dir) + ".png";
+
+        String key;
+        if (token instanceof ITargetToken targetToken && targetToken.isRequiredTarget()) {
+            key = "PurpleTarget-TARGET_ON_" + getDirString(dir) + "-M.png";
+        } else {
+            key = "PurpleTarget-TARGET_ON_" + getDirString(dir) + ".png";
+        }
+
         BufferedImage img = tokenImages.get(key);
 
         if (img != null) {

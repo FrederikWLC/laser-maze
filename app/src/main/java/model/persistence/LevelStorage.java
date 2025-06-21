@@ -6,6 +6,8 @@ import model.domain.token.builder.impl.*;
 
 import java.util.List;
 import java.util.stream.Stream;
+import model.domain.token.impl.PortalToken;
+
 
 public class LevelStorage {
 
@@ -16,12 +18,12 @@ public class LevelStorage {
                 return List.of(
                         new LaserTokenBuilder().withMutability(false,false).withPosition(1,1).withDirection(Direction.DOWN).build(),
                         new TargetMirrorTokenBuilder().withMutability(false,false).withPosition(3,3).withDirection(Direction.LEFT).withRequiredTarget().build()
+
                 );
             case 2:
                 return List.of(
                         new LaserTokenBuilder().withMutability(false,true).withPosition(0,4).withDirection(Direction.DOWN).build(),
                         new TargetMirrorTokenBuilder().withMutability(false,false).withPosition(0,3).withDirection(Direction.LEFT).build(),
-                        new CheckpointTokenBuilder().withMutability(false,false).withPosition(2,4).build(),
                         new TargetMirrorTokenBuilder().withMutability(false,false).withPosition(4,0).withDirection(Direction.DOWN).withRequiredTarget().build()
                 );
             case 3:
@@ -37,13 +39,13 @@ public class LevelStorage {
                         new CheckpointTokenBuilder().withMutability(false,false).withPosition(0,1).withDirection(Direction.DOWN).build(),
                         new TargetMirrorTokenBuilder().withMutability(false,true).withPosition(0,4).build()
                 );
-            case 17:
+            case 5:
                 return List.of(
                         new LaserTokenBuilder().withMutability(false,true).withPosition(0,0).build(),
                         new TargetMirrorTokenBuilder().withMutability(false,true).withPosition(4,0).withRequiredTarget().build(),
                         new DoubleMirrorTokenBuilder().withMutability(false,false).withPosition(3,1).withDirection(Direction.LEFT).build()
                 );
-            case 18:
+            case 6:
                 return List.of(
                         new CheckpointTokenBuilder().withMutability(false,true).withPosition(2,1).build(),
                         new TargetMirrorTokenBuilder().withMutability(false,true).withPosition(2,4).withRequiredTarget().build(),
@@ -52,7 +54,7 @@ public class LevelStorage {
                         new TargetMirrorTokenBuilder().withMutability(false,true).withPosition(3,3).build(),
                         new TargetMirrorTokenBuilder().withMutability(false,true).withPosition(3,4).build()
                         );
-            case 28:
+            case 7:
                 return List.of(
                         new TargetMirrorTokenBuilder().withMutability(false,false).withPosition(1,2).withDirection(Direction.RIGHT).build(),
                         new DoubleMirrorTokenBuilder().withMutability(false,false).withPosition(2,2).withDirection(Direction.RIGHT).build(),
@@ -60,7 +62,7 @@ public class LevelStorage {
                         new TargetMirrorTokenBuilder().withMutability(false,false).withPosition(3,3).withDirection(Direction.RIGHT).build(),
                         new LaserTokenBuilder().withMutability(false,true).withPosition(4,2).withDirection(Direction.DOWN).build()
                 );
-            case 30:
+            case 8:
                 return List.of(
                         new TargetMirrorTokenBuilder().withMutability(false,false).withPosition(3,3).build(),
                         new TargetMirrorTokenBuilder().withMutability(false,false).withPosition(3,1).build(),
@@ -70,7 +72,7 @@ public class LevelStorage {
                         new CheckpointTokenBuilder().withMutability(false,true).withPosition(1,2).build(),
                         new BeamSplitterTokenBuilder().withMutability(false,false).withPosition(2,3).withDirection(Direction.RIGHT).build()
                         );
-            case 33:
+            case 9:
                 return List.of(
                         new LaserTokenBuilder().withMutability(false,true).withPosition(0,3).build(),
                         new DoubleMirrorTokenBuilder().withMutability(false,true).withPosition(2,1).build(),
@@ -78,14 +80,14 @@ public class LevelStorage {
                         new TargetMirrorTokenBuilder().withMutability(false,true).withPosition(4,1).withRequiredTarget().build(),
                         new TargetMirrorTokenBuilder().withMutability(false,true).withPosition(3,4).withRequiredTarget().build()
                         );
-            case 34:
+            case 10:
                 return List.of(
                         new LaserTokenBuilder().withMutability(false,false).withPosition(2,0).withDirection(Direction.DOWN).build(),
                         new TargetMirrorTokenBuilder().withMutability(false,false).withPosition(3,1).withDirection(Direction.LEFT).withRequiredTarget().build(),
                         new CheckpointTokenBuilder().withMutability(false,true).withPosition(3,2).build(),
                         new DoubleMirrorTokenBuilder().withMutability(false,false).withPosition(0,3).withDirection(Direction.DOWN).build()
                 );
-            case 36:
+            case 11:
                 return List.of(
                         new LaserTokenBuilder().withMutability(false,true).withPosition(3,1).build(),
                         new TargetMirrorTokenBuilder().withMutability(false,true).withPosition(2,0).withRequiredTarget().build(),
@@ -96,7 +98,7 @@ public class LevelStorage {
                         new CheckpointTokenBuilder().withMutability(false,true).withPosition(1,1).withDirection(Direction.LEFT).build(),
                         new BeamSplitterTokenBuilder().withMutability(false,true).withPosition(2,2).build()
                         );
-            case 40:
+            case 12:
                 return List.of(
                         new LaserTokenBuilder().withMutability(false,true).withPosition(0,0).build(),
                         new TargetMirrorTokenBuilder().withMutability(false,false).withPosition(4,3).withDirection(Direction.LEFT).withRequiredTarget().build(),
@@ -104,14 +106,14 @@ public class LevelStorage {
                         new CheckpointTokenBuilder().withMutability(false,false).withPosition(2,1).withDirection(Direction.UP).build(),
                         new DoubleMirrorTokenBuilder().withMutability(false,false).withPosition(1,2).withDirection(Direction.UP).build()
                         );
-            case 52:
+            case 13:
                 return List.of(
                         new LaserTokenBuilder().withMutability(false,false).withPosition(4,2).withDirection(Direction.LEFT).build(),
                         new TargetMirrorTokenBuilder().withMutability(false,true).withPosition(4,1).build(),
                         new BeamSplitterTokenBuilder().withMutability(false,true).withPosition(3,1).build(),
                         new BeamSplitterTokenBuilder().withMutability(false,true).withPosition(1,4).build()
                 );
-            case 54:
+            case 14:
                 return List.of(
                         new TargetMirrorTokenBuilder().withMutability(false,false).withPosition(1,3).withDirection(Direction.UP).withRequiredTarget().build(),
                         new TargetMirrorTokenBuilder().withMutability(false,false).withPosition(2,2).withDirection(Direction.DOWN).withRequiredTarget().build(),
@@ -121,7 +123,7 @@ public class LevelStorage {
                         new BeamSplitterTokenBuilder().withMutability(false,true).withPosition(1,0).build()
                         );
 
-            case 58:
+            case 15:
                 return List.of(
                         new LaserTokenBuilder().withMutability(false,true).withPosition(2,3).build(),
                         new TargetMirrorTokenBuilder().withMutability(false,false).withPosition(0,2).withDirection(Direction.DOWN).build(),

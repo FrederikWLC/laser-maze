@@ -28,6 +28,10 @@ public abstract class BaseSteps {
     public PortalToken portal;
     public Exception exception;
     public List<PositionDirection> actualBeamPath;
+    public Direction currentDirection;
+    public Direction resultDirection;
+    public boolean equalsResult;
+
 
     public Token getSavedToken(String name) {
         return switch (name.toLowerCase()) {

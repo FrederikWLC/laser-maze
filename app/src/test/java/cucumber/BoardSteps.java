@@ -17,6 +17,8 @@ import model.domain.token.base.*;
 import model.domain.token.builder.base.*;
 import model.domain.token.builder.impl.*;
 import model.domain.token.impl.*;
+import model.domain.board.Direction;
+
 
 import java.util.List;
 import java.util.Map;
@@ -484,5 +486,38 @@ public class BoardSteps extends BaseSteps {
         // getInventory() must return exactly what we set
         assertSame(board, level.getInventory(),
                 "Expected level.getInventory() to return the board we just set");
+    }
+
+    @Given("the current direction is {direction}")
+    public void theCurrentDirectionIs(Direction dir) {
+        currentDirection = dir;
+    }
+
+    @When("I rotate it clockwise")
+    public void iRotateItClockwise() {
+        resultDirection = currentDirection.rotateClockwise();
+    }
+
+    @Then("the result should be {direction}")
+    public void theResultShouldBe(Direction expected) {
+        assertEquals(expected, resultDirection,
+                () -> "Expected " + currentDirection + ".rotateClockwise() to be " + expected);
+    }
+    @Then("the rotated direction should be {direction}")
+    public void theRotatedDirectionShouldBe(Direction expected) {
+        assertEquals(expected, resultDirection,
+                () -> "Expected rotateClockwise() to yield " + expected +
+                        " but got " + resultDirection);
+    }
+
+    @When("I check if the current direction is parallel to {direction}")
+    public void iCheckIfCurrentDirectionIsParallelTo(Direction other) {
+        equalsResult = currentDirection.isParallel(other);
+    }
+
+    @Then("the result should be {word}")
+    public void theResultShouldBeWord(String word) {
+        assertEquals(Boolean.parseBoolean(word), equalsResult,
+                () -> "Expected boolean result to be " + word);
     }
 }

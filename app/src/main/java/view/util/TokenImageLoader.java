@@ -45,10 +45,10 @@ public class TokenImageLoader {
                 "LASER-BEAM-VERTICAL.png",
                 "turnable.png",
 
-                "PortalToken-SOUTH.png",
-                "PortalToken-WEST.png",
                 "PortalToken-EAST.png",
+                "PortalToken-SOUTH.png",
                 "PortalToken-NORTH.png",
+                "PortalToken-WEST.png",
                 "PortalToken-default.png",
         };
 

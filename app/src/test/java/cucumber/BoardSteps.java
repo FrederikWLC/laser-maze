@@ -11,12 +11,10 @@ import model.domain.board.builder.BoardBuilder;
 import model.domain.engine.BoardEngine;
 import model.domain.engine.LaserEngine;
 import model.domain.engine.LevelEngine;
-import model.domain.level.Level;
 import model.domain.level.builder.LevelBuilder;
 import model.domain.token.base.*;
 import model.domain.token.builder.base.*;
 import model.domain.token.builder.impl.*;
-import model.domain.token.impl.*;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -154,9 +152,9 @@ public class BoardSteps extends BaseSteps {
     @And("a Cell Blocker token is preplaced on the board at \\({int}, {int})")
     public void aCellBlockerTokenIsPreplacedOnTheBoardAt(int x, int y) {
         cellBlocker = new CellBlockerTokenBuilder()
-                .withPosition(x, y)
+                .withPosition(x,y)
                 .build();
-        BoardEngine.placeToken(board, cellBlocker, new Position(x, y));
+        BoardEngine.placeToken(board,cellBlocker, new Position(x, y));
     }
 
     public Token buildToken(String tokenName, Integer x, Integer y, Direction direction, boolean movable, boolean turnable) {
@@ -173,22 +171,22 @@ public class BoardSteps extends BaseSteps {
     public void placeTokenOnTheBoard(Board board, String tokenName, int x, int y, Direction direction, boolean movable, boolean turnable) {
         token = buildToken(tokenName, x, y, direction, movable, turnable);
         saveTokenAsType(token);
-        BoardEngine.placeToken(board, token, new Position(x, y));
+        BoardEngine.placeToken(board,token, new Position(x, y)) ;
     }
 
     @Given("a completely mutable {tokenName} token is placed on the board at \\({int}, {int}) facing {direction}")
-    public void aCompletelyMutableTokenIsPlacedOnTheBoardAtFacing(String tokenName, int x, int y, Direction direction) {
-        placeTokenOnTheBoard(board, tokenName, x, y, direction, true, true);
+    public void aCompletelyMutableTokenIsPlacedOnTheBoardAtFacing(String tokenName,int x, int y, Direction direction) {
+        placeTokenOnTheBoard(board,tokenName,x,y,direction,true,true);
     }
 
     @Given("a turnable {tokenName} token is preplaced on the board at \\({int}, {int}) facing {direction}")
-    public void aTurnableTokenIsPreplacedOnTheBoardAtFacing(String tokenName, int x, int y, Direction direction) {
-        placeTokenOnTheBoard(board, tokenName, x, y, direction, false, true);
+    public void aTurnableTokenIsPreplacedOnTheBoardAtFacing(String tokenName,int x, int y, Direction direction) {
+        placeTokenOnTheBoard(board,tokenName,x,y,direction,false,true);
     }
 
     @Given("an immutable {tokenName} token is preplaced on the board at \\({int}, {int}) facing {direction}")
-    public void anImmutableTokenIsPreplacedOnTheBoardAtFacing(String tokenName, int x, int y, Direction direction) {
-        placeTokenOnTheBoard(board, tokenName, x, y, direction, false, false);
+    public void anImmutableTokenIsPreplacedOnTheBoardAtFacing(String tokenName,int x, int y, Direction direction) {
+        placeTokenOnTheBoard(board,tokenName,x,y,direction,false,false);
     }
 
     @Then("the {token} token should be movable")
@@ -230,8 +228,8 @@ public class BoardSteps extends BaseSteps {
     @Then("the {token} token should be at \\({int}, {int})")
     public void theTokenShouldRemainAt(Token token, int x, int y) {
         Tile tokenTile = board.getTile(x, y);
-        assertEquals(token, tokenTile.getToken(), "Token should be in position:" + " (" + x + ", " + y + ")");
-        assertEquals(new Position(x, y), token.getPosition(), "Token should not change position:" + " (" + x + ", " + y + ")");
+        assertEquals(token,tokenTile.getToken(), "Token should be in position:"+ " (" + x + ", " + y + ")");
+        assertEquals(new Position(x, y),token.getPosition(),"Token should not change position:" + " (" + x + ", " + y + ")");
     }
 
     @Given("I try to turn the {token} token to face {direction}")
@@ -245,7 +243,7 @@ public class BoardSteps extends BaseSteps {
 
     @Given("I turn the {token} token to face {direction}")
     public void iTurnTheTokenToFace(Token token, Direction direction) {
-        BoardEngine.turnToken((MutableToken) token, direction);
+            BoardEngine.turnToken((MutableToken) token, direction);
     }
 
     @Then("the {token} token should face {direction}")
@@ -258,22 +256,22 @@ public class BoardSteps extends BaseSteps {
                 .stream()
                 // keep only rows where preplaced == true
                 .map(row -> {
-                            Boolean turnable = Boolean.parseBoolean(row.get("turnable"));
-                            Boolean movable = Boolean.parseBoolean(row.get("movable"));
-                            Integer x = row.get("x") != null ? Integer.parseInt(row.get("x")) : null;
-                            Integer y = row.get("y") != null ? Integer.parseInt(row.get("y")) : null;
-                            Direction dir = row.get("dir") != null ? Direction.valueOf(row.get("dir").toUpperCase()) : null;
-                            return buildToken(row.get("token"),
-                                    x, y, dir,
-                                    movable, turnable);
-                        }
+                    Boolean turnable = Boolean.parseBoolean(row.get("turnable"));
+                    Boolean movable = Boolean.parseBoolean(row.get("movable"));
+                    Integer x = row.get("x") != null ? Integer.parseInt(row.get("x")) : null;
+                    Integer y = row.get("y") != null ? Integer.parseInt(row.get("y")) : null;
+                    Direction dir = row.get("dir") != null ? Direction.valueOf(row.get("dir").toUpperCase()) : null;
+                    return buildToken(row.get("token"),
+                            x,y,dir,
+                            movable, turnable);
+                    }
                 ).toList();
     }
 
     @And("the number of targets hit by the beam path should be {int}")
     public void theNumberOfTargetsHitShouldBe(int n) {
         int actualHitCount = LaserEngine.getTargetHitNumber(actualBeamPath, level.getTokens());
-        assertEquals(n, actualHitCount,
+        assertEquals(n,actualHitCount,
                 "Number of targets hit should be " + n + ", but is: " + actualHitCount);
     }
 
@@ -323,7 +321,7 @@ public class BoardSteps extends BaseSteps {
     @And("the first pair of the level's {tokenType} tokens are each other's twins")
     public void theFirstPairOfTheLevelsTokensAreEachOthersTwins(Class<? extends MutableTwinToken> tokenType) {
         List<MutableTwinToken> pair = getTwinPairOfType(tokenType, level.getTokens());
-        MutableTwinToken first = pair.get(0);
+        MutableTwinToken first  = pair.get(0);
         MutableTwinToken second = pair.get(1);
         first.setTwin(second);
         second.setTwin(first);
@@ -332,12 +330,12 @@ public class BoardSteps extends BaseSteps {
     @And("the first pair of the level's {tokenType} tokens should be each other's twins")
     public void theFirstPairOfTheLevelsTokensShouldBeEachOthersTwins(Class<? extends MutableTwinToken> tokenType) {
         List<MutableTwinToken> pair = getTwinPairOfType(tokenType, level.getTokens());
-        MutableTwinToken first = pair.get(0);
+        MutableTwinToken first  = pair.get(0);
         MutableTwinToken second = pair.get(1);
         assertEquals(second, first.getTwin(),
                 "First " + tokenType.getSimpleName() + "'s twin should be the second token of same type, but is: " + first.getTwin());
         assertEquals(first, second.getTwin(),
-                "Second " + tokenType.getSimpleName() + "token's twin should be the first token of same type, but is: " + second.getTwin());
+                "Second " + tokenType.getSimpleName() +"token's twin should be the first token of same type, but is: " + second.getTwin());
     }
 
     @Then("the Portal token's blue opening side should face {direction}")
@@ -424,7 +422,6 @@ public class BoardSteps extends BaseSteps {
         assertEquals(count, level.getRequiredTokens().size(),
                 "Remaining required tokens to be placed should be " + count);
     }
-
     @Then("the level should be incomplete")
     public void theLevelShouldBeIncomplete() {
         LevelEngine.updateAndCheckLevelCompletionState(level);

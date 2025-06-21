@@ -1,0 +1,47 @@
+{
+  "id": 2,
+  "width": 5,
+  "height": 5,
+  "requiredTargetNumber": 1,
+  "currentTargetNumber": 0,
+  "complete": false,
+  "tokens": [
+    {
+      "type": "TargetMirrorToken",
+      "movable": true,
+      "turnable": true
+    },
+    {
+      "type": "LaserToken",
+      "x": 0,
+      "y": 4,
+      "direction": "DOWN",
+      "movable": false,
+      "turnable": true
+    },
+    {
+      "type": "TargetMirrorToken",
+      "x": 0,
+      "y": 3,
+      "direction": "LEFT",
+      "movable": false,
+      "turnable": false
+    },
+    {
+      "type": "CheckpointToken",
+      "x": 2,
+      "y": 4,
+      "movable": false,
+      "turnable": false
+    },
+    {
+      "type": "TargetMirrorToken",
+      "x": 4,
+      "y": 0,
+      "direction": "DOWN",
+      "movable": false,
+      "turnable": false,
+      "isRequiredTarget": true
+    }
+  ]
+}

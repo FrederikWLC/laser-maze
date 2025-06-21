@@ -1,19 +1,20 @@
 package controller;
 
-import model.domain.board.Board;
 import model.domain.board.PositionDirection;
 import model.domain.board.TileContainer;
 import model.domain.board.builder.InventoryBuilder;
+
 import model.domain.level.Level;
-import model.persistence.LevelLoader;
-import model.domain.token.base.Token;
-import model.domain.token.base.ITurnableToken;
+import model.persistence.storage.DefaultLevelLoader;
+import model.persistence.storage.LevelIOHandler;
+import model.persistence.storage.LevelSaver;
+import model.persistence.storage.SavedLevelLoader;
 
 import view.GamePanel;
 import view.RenderableTile;
 import view.GamePanelUIBinder;
 
-import javax.swing.JButton;
+import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.util.List;
 
@@ -21,7 +22,11 @@ public class LevelController {
     private final GamePanel gamePanel;
     private final ScreenController screenController;
     private final SoundManager soundManager = new SoundManager();
-    private int currentLevelNumber;
+    private final DefaultLevelLoader defaultLevelLoader = new DefaultLevelLoader();
+    private final SavedLevelLoader savedLevelLoader = new SavedLevelLoader();
+    private final LevelSaver levelSaver = new LevelSaver();
+    private final LevelIOHandler levelIOHandler = new LevelIOHandler(defaultLevelLoader,savedLevelLoader,levelSaver);
+    private Level currentLevel;
 
     public LevelController(GamePanel gamePanel, ScreenController screenController) {
         this.gamePanel = gamePanel;
@@ -29,18 +34,13 @@ public class LevelController {
     }
 
     public void loadLevel(int levelNumber) {
-        this.currentLevelNumber = levelNumber;
-
+        Level level = levelIOHandler.load(levelNumber);
+        setCurrentLevel(level);
 
         gamePanel.resetBoardUI();
         gamePanel.clearMouseListeners();
         gamePanel.createControlButtons();
         gamePanel.showBoardUI();
-
-
-        Level level = LevelLoader.load(levelNumber);
-        Board board = level.getBoard();
-
 
         soundManager.stopBackground(); // ensure old track doesn't stack
         soundManager.play(SoundManager.Sound.BACKGROUND, true);
@@ -55,7 +55,7 @@ public class LevelController {
         gamePanel.setInventoryTilesToRender(inventoryTiles);
 
 
-        List<RenderableTile> tiles = tileFactory.convertBoardToRenderableTiles(board);
+        List<RenderableTile> tiles = tileFactory.convertBoardToRenderableTiles(currentLevel.getBoard());
         gamePanel.setTilesToRender(tiles);
 
         GameController gameController = new GameController(level);
@@ -81,7 +81,7 @@ public class LevelController {
                     gamePanel.getControlPanel().boardRenderer.setLaserPath(path);
                     gamePanel.getControlPanel().boardRenderer.repaint();
 
-                    List<RenderableTile> updated = tileFactory.convertBoardToRenderableTiles(board);
+                    List<RenderableTile> updated = tileFactory.convertBoardToRenderableTiles(currentLevel.getBoard());
                     gamePanel.setTilesToRender(updated);
                     gamePanel.getControlPanel().boardRenderer.setTilesToRender(updated);
                     gamePanel.repaint();
@@ -106,27 +106,54 @@ public class LevelController {
         gamePanel.repaint();
 
         //control buttons
-        JButton restart = gamePanel.getRestartButton();
-        JButton exit = gamePanel.getExitButton();
-        JButton saveExit = gamePanel.getSaveAndExitButton();
+        JButton restartButton = gamePanel.getRestartButton();
+        JButton exitButton = gamePanel.getExitButton();
+        JButton saveExitButton = gamePanel.getSaveAndExitButton();
 
-        restart.setVisible(true);
-        exit.setVisible(true);
-        saveExit.setVisible(true);
+        restartButton.setVisible(true);
+        exitButton.setVisible(true);
+        saveExitButton.setVisible(true);
 
-        restart.addActionListener(e -> {
-            System.out.println("Restart clicked");
-            loadLevel(currentLevelNumber); // reload fresh
+        saveExitButton.addActionListener(e -> {
+            saveLevel();
+            exitLevel();
+        });
+
+        restartButton.addActionListener(e -> {
+            restartLevel();
         });
 
         ActionListener exitAction = e -> {
-            System.out.println("Exit or Save & Exit clicked");
-            soundManager.stopBackground();
-            gamePanel.resetBoardUI();
-            screenController.showTitleScreen();
+            exitLevel();
         };
 
-        exit.addActionListener(exitAction);
-        saveExit.addActionListener(exitAction);
+        exitButton.addActionListener(exitAction);
+        saveExitButton.addActionListener(exitAction);
+    }
+
+    public void saveLevel() {
+        System.out.println("Saving...");
+        levelIOHandler.save(currentLevel);
+    }
+
+    public void exitLevel() {
+        System.out.println("Exiting...");
+        this.currentLevel = null;
+        soundManager.stopBackground();
+        gamePanel.resetBoardUI();
+        screenController.showTitleScreen();
+    }
+
+    public void restartLevel() {
+        Level level = levelIOHandler.restart(getCurrentLevel());
+        setCurrentLevel(level);
+    }
+
+    public Level getCurrentLevel() {
+        return currentLevel;
+    }
+
+    public void setCurrentLevel(Level level) {
+        this.currentLevel = level;
     }
 }

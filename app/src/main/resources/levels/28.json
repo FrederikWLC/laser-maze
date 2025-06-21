@@ -1,0 +1,72 @@
+{
+  "id": 28,
+  "width": 5,
+  "height": 5,
+  "requiredTargetNumber": 1,
+  "currentTargetNumber": 0,
+  "complete": false,
+  "tokens": [
+    {
+      "type": "TargetMirrorToken",
+      "movable": true,
+      "turnable": true
+    },
+    {
+      "type": "TargetMirrorToken",
+      "movable": true,
+      "turnable": true
+    },
+    {
+      "type": "TargetMirrorToken",
+      "movable": true,
+      "turnable": true
+    },
+    {
+      "type": "TargetMirrorToken",
+      "movable": true,
+      "turnable": true
+    },
+    {
+      "type": "CheckpointToken",
+      "movable": true,
+      "turnable": true
+    },
+    {
+      "type": "TargetMirrorToken",
+      "x": 1,
+      "y": 2,
+      "direction": "RIGHT",
+      "movable": false,
+      "turnable": false
+    },
+    {
+      "type": "DoubleMirrorToken",
+      "x": 2,
+      "y": 2,
+      "direction": "RIGHT",
+      "movable": false,
+      "turnable": false
+    },
+    {
+      "type": "CellBlockerToken",
+      "x": 3,
+      "y": 1
+    },
+    {
+      "type": "TargetMirrorToken",
+      "x": 3,
+      "y": 3,
+      "direction": "RIGHT",
+      "movable": false,
+      "turnable": false
+    },
+    {
+      "type": "LaserToken",
+      "x": 4,
+      "y": 2,
+      "direction": "DOWN",
+      "movable": false,
+      "turnable": true
+    }
+  ]
+}

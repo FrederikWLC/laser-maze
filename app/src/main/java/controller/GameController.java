@@ -17,10 +17,6 @@ import java.util.List;
 public class GameController {
     private Level level;
     private List<PositionDirection> beamPath = List.of();
-    private JButton restartButton;
-    private JButton exitButton;
-    private JButton saveAndExitButton;
-
 
     public GameController(Level level) {
         this.level = level;
@@ -54,8 +50,6 @@ public class GameController {
         }
     }
 
-
-
     public void rotateToken(Token token, Direction direction) {
         if (token instanceof ILaserToken) {
             ((ILaserToken) token).trigger(false); // turn off laser before rotation
@@ -80,17 +74,4 @@ public class GameController {
         return level;
     }
 
-
-    // Add these getters:
-    public JButton getRestartButton() {
-        return restartButton;
-    }
-
-    public JButton getExitButton() {
-        return exitButton;
-    }
-
-    public JButton getSaveAndExitButton() {
-        return saveAndExitButton;
-    }
 }

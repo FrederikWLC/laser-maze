@@ -12,9 +12,10 @@ import model.domain.engine.BoardEngine;
 import model.domain.level.builder.LevelBuilder;
 import model.domain.token.base.Token;
 import model.domain.token.builder.base.TokenBuilder;
+
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,7 +23,6 @@ public class InventorySteps extends BaseSteps {
 
     @Given("a level is initialized with:")
     public void aLevelIsInitializedWith(DataTable table) {
-        board = new BoardBuilder().withDimensions(5, 5).build();
 
         List<Token> tokens = table.asMaps(String.class, String.class)
                 .stream()
@@ -44,13 +44,13 @@ public class InventorySteps extends BaseSteps {
         }
 
         level = new LevelBuilder(0)
-                .withBoard(board)
                 .withTokens(tokens)
                 .withRequiredTargetNumber(1)
                 .build();
 
         board = level.getBoard();
     }
+
     @Then("the inventory should contain {int} tokens total")
     public void theInventoryShouldContainTokensTotal(int expectedCount) {
         assertEquals(expectedCount, inventory.getTotalTokenCount(),

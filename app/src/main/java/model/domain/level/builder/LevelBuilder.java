@@ -4,54 +4,52 @@ import model.domain.level.Level;
 import model.domain.token.base.Token;
 import model.domain.board.Board;
 import model.domain.board.builder.BoardBuilder;
+import view.BoardRendererPanel;
 
 import java.util.List;
 import java.util.stream.Stream;
 
 public final class LevelBuilder {
-    private final int id;
-    private int width = 5; // default board width
-    private int height = 5; // default board height
-    private List<Token> tokens = List.of();
-    private int requiredTargetNumber = 1;
-    private Board board;
+    private Level level;
+    private BoardBuilder boardBuilder;
 
-    public LevelBuilder(int id) { this.id = id; }
-
-    public LevelBuilder withBoardDimensions(int width, int height) {
-        this.width = width;
-        this.height = height;
-        return this;
+    public LevelBuilder(int id) {
+        this.level = new Level(id);
+        this.boardBuilder = new BoardBuilder();
     }
 
-    public LevelBuilder withBoard(Board board) {
-        this.board = board;
+    public LevelBuilder withBoardDimensions(int width, int height) {
+        this.boardBuilder = this.boardBuilder
+                .withDimensions(width, height);
         return this;
     }
 
     public LevelBuilder withTokens(List<Token> tokens) {
-        this.tokens = tokens; return this;
+        this.level.setTokens(tokens); return this;
     }
+
     public LevelBuilder withRequiredTargetNumber(int n) {
-        this.requiredTargetNumber = n; return this;
+        this.level.setRequiredTargetNumber(n); return this;
+    }
+
+    public LevelBuilder withCurrentTargetNumber(int n) {
+        this.level.setCurrentTargetNumber(n); return this;
+    }
+
+    public LevelBuilder withComplete(boolean complete) {
+        this.level.setComplete(complete); return this;
     }
 
     public Level build() {
-        List<Token> preplacedTokens = tokens.stream()
+        // Get all preplaced tokens from the level
+        List<Token> preplacedTokens = level.getTokens().stream()
                 .filter(Token::isPlaced)
                 .toList();
-
-        // Use existing board if one was provided; otherwise build a new one
-        Board finalBoard = (this.board != null)
-                ? this.board
-                : new BoardBuilder()
-                .withDimensions(width, height)
+        // Build the board with preplaced tokens
+        Board board = boardBuilder
                 .withPreplacedTokens(preplacedTokens)
                 .build();
-
-        Level lvl = new Level(id, finalBoard);
-        lvl.setTokens(tokens);
-        lvl.setRequiredTargetNumber(requiredTargetNumber);
-        return lvl;
+        level.setBoard(board);
+        return level;
     }
 }

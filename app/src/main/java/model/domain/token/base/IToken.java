@@ -25,5 +25,4 @@ public interface IToken {
     boolean isTurnable();
 
 
-
 }

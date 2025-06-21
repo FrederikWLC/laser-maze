@@ -40,13 +40,12 @@ public class GameController {
     }
 
     public void rotateTokenClockwise(ITurnableToken token) {
-        if (token == null) return;
-
+        if (token == null) {System.out.println("No token to rotate"); return;}
         Direction current = token.getDirection();
         if (current == null) {
-            token.setDirection(Direction.UP);
+            rotateToken((Token) token,Direction.UP);
         } else {
-            token.setDirection(current.rotateClockwise());
+            rotateToken((Token) token,current.rotateClockwise());
         }
     }
 

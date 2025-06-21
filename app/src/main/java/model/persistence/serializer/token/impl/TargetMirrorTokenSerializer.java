@@ -30,9 +30,9 @@ public class TargetMirrorTokenSerializer extends MutableTokenSerializer<TargetMi
     protected void customizeSerialization(ObjectNode node, Token token) {
         super.customizeSerialization(node, token);
         TargetMirrorToken targetMirrorToken = (TargetMirrorToken) token;
-        if (targetMirrorToken.isRequiredTarget()) {
-            node.put(FieldNameRegistry.IS_REQUIRED_TARGET_FIELD_NAME, true);
-        }
+
+        boolean isRequiredTarget = targetMirrorToken.isRequiredTarget();
+        node.put(FieldNameRegistry.IS_REQUIRED_TARGET_FIELD_NAME, isRequiredTarget);
     }
 
 }

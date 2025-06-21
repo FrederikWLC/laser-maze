@@ -12,6 +12,9 @@ public class TargetMirrorTokenBuilder extends MutableTokenBuilder<TargetMirrorTo
     }
 
     public TargetMirrorTokenBuilder withRequiredTarget() {
+        return this.withRequiredTarget(true);
+    }
+    public TargetMirrorTokenBuilder withRequiredTarget(boolean isRequiredTarget) {
         ((ITargetToken) this.token).setRequiredTarget(true);
         return this;
     }

@@ -50,8 +50,6 @@ public class GameController {
         }
     }
 
-
-
     public void rotateToken(Token token, Direction direction) {
         if (token instanceof ILaserToken) {
             ((ILaserToken) token).trigger(false); // turn off laser before rotation

@@ -1,4 +1,4 @@
-package model.persistence.serializer.token;
+package model.persistence.serializer.token.base;
 
 import model.domain.token.base.Token;
 
@@ -6,17 +6,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import model.domain.token.builder.base.TokenBuilder;
+import model.persistence.serializer.util.FieldNameRegistry;
 import model.persistence.serializer.ISerializer;
 
 import java.lang.reflect.ParameterizedType;
 
 public abstract class TokenSerializer<T extends Token> implements ISerializer<T> {
-
-
-    private final String TYPE_FIELD_NAME = "type";
-    private final String X_FIELD_NAME = "x";
-    private final String Y_FIELD_NAME = "y";
-
 
     public ObjectNode serialize(T token) {
         ObjectNode node = JsonNodeFactory.instance.objectNode();
@@ -31,21 +26,21 @@ public abstract class TokenSerializer<T extends Token> implements ISerializer<T>
     }
 
     protected TokenBuilder<?,T> customizeDeserialization(TokenBuilder<?,T> builder, JsonNode json) {
-        if (json.has(X_FIELD_NAME) && json.has(Y_FIELD_NAME)) {
-            builder = builder.withPosition(
-                    json.get(X_FIELD_NAME).asInt(),
-                    json.get(Y_FIELD_NAME).asInt()
-            );
+        // Default null
+        Integer x = json.has(FieldNameRegistry.X_FIELD_NAME) ? json.get(FieldNameRegistry.X_FIELD_NAME).asInt() : null;
+        Integer y = json.has(FieldNameRegistry.Y_FIELD_NAME) ? json.get(FieldNameRegistry.Y_FIELD_NAME).asInt() : null;
+        if (x != null && y != null) {
+            builder = builder.withPosition(x, y);
         }
         return builder;
     }
 
     protected void customizeSerialization(ObjectNode node, Token token) {
         // Default implementation does nothing, can be overridden by subclasses
-        node.put(TYPE_FIELD_NAME, token.getClass().getSimpleName());
-        if (token.getPosition() != null) {
-            node.put(X_FIELD_NAME , token.getPosition().getX());
-            node.put(Y_FIELD_NAME, token.getPosition().getY());
+        node.put(FieldNameRegistry.TYPE_FIELD_NAME, token.getClass().getSimpleName());
+        if (token.isPlaced()) {
+            node.put(FieldNameRegistry.X_FIELD_NAME , token.getPosition().getX());
+            node.put(FieldNameRegistry.Y_FIELD_NAME, token.getPosition().getY());
         }
     }
 

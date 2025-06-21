@@ -11,16 +11,12 @@ import model.domain.board.builder.BoardBuilder;
 import model.domain.engine.BoardEngine;
 import model.domain.engine.LaserEngine;
 import model.domain.engine.LevelEngine;
-import model.domain.level.Level;
 import model.domain.level.builder.LevelBuilder;
 import model.domain.token.base.*;
 import model.domain.token.builder.base.*;
 import model.domain.token.builder.impl.*;
-import model.domain.token.impl.*;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 

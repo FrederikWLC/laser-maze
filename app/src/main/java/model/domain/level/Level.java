@@ -13,15 +13,18 @@ public class Level {
     int requiredTargetNumber;
     int currentTargetNumber = 0;
     Board board;
-    List<Token> tokens;
+    List<Token> tokens = List.of();
 
-    public Level(int id, Board board) {
+    public Level(int id) {
         this.id = id;
-        this.board = board;
     }
 
     public int getId() {
         return id;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
     }
 
     public Board getBoard() {
@@ -95,5 +98,4 @@ public class Level {
     public int getCurrentTargetNumber() {
         return currentTargetNumber;
     }
-
 }

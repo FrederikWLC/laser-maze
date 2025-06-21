@@ -1,7 +1,10 @@
 package model.persistence.storage;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import model.domain.level.Level;
 
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,21 +12,8 @@ import java.util.List;
 public class SavedLevelLoader extends DefaultLevelLoader {
 
     @Override
-    public Path getPath() {
+    public Path getFolderPath() {
         return pathHelper.getAppDataPath(getFolderName());
-    }
-
-    public static List<Level> loadAll() {
-        List<Level> levels = new ArrayList<>();
-        for (int i : new int[]{
-                1, 2, 3, 4,
-                17, 18, 28, 30,
-                33, 34, 36, 40,
-                52, 54, 58
-        }) {
-            levels.add(load(i));
-        }
-        return levels;
     }
 
 }

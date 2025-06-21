@@ -1,4 +1,4 @@
-package model.persistence.serializer.token;
+package model.persistence.serializer.token.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -6,10 +6,10 @@ import model.domain.token.base.Token;
 import model.domain.token.builder.base.TokenBuilder;
 import model.domain.token.builder.impl.TargetMirrorTokenBuilder;
 import model.domain.token.impl.TargetMirrorToken;
+import model.persistence.serializer.util.FieldNameRegistry;
+import model.persistence.serializer.token.base.MutableTokenSerializer;
 
 public class TargetMirrorTokenSerializer extends MutableTokenSerializer<TargetMirrorToken> {
-
-    private final String IS_REQUIRED_TARGET_FIELD_NAME = "is_required_target";
 
     protected TargetMirrorTokenBuilder instantiateBuilder(JsonNode json)  {
         return new TargetMirrorTokenBuilder();
@@ -18,9 +18,11 @@ public class TargetMirrorTokenSerializer extends MutableTokenSerializer<TargetMi
     @Override
     protected TokenBuilder<?,TargetMirrorToken> customizeDeserialization(TokenBuilder<?,TargetMirrorToken> builder, JsonNode json) {
         builder = super.customizeDeserialization(builder, json);
-        if (json.has(IS_REQUIRED_TARGET_FIELD_NAME) & json.get(IS_REQUIRED_TARGET_FIELD_NAME).asBoolean()) {
-            builder = ((TargetMirrorTokenBuilder) builder).withRequiredTarget();
-        }
+        // Default to false if not present in json
+        boolean isRequiredTarget = json.has(FieldNameRegistry.IS_REQUIRED_TARGET_FIELD_NAME)
+                ? json.get(FieldNameRegistry.IS_REQUIRED_TARGET_FIELD_NAME).asBoolean() : false;
+        // Build by casting to TargetMirrorTokenBuilder
+        builder = ((TargetMirrorTokenBuilder) builder).withRequiredTarget(isRequiredTarget);
         return builder;
     }
 
@@ -29,7 +31,7 @@ public class TargetMirrorTokenSerializer extends MutableTokenSerializer<TargetMi
         super.customizeSerialization(node, token);
         TargetMirrorToken targetMirrorToken = (TargetMirrorToken) token;
         if (targetMirrorToken.isRequiredTarget()) {
-            node.put(IS_REQUIRED_TARGET_FIELD_NAME, true);
+            node.put(FieldNameRegistry.IS_REQUIRED_TARGET_FIELD_NAME, true);
         }
     }
 

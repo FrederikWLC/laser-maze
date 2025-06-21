@@ -3,6 +3,9 @@ package controller;
 import model.domain.board.Board;
 import model.domain.board.PositionDirection;
 import model.domain.level.Level;
+import model.persistence.storage.DefaultLevelLoader;
+import model.persistence.storage.LevelIOHandler;
+import model.persistence.storage.LevelSaver;
 import model.persistence.storage.SavedLevelLoader;
 import view.GamePanel;
 import view.RenderableTile;
@@ -15,7 +18,10 @@ public class LevelController {
     private final GamePanel gamePanel;
     private final ScreenController screenController;
     private final SoundManager soundManager = new SoundManager();
-
+    private final DefaultLevelLoader defaultLevelLoader = new DefaultLevelLoader();
+    private final SavedLevelLoader savedLevelLoader = new SavedLevelLoader();
+    private final LevelSaver levelSaver = new LevelSaver();
+    private final LevelIOHandler levelIOHandler = new LevelIOHandler(defaultLevelLoader,savedLevelLoader,levelSaver);
 
     public LevelController(GamePanel gamePanel, ScreenController screenController) {
         this.gamePanel = gamePanel;
@@ -23,7 +29,7 @@ public class LevelController {
     }
 
     public void loadLevel(int levelNumber) {
-        Level level = SavedLevelLoader.load(levelNumber);
+        Level level = levelIOHandler.load(levelNumber);
         Board board = level.getBoard();
         soundManager.play(SoundManager.Sound.BACKGROUND, true);
 

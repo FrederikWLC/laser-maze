@@ -22,7 +22,6 @@ public class InventorySteps extends BaseSteps {
 
     @Given("a level is initialized with:")
     public void aLevelIsInitializedWith(DataTable table) {
-        board = new BoardBuilder().withDimensions(5, 5).build(); // Fix: initialize board here
 
         List<Token> tokens = table.asMaps(String.class, String.class)
                 .stream()
@@ -37,7 +36,6 @@ public class InventorySteps extends BaseSteps {
         inventory = new Inventory(tokens);
 
         level = new LevelBuilder(0)
-                .withBoard(board)
                 .withTokens(tokens)
                 .withRequiredTargetNumber(1)
                 .build();

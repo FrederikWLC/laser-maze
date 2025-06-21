@@ -1,9 +1,10 @@
-package model.persistence.serializer.token;
+package model.persistence.serializer.token.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import model.domain.token.builder.impl.CellBlockerTokenBuilder;
 import model.domain.token.impl.CellBlockerToken;
 import model.persistence.serializer.ISerializer;
+import model.persistence.serializer.token.base.TokenSerializer;
 
 public class CellBlockerTokenSerializer extends TokenSerializer<CellBlockerToken> implements ISerializer<CellBlockerToken> {
 

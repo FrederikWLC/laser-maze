@@ -11,12 +11,12 @@ import model.domain.token.base.ILaserToken;
 import model.domain.token.base.ITurnableToken;
 import model.domain.token.base.Token;
 
+import javax.swing.*;
 import java.util.List;
 
 public class GameController {
     private Level level;
     private List<PositionDirection> beamPath = List.of();
-
 
     public GameController(Level level) {
         this.level = level;
@@ -73,4 +73,5 @@ public class GameController {
     public Level getLevel() {
         return level;
     }
+
 }

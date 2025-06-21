@@ -21,7 +21,7 @@ public class GameControlPanel extends JPanel {
     public GameControlPanel() {
         setLayout(null);
         levelListPanel.setLayout(new GridLayout(0, 3, 10, 10));
-        for (int i = 1; i <= 60; i++) {
+        for (int i = 1; i <= 15; i++) {
             levelListPanel.add(new JButton("Level " + i));
         }
     }

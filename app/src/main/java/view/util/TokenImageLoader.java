@@ -21,6 +21,10 @@ public class TokenImageLoader {
                 "PurpleTarget-TARGET_ON_EAST.png",
                 "PurpleTarget-TARGET_ON_SOUTH.png",
                 "PurpleTarget-TARGET_ON_WEST.png",
+                "PurpleTarget-TARGET_ON_NORTH-M.png",
+                "PurpleTarget-TARGET_ON_EAST-M.png",
+                "PurpleTarget-TARGET_ON_SOUTH-M.png",
+                "PurpleTarget-TARGET_ON_WEST-M.png",
                 "PurpleTarget-TARGET_ON_default.png",
 
                 "GreenMirror-BACKSLASH_MIRROR.png",
@@ -38,7 +42,14 @@ public class TokenImageLoader {
                 "WhiteObstacle-NONE-Dark.png",
                 "EmptyCell.png",
                 "LASER-BEAM-HORIZONTAL.png",
-                "LASER-BEAM-VERTICAL.png"
+                "LASER-BEAM-VERTICAL.png",
+                "turnable.png",
+
+                "PortalToken-EAST.png",
+                "PortalToken-SOUTH.png",
+                "PortalToken-NORTH.png",
+                "PortalToken-WEST.png",
+                "PortalToken-default.png",
         };
 
         for (String name : filenames) {

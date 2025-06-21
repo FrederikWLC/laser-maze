@@ -1,5 +1,7 @@
 package model.domain.level;
 
+import model.domain.board.Inventory;
+import model.domain.board.TileContainer;
 import model.domain.token.base.Token;
 import model.domain.board.Board;
 import model.domain.token.impl.LaserToken;
@@ -14,6 +16,7 @@ public class Level {
     int currentTargetNumber = 0;
     Board board;
     List<Token> tokens = List.of();
+    private TileContainer inventory;
 
     public Level(int id) {
         this.id = id;
@@ -97,5 +100,12 @@ public class Level {
     }
     public int getCurrentTargetNumber() {
         return currentTargetNumber;
+    }
+
+    public void setInventory(TileContainer inventory) {
+        this.inventory = inventory;
+    }
+    public TileContainer getInventory() {
+        return inventory;
     }
 }

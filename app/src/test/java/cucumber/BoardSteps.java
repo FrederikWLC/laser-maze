@@ -439,5 +439,50 @@ public class BoardSteps extends BaseSteps {
         assertTrue(level.isComplete(), "Level should be complete, but is not");
     }
 
+    @Then("all tokens should be placed")
+    public void allTokensShouldBePlaced() {
+        assertTrue(level.areAllTokensPlaced(), "Expected all tokens to be placed");
+    }
 
+    @Then("not all tokens should be placed")
+    public void notAllTokensShouldBePlaced() {
+        assertFalse(level.areAllTokensPlaced(), "Expected not all tokens to be placed");
+    }
+
+    @When("I try to trigger the level's laser")
+    public void iTryToTriggerTheLevelsLaser() {
+        try {
+            LevelEngine.triggerLaserToken(level, true);
+        } catch (Exception e) {
+            exception = e;
+        }
+    }
+
+    @When("I try to fire the level's laser")
+    public void iTryToFireTheLevelsLaser() {
+        try {
+            LevelEngine.fireLaserToken(level);
+        } catch (Exception e) {
+            exception = e;
+        }
+    }
+
+    @Then("the level's current target number should be {int}")
+    public void theLevelsCurrentTargetNumberShouldBe(int n) {
+        assertEquals(n, level.getCurrentTargetNumber(),
+                "Expected current target number to be " + n);
+    }
+
+    @When("I set the level's inventory to the current board")
+    public void iSetTheLevelsInventoryToTheCurrentBoard() {
+        // This calls Level.setInventory(...)
+        level.setInventory(board);
+    }
+
+    @Then("the level's inventory should be the current board")
+    public void theLevelsInventoryShouldBeTheCurrentBoard() {
+        // getInventory() must return exactly what we set
+        assertSame(board, level.getInventory(),
+                "Expected level.getInventory() to return the board we just set");
+    }
 }

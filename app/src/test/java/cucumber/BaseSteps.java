@@ -12,6 +12,7 @@ import model.domain.token.builder.impl.*;
 import model.domain.token.impl.*;
 
 import java.util.List;
+import java.util.Map;
 
 public abstract class BaseSteps {
     public Level level;
@@ -28,9 +29,7 @@ public abstract class BaseSteps {
     public PortalToken portal;
     public Exception exception;
     public List<PositionDirection> actualBeamPath;
-    public Direction currentDirection;
-    public Direction resultDirection;
-    public boolean equalsResult;
+    public Map<String,Integer> availableTokensMap;
 
 
     public Token getSavedToken(String name) {

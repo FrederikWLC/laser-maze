@@ -12,9 +12,9 @@ import model.domain.engine.BoardEngine;
 import model.domain.level.builder.LevelBuilder;
 import model.domain.token.base.Token;
 import model.domain.token.builder.base.TokenBuilder;
-
-import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -99,5 +99,53 @@ public class InventorySteps extends BaseSteps {
                 "Expected " + expectedCount + " " + tokenName + " tokens, but found " + actual);
     }
 
+    @When("I retrieve the available tokens map")
+    public void iRetrieveTheAvailableTokensMap() {
+        availableTokensMap = inventory.getAvailableTokens();
+    }
 
+    @Then("the available tokens map should contain:")
+    public void theAvailableTokensMapShouldContain(DataTable table) {
+        // Build expected Map<String,Integer> from the DataTable
+        Map<String,Integer> expected = table
+                .asMaps(String.class, String.class)
+                .stream()
+                .collect(Collectors.toMap(
+                        row -> row.get("tokenClass"),
+                        row -> Integer.parseInt(row.get("count"))
+                ));
+        // size check
+        assertEquals(expected.size(), availableTokensMap.size(), "Map size mismatch");
+        // each entry
+        expected.forEach((cls, cnt) ->
+                assertEquals(cnt, availableTokensMap.get(cls),
+                        "Count for " + cls)
+        );
+    }
+
+    @Then("it should be null")
+    public void itShouldBeNullInventory() {
+        assertNull(token, "Expected no token but got one");
+    }
+
+    @When("I add a {string} to the inventory")
+    public void iAddATokenToTheInventory(String tokenName) {
+        Token t = buildToken(tokenName, null, null, null, true, true);
+        inventory.addToken(t);
+    }
+
+    @When("I try to add a {string} to the inventory")
+    public void iTryToAddATokenToTheInventory(String tokenName) {
+        try {
+            Token t = buildToken(tokenName, null, null, null, true, true);
+            inventory.addToken(t);
+        } catch (Exception e) {
+            exception = e;
+        }
+    }
+
+    @When("I get the token at inventory position {int}")
+    public void iGetTheTokenAtInventoryPosition(int index) {
+        token = inventory.getTokenAtPosition(index);
+    }
 }

@@ -4,6 +4,7 @@ import model.domain.board.Board;
 import model.domain.board.Direction;
 import model.domain.board.Tile;
 import model.domain.board.TileContainer;
+import model.domain.token.base.ITargetToken;
 import model.domain.token.base.ITurnableToken;
 import model.domain.token.base.Token;
 import view.RenderableTile;
@@ -23,7 +24,8 @@ public class RenderableTileFactory {
                     Direction direction = token instanceof ITurnableToken turnable ? turnable.getDirection() : null;
                     boolean isTurnable = token instanceof ITurnableToken turnable && turnable.isTurnable();
                     boolean isMovable = token instanceof ITurnableToken turnable && turnable.isMovable();
-                    renderables.add(new RenderableTile(x, y, type, direction, token, isTurnable, isMovable));
+                    boolean isRequiredTarget = token instanceof  ITargetToken target && target.isRequiredTarget();
+                    renderables.add(new RenderableTile(x, y, type, direction, token, isTurnable, isMovable, isRequiredTarget));
                 }
             }
         }

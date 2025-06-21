@@ -6,6 +6,8 @@ import model.domain.token.builder.impl.*;
 
 import java.util.List;
 import java.util.stream.Stream;
+import model.domain.token.impl.PortalToken;
+
 
 public class LevelStorage {
 
@@ -16,12 +18,12 @@ public class LevelStorage {
                 return List.of(
                         new LaserTokenBuilder().withMutability(false,false).withPosition(1,1).withDirection(Direction.DOWN).build(),
                         new TargetMirrorTokenBuilder().withMutability(false,false).withPosition(3,3).withDirection(Direction.LEFT).withRequiredTarget().build()
+
                 );
             case 2:
                 return List.of(
                         new LaserTokenBuilder().withMutability(false,true).withPosition(0,4).withDirection(Direction.DOWN).build(),
                         new TargetMirrorTokenBuilder().withMutability(false,false).withPosition(0,3).withDirection(Direction.LEFT).build(),
-                        new CheckpointTokenBuilder().withMutability(false,false).withPosition(2,4).build(),
                         new TargetMirrorTokenBuilder().withMutability(false,false).withPosition(4,0).withDirection(Direction.DOWN).withRequiredTarget().build()
                 );
             case 3:

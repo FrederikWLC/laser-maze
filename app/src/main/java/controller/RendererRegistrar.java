@@ -10,6 +10,7 @@ import view.CellBlockerTokenRenderer;
 import view.SplitterBeamTokenRenderer;
 import view.CheckpointTokenRenderer;
 import view.util.TokenImageLoader;
+import view.PortalTokenRenderer;
 
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
@@ -29,6 +30,8 @@ public class RendererRegistrar {
         staticRenderers.put("CellBlockerToken", new CellBlockerTokenRenderer(tokenImages));
         turnableRenderers.put("BeamSplitterToken", new SplitterBeamTokenRenderer(tokenImages));
         turnableRenderers.put("CheckpointToken", new CheckpointTokenRenderer(tokenImages));
+        turnableRenderers.put("PortalToken", new PortalTokenRenderer(tokenImages));
+
 
         gamePanel.setStaticRenderers(staticRenderers);
         gamePanel.setTurnableRenderers(turnableRenderers);

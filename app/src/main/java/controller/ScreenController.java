@@ -9,15 +9,13 @@ import java.util.function.IntConsumer;
 
 public class ScreenController {
     private final GamePanel gamePanel;
-    private final MainController mainController;
     private final SoundManager soundManager = new SoundManager();
 
     private DisplayManager titleScreen;
     private DisplayManager levelSelectScreen;
 
-    public ScreenController(GamePanel gamePanel, MainController mainController) {
+    public ScreenController(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
-        this.mainController = mainController;
     }
 
     public void setupScreens(IntConsumer onLevelSelectClick) {
@@ -63,10 +61,6 @@ public class ScreenController {
         );
         gamePanel.switchToScreen(boardScreen);
         gamePanel.showBoardUI();
-    }
-
-    public MainController getMainController() {
-        return mainController;
     }
 
     public void bindFireLaserListener(java.awt.event.ActionListener fireLaserListener) {

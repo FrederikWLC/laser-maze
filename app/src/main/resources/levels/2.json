@@ -28,13 +28,6 @@
       "turnable": false
     },
     {
-      "type": "CheckpointToken",
-      "x": 2,
-      "y": 4,
-      "movable": false,
-      "turnable": false
-    },
-    {
       "type": "TargetMirrorToken",
       "x": 4,
       "y": 0,

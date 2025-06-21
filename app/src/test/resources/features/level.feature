@@ -27,3 +27,42 @@ Feature: Level
       Then the token on the board at (0, 0) should be a Double Mirror token
       And the token should be turnable without direction
       And the remaining number of required tokens to be placed should be 1
+
+  Scenario: Place all tokens and verify all tokens are placed
+    Given I place token 0 (from the required tokens) on the board at (0, 0)
+    And I place token 0 (from the required tokens) on the board at (1, 1)
+    Then all tokens should be placed
+
+  Scenario: Triggering level's laser with no laser present throws
+    Given a new game is started
+    And the board is initialized with width 5 and height 5
+    And the level is initialized with id 10, required target number 0, a board with width 5 and height 5, and the following tokens:
+      | token | x | y | dir | movable | turnable |
+    When I try to trigger the level's laser
+    Then an error should occur
+
+  Scenario: Firing level's laser with no lasers throws
+    Given a new game is started
+    And the board is initialized with width 5 and height 5
+    And the level is initialized with id 11, required target number 0, a board with width 5 and height 5, and the following tokens:
+      | token    | x | y | dir | movable | turnable |
+      | portal   | 0 | 0 | UP  | false   | false    |
+    When I try to fire the level's laser
+    Then an error should occur
+
+
+  Scenario: Incomplete level without trigger resets state
+    Given a new game is started
+    And the board is initialized with width 5 and height 5
+    And the level is initialized with id 12, required target number 1, a board with width 5 and height 5, and the following tokens:
+      | token  | x | y | dir | movable | turnable |
+      | portal | 0 | 0 | UP  | false   | false    |
+    Then the level should be incomplete
+    And the level's current target number should be 0
+
+  Scenario: Setting and then getting the inventory
+    Given a new game is started
+    And the level is initialized with id 0, required target number 0, a board with width 2 and height 2, and the following tokens:
+      | token | x | y | dir | movable | turnable |
+    When I set the level's inventory to the current board
+    Then the level's inventory should be the current board

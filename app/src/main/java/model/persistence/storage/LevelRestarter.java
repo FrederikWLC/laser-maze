@@ -1,4 +1,4 @@
-package model.persistence;
+package model.persistence.storage;
 
 import model.domain.level.Level;
 

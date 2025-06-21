@@ -3,7 +3,7 @@ package controller;
 import model.domain.board.Board;
 import model.domain.board.PositionDirection;
 import model.domain.level.Level;
-import model.persistence.SavedLevelLoader;
+import model.persistence.storage.SavedLevelLoader;
 import view.GamePanel;
 import view.RenderableTile;
 

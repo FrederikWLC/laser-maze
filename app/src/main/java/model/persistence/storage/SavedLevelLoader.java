@@ -1,7 +1,6 @@
-package model.persistence;
+package model.persistence.storage;
 
 import model.domain.level.Level;
-import org.gradle.internal.impldep.com.google.api.client.json.Json;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

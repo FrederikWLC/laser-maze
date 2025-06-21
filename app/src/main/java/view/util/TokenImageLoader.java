@@ -43,7 +43,7 @@ public class TokenImageLoader {
 
         for (String name : filenames) {
             try {
-                BufferedImage img = ImageIO.read(getClass().getResource("/tokens/" + name));
+                BufferedImage img = ImageIO.read(getClass().getResource("/textures/tokens/" + name));
                 images.put(name, img);
             } catch (Exception e) {
                 System.err.println("Failed to load: " + name);
@@ -58,7 +58,7 @@ public class TokenImageLoader {
 
     public BufferedImage loadBackgroundImage() {
         try {
-            return ImageIO.read(getClass().getResource("/background/thelasermaze.jpeg"));
+            return ImageIO.read(getClass().getResource("/texture/background/thelasermaze.jpeg"));
         } catch (Exception e) {
             System.err.println("Could not load background image. Using fallback.");
             return null;

@@ -32,7 +32,7 @@ public class ScreenController {
 
 
         try {
-            BufferedImage bg = ImageIO.read(getClass().getResource("/background/thelasermaze.jpeg"));
+            BufferedImage bg = ImageIO.read(getClass().getResource("/textures/background/thelasermaze.jpeg"));
             titleScreen = new TitleScreenManager(gamePanel, bg);
         } catch (Exception e) {
             System.err.println("Failed to load title screen background.");

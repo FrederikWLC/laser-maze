@@ -6,9 +6,14 @@ import model.domain.token.base.Token;
 
 public class ViewOnlyToken extends Token implements ITurnableToken {
     private final Direction direction;
+    private final boolean turnable;
+    private final boolean movable;
 
-    public ViewOnlyToken(Direction direction) {
+    public ViewOnlyToken(Direction direction, boolean turnable, boolean movable) {
+
         this.direction = direction;
+        this.turnable = turnable;
+        this.movable = movable;
     }
 
     @Override
@@ -21,7 +26,12 @@ public class ViewOnlyToken extends Token implements ITurnableToken {
 
     @Override
     public boolean isTurnable() {
-        return false;
+
+        return turnable;
+    }
+    @Override
+    public boolean isMovable() {
+        return movable;
     }
 
     @Override

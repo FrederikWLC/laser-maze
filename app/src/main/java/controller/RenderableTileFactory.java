@@ -21,7 +21,9 @@ public class RenderableTileFactory {
                     Token token = tile.getToken();
                     String type = token.getClass().getSimpleName();
                     Direction direction = token instanceof ITurnableToken turnable ? turnable.getDirection() : null;
-                    renderables.add(new RenderableTile(x, y, type, direction));
+                    boolean isTurnable = token instanceof ITurnableToken turnable && turnable.isTurnable();
+                    boolean isMovable = token instanceof ITurnableToken turnable && turnable.isMovable();
+                    renderables.add(new RenderableTile(x, y, type, direction, token, isTurnable, isMovable));
                 }
             }
         }

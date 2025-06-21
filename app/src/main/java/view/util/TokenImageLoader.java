@@ -38,7 +38,8 @@ public class TokenImageLoader {
                 "WhiteObstacle-NONE-Dark.png",
                 "EmptyCell.png",
                 "LASER-BEAM-HORIZONTAL.png",
-                "LASER-BEAM-VERTICAL.png"
+                "LASER-BEAM-VERTICAL.png",
+                "turnable.png"
         };
 
         for (String name : filenames) {

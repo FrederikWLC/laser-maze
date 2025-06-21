@@ -99,7 +99,9 @@ public class BoardRendererPanel extends JPanel {
 
                 RenderableTile match = findMatchingTile(col, row);
                 if (match != null) {
-                    drawToken(g2d, match.getTokenType(), match.getDirection(), x, y, tileSize);
+                    boolean isTurnable = match.isTurnable();
+                    boolean isMovable = match.isMovable();
+                    drawToken(g2d, match.getTokenType(), match.getDirection(), isTurnable, isMovable, x, y, tileSize);
                 } else {
                     BufferedImage emptyTile = tokenImages.get("EmptyCell.png");
 
@@ -124,7 +126,9 @@ public class BoardRendererPanel extends JPanel {
 
             RenderableTile tile = findMatchingInventoryTile(i);
             if (tile != null) {
-                drawToken(g2d, tile.getTokenType(), tile.getDirection(), x, y, inventoryTileSize);
+                boolean isTurnable = tile.isTurnable();
+                boolean isMovable = tile.isMovable();
+                drawToken(g2d, tile.getTokenType(), tile.getDirection(), isTurnable, isMovable, x, y, inventoryTileSize);
             } else {
                 BufferedImage emptyTile = tokenImages.get("EmptyCell.png");
                 if (emptyTile != null) {
@@ -143,12 +147,16 @@ public class BoardRendererPanel extends JPanel {
         if (dragMousePosition != null && currentlyDraggedToken != null) {
             String type = currentlyDraggedToken.getClass().getSimpleName();
             Direction dir = currentlyDraggedToken instanceof ITurnableToken turnable ? turnable.getDirection() : null;
+            boolean isTurnable = currentlyDraggedToken instanceof ITurnableToken turnable && turnable.isTurnable();
+            boolean isMovable = currentlyDraggedToken instanceof ITurnableToken turnable && turnable.isMovable();
+
+
 
             int dragTileSize = 40; // smaller image
             int x = dragMousePosition.x - dragTileSize / 2;
             int y = dragMousePosition.y - dragTileSize / 2;
 
-            drawToken(g2d, type, dir, x, y, dragTileSize);
+            drawToken(g2d, type, dir, isTurnable, isMovable, x, y, dragTileSize);
         }
 
         // Draw laser path
@@ -195,13 +203,13 @@ public class BoardRendererPanel extends JPanel {
         return null;
     }
 
-    private void drawToken(Graphics2D g2d, String tokenType, Direction direction, int x, int y, int tileSize) {
+    private void drawToken(Graphics2D g2d, String tokenType, Direction direction, boolean isTurnable, boolean isMovable, int x, int y, int tileSize) {
         TokenRenderer staticRenderer = staticRenderers.get(tokenType);
         ITurnableTokenRenderer turnableRenderer = turnableRenderers.get(tokenType);
 
 
         if (turnableRenderer != null) {
-            ITurnableToken dummy = new ViewOnlyToken(direction);
+            ITurnableToken dummy = new ViewOnlyToken(direction, isTurnable, isMovable);
             turnableRenderer.render(g2d, dummy, x, y, tileSize);
         } else if (staticRenderer != null) {
             Token dummy = new Token() {};

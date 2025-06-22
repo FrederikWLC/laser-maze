@@ -1,15 +1,14 @@
 package model.domain.level.builder;
 
+import model.domain.engine.TokenInitializerEngine;
 import model.domain.level.Level;
 import model.domain.token.base.Token;
 import model.domain.board.Board;
 import model.domain.board.builder.BoardBuilder;
-import view.BoardRendererPanel;
-
 import java.util.List;
-import java.util.stream.Stream;
 
 public final class LevelBuilder {
+    TokenInitializerEngine tokenInitializerEngine = new TokenInitializerEngine(); // Violation of OPEN/CLOSED PRINCIPLE, but whatever
     private Level level;
     private BoardBuilder boardBuilder;
 
@@ -50,6 +49,8 @@ public final class LevelBuilder {
                 .withPreplacedTokens(preplacedTokens)
                 .build();
         level.setBoard(board);
+        // Run extra initialization logic
+        tokenInitializerEngine.init(level.getTokens()); // keeps SRP mostly intact
         return level;
     }
 }

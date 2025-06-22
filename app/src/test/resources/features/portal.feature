@@ -16,7 +16,6 @@ Feature: Portal
       | Laser           | 2  | 3  | UP    | false    | false   |
       | Portal          | 2  | 1  | DOWN  | true     | false   |
       | Portal          | 1  | 3  | UP    | false    | false   |
-    And the first pair of the level's Portal tokens are each other's twins
     Then the first pair of the level's Portal tokens should be each other's twins
     
     Given the token on the board at (1, 3) should be a Portal token

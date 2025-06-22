@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class SoundManager {
     public enum Sound {
-        BACKGROUND("sound/background.wav"),
+        BACKGROUND("sound/backgroound.wav"),
         LASER("sound/laser.wav"),
         CLICK("sound/click.wav");
 

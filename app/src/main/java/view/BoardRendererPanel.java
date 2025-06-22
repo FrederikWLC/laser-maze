@@ -163,26 +163,29 @@ public class BoardRendererPanel extends JPanel {
             drawToken(g2d, type, dir, isTurnable, isMovable, isRequiredTarget, x, y, dragTileSize);
         }
 
-        // Draw laser path
         if (laserPath != null && !laserPath.isEmpty()) {
+            g2d.setColor(Color.RED);
+            g2d.setStroke(new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+
             for (PositionDirection pd : laserPath) {
                 int x = 100 + pd.getPosition().getX() * tileSize;
                 int y = 100 + pd.getPosition().getY() * tileSize;
 
-                Direction dir = pd.getDirection(); // Assuming this exists
-                boolean isVertical = (dir == Direction.UP || dir == Direction.DOWN);
-                String imageKey = "LASER-BEAM-" + (isVertical ? "VERTICAL" : "HORIZONTAL") + ".png";
+                Direction dir = pd.getDirection();
 
-                BufferedImage beamImage = tokenImages.get(imageKey);
-                if (beamImage != null) {
-                    g2d.drawImage(beamImage, x, y, tileSize, tileSize, null);
-                } else {
-                    // fallback in case image is missing
-                    g2d.setColor(Color.RED);
-                    g2d.fillRect(x + 30, y + 30, 20, 20);
+                if (dir == Direction.UP || dir == Direction.DOWN) {
+                    // Full vertical line down the middle
+                    g2d.drawLine(x + tileSize / 2, y, x + tileSize / 2, y + tileSize);
+                } else if (dir == Direction.LEFT || dir == Direction.RIGHT) {
+                    // Full horizontal line across the middle
+                    g2d.drawLine(x, y + tileSize / 2, x + tileSize, y + tileSize / 2);
                 }
             }
+
+            g2d.setStroke(new BasicStroke(1));
         }
+
+
 
 
         g2d.dispose();

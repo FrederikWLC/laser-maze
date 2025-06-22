@@ -16,7 +16,7 @@ public class BeamSplitterToken extends MutableToken {
     }
 
     @Override
-    public List<PositionDirection> interact(PositionDirection currentBeamPositionDirection, List<PositionDirection> beamPath, Board board) {
+    public List<PositionDirection> interact(LaserEngine laserEngine, PositionDirection currentBeamPositionDirection, List<PositionDirection> beamPath, Board board) {
         // A Beam Splitter splits the beam into two paths, one forward and one reflected 90 degrees depending on direction.
         PositionDirection currentPositionDirectionOfReflectedBeam = currentBeamPositionDirection; // This will be the position direction of the beam reflected by the beam splitter
         switch (this.getDirection()) {
@@ -49,7 +49,7 @@ public class BeamSplitterToken extends MutableToken {
         }
         // Returns the union of the entire beam path of the forward beam and then the reflected beam path (without previous path history before this split)
         List<PositionDirection> emptyBeamPath = new ArrayList<>(); // Thus, the empty beam path
-        return Stream.concat(LaserEngine.travel(currentBeamPositionDirection, beamPath, board).stream(), LaserEngine.travel(currentPositionDirectionOfReflectedBeam, emptyBeamPath, board).stream()).toList();
+        return Stream.concat(laserEngine.travel(currentBeamPositionDirection, beamPath, board).stream(), laserEngine.travel(currentPositionDirectionOfReflectedBeam, emptyBeamPath, board).stream()).toList();
     }
 }
 

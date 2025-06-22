@@ -1,9 +1,6 @@
 package controller;
 
-import model.domain.board.Direction;
-import model.domain.board.Inventory;
-import model.domain.board.Position;
-import model.domain.board.TileContainer;
+import model.domain.board.*;
 import model.domain.token.base.ITurnableToken;
 import model.domain.token.base.Token;
 
@@ -23,23 +20,19 @@ public class TokenDragController {
         return true;
     }
 
-    public void drop(TileContainer target, Position to) {
-        if (draggedToken == null || to == null || !target.isWithinBounds(to.getX(), to.getY())) return;
+    public boolean drop(TileContainer target, Position to) {
+        if (draggedToken == null || to == null || !target.isWithinBounds(to.getX(), to.getY())) return false;
 
         // Allow dropping into the same position
         if (target == source && to.equals(origin)) {
             cancel();
-            return;
+            return false;
         }
 
         if (!target.getTile(to.getX(), to.getY()).isEmpty()) {
             System.out.println("Drop target occupied.");
             cancel(); // or allow swap if desired
-            return;
-        }
-
-        if (draggedToken instanceof ITurnableToken turnable && turnable.getDirection() == null) {
-            turnable.setDirection(Direction.UP); // Safe default direction
+            return false;
         }
 
         // Remove from source
@@ -47,8 +40,30 @@ public class TokenDragController {
 
         // Place in target
         target.getTile(to.getX(), to.getY()).setToken(draggedToken);
-        draggedToken.setPosition(to);
+        return true;
+    }
 
+    public void dropOnInventory(Inventory target, Position to) {
+        if (drop(target,to)) {
+            ((ITurnableToken) draggedToken).setDirection(null);
+            draggedToken.setPosition(null);
+        }
+        else {
+            System.out.println("Failed to drop token on inventory.");
+        }
+        cancel();
+    }
+
+    public void dropOnBoard(Board target, Position to) {
+        if (drop(target,to)) {
+            draggedToken.setPosition(to);
+            if (draggedToken instanceof ITurnableToken turnable && turnable.getDirection() == null) {
+                turnable.setDirection(Direction.UP); // Safe default direction
+            }
+        }
+        else {
+            System.out.println("Failed to drop token on board.");
+        }
         cancel();
     }
 

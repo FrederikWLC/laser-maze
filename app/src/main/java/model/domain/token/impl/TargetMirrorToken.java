@@ -26,7 +26,7 @@ public class TargetMirrorToken extends MutableToken implements ITargetToken {
     }
 
     @Override
-    public List<PositionDirection> interact(PositionDirection currentBeamPositionDirection, List<PositionDirection> beamPath, Board board) {
+    public List<PositionDirection> interact(LaserEngine laserEngine, PositionDirection currentBeamPositionDirection, List<PositionDirection> beamPath, Board board) {
         // A Target Mirror reflects the beam only on two of its four sides, depending on the direction of the beam.
         switch (this.getDirection()) {
             case UP -> {
@@ -87,7 +87,7 @@ public class TargetMirrorToken extends MutableToken implements ITargetToken {
                 }
             }
         }
-        return LaserEngine.travel(currentBeamPositionDirection, beamPath, board);
+        return laserEngine.travel(currentBeamPositionDirection, beamPath, board);
     }
 
     public boolean isHit(PositionDirection beamPositionDirection) {

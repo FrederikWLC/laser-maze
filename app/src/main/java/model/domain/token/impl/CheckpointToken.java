@@ -15,7 +15,7 @@ public class CheckpointToken extends MutableToken implements ICheckpointToken {
     }
 
     @Override
-    public List<PositionDirection> interact(PositionDirection currentBeamPositionDirection, List<PositionDirection> beamPath, Board board) {
+    public List<PositionDirection> interact(LaserEngine laserEngine, PositionDirection currentBeamPositionDirection, List<PositionDirection> beamPath, Board board) {
         // A Checkpoint allows the beam to pass through its tile without changing its direction
         // only if the beam is facing the opening of the checkpoint.
         switch (this.getDirection()) {
@@ -23,7 +23,7 @@ public class CheckpointToken extends MutableToken implements ICheckpointToken {
                 switch (currentBeamPositionDirection.getDirection()) { // if the beam passes or not depending on the direction
                     case UP, DOWN -> { // Beam passes through the opening
                         beamPath = Stream.concat(beamPath.stream(), Stream.of(currentBeamPositionDirection)).toList();
-                        return LaserEngine.travel(currentBeamPositionDirection, beamPath, board);
+                        return laserEngine.travel(currentBeamPositionDirection, beamPath, board);
                     }
                     case LEFT, RIGHT -> {
                         return beamPath;
@@ -37,7 +37,7 @@ public class CheckpointToken extends MutableToken implements ICheckpointToken {
                     } // Beam hits non-opening side
                     case LEFT, RIGHT -> { // Beam passes through the opening
                         beamPath = Stream.concat(beamPath.stream(), Stream.of(currentBeamPositionDirection)).toList();
-                        return LaserEngine.travel(currentBeamPositionDirection, beamPath, board);
+                        return laserEngine.travel(currentBeamPositionDirection, beamPath, board);
                     }
                 }
             }

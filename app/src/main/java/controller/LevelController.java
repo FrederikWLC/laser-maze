@@ -1,5 +1,6 @@
 package controller;
 
+import model.domain.board.Inventory;
 import model.domain.board.PositionDirection;
 import model.domain.board.TileContainer;
 import model.domain.board.builder.InventoryBuilder;
@@ -29,6 +30,7 @@ public class LevelController {
     private final LevelSaver levelSaver = new LevelSaver();
     private final LevelIOHandler levelIOHandler = new LevelIOHandler(defaultLevelLoader,savedLevelLoader,levelSaver);
     private Level currentLevel;
+    private LevelEngine levelEngine = new LevelEngine();
 
 
     public LevelController(GamePanel gamePanel, ScreenController screenController) {
@@ -58,7 +60,7 @@ public class LevelController {
         soundManager.stopBackground(); // ensure old track doesn't stack
         soundManager.play(SoundManager.Sound.BACKGROUND, true);
 
-        TileContainer inventory = InventoryBuilder.buildInventory(getCurrentLevel().getRequiredTokens());
+        Inventory inventory = InventoryBuilder.buildInventory(getCurrentLevel().getRequiredTokens());
         getCurrentLevel().setInventory(inventory);
 
         RenderableTileFactory tileFactory = new RenderableTileFactory();
@@ -99,7 +101,7 @@ public class LevelController {
                     gamePanel.repaint();
                     gamePanel.getControlPanel().boardRenderer.repaint();
 
-                    if (LevelEngine.updateAndCheckLevelCompletionState(getCurrentLevel())) {
+                    if (levelEngine.updateAndCheckLevelCompletionState(getCurrentLevel())) {
                         gamePanel.showLevelComplete();
                     }
 

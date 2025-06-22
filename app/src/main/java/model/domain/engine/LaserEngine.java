@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 public class LaserEngine {
 
-    public static List<PositionDirection> fire(LaserToken laser, Board board) {
+    public List<PositionDirection> fire(LaserToken laser, Board board) {
         if (!laser.isActive()) {
             return List.of();
         }
@@ -24,7 +24,7 @@ public class LaserEngine {
         return travel(currentPositionDirection, beamPath, board);
     }
 
-    public static List<PositionDirection> travel(PositionDirection currentPositionDirection, List<PositionDirection> beamPath, Board board) {
+    public List<PositionDirection> travel(PositionDirection currentPositionDirection, List<PositionDirection> beamPath, Board board) {
         while (true) {
             // Move in the current direction
             currentPositionDirection = currentPositionDirection.increment();
@@ -43,7 +43,7 @@ public class LaserEngine {
             }
 
             if (!tile.isEmpty()) {
-                beamPath = tile.getToken().interact(currentPositionDirection, beamPath, board);
+                beamPath = tile.getToken().interact(this, currentPositionDirection, beamPath, board);
                 break; // Stop if we go out of bounds
             }
 
@@ -55,13 +55,13 @@ public class LaserEngine {
     }
 
 
-    public static List<Token> getAllTouchRequiredTokens(List<PositionDirection> beamPath, List<Token> tokens) {
+    public List<Token> getAllTouchRequiredTokens(List<PositionDirection> beamPath, List<Token> tokens) {
         return tokens.stream()
                 .filter(Token::isTouchRequired)
                 .toList();
     }
 
-    public static List<Token> getAllTouchRequiredTokensTouched(List<PositionDirection> beamPath, List<Token> tokens) {
+    public List<Token> getAllTouchRequiredTokensTouched(List<PositionDirection> beamPath, List<Token> tokens) {
         return tokens.stream()
                 .filter(Token::isTouchRequired)
                 .filter(token ->
@@ -69,11 +69,11 @@ public class LaserEngine {
                 ).toList();
     }
 
-    public static boolean areAllTouchRequiredTokensTouched(List<PositionDirection> beamPath, List<Token> tokens) {
+    public boolean areAllTouchRequiredTokensTouched(List<PositionDirection> beamPath, List<Token> tokens) {
         return getAllTouchRequiredTokensTouched(beamPath, tokens).size() == getAllTouchRequiredTokens(beamPath,tokens).size();
     }
 
-    public static List<ICheckpointToken> getAllCheckpointsPenetrated(List<PositionDirection> beamPath, List<Token>             tokens) {
+    public List<ICheckpointToken> getAllCheckpointsPenetrated(List<PositionDirection> beamPath, List<Token>             tokens) {
         return tokens.stream()
                 .filter(ICheckpointToken.class::isInstance)
                 .map(ICheckpointToken.class::cast).
@@ -82,14 +82,14 @@ public class LaserEngine {
                 ).toList();
     }
 
-    public static boolean areAllCheckpointsPenetrated(List<PositionDirection> beamPath, List<Token> tokens) {
+    public boolean areAllCheckpointsPenetrated(List<PositionDirection> beamPath, List<Token> tokens) {
         int totalCheckpoints = tokens.stream()
                 .filter(ICheckpointToken.class::isInstance)
                 .toList().size();
         return getAllCheckpointsPenetrated(beamPath, tokens).size() == totalCheckpoints;
     }
 
-    public static List<ITargetToken> getAllTargetsHit(List<PositionDirection> beamPath, List<Token> tokens) {
+    public List<ITargetToken> getAllTargetsHit(List<PositionDirection> beamPath, List<Token> tokens) {
         return tokens.stream()
                 .filter(ITargetToken.class::isInstance)
                 .map(ITargetToken.class::cast)
@@ -98,11 +98,11 @@ public class LaserEngine {
                 ).toList();
     }
 
-    public static int getTargetHitNumber(List<PositionDirection> beamPath, List<Token> tokens) {
+    public int getTargetHitNumber(List<PositionDirection> beamPath, List<Token> tokens) {
         return getAllTargetsHit(beamPath,tokens).size();
     }
 
-    public static List<ITargetToken> getAllRequiredTargetsHit(List<PositionDirection> beamPath, List<Token> tokens)
+    public List<ITargetToken> getAllRequiredTargetsHit(List<PositionDirection> beamPath, List<Token> tokens)
     {
         return getAllTargetsHit(beamPath, tokens).stream().
                 filter(target ->
@@ -110,7 +110,7 @@ public class LaserEngine {
                 .toList();
     }
 
-    public static boolean areAllRequiredTargetsHit(List<PositionDirection> beamPath, List<Token> tokens) {
+    public boolean areAllRequiredTargetsHit(List<PositionDirection> beamPath, List<Token> tokens) {
         return getAllRequiredTargetsHit(beamPath, tokens).size() == tokens.stream()
                 .filter(ITargetToken.class::isInstance)
                 .map(ITargetToken.class::cast)

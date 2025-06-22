@@ -9,11 +9,10 @@ import model.domain.token.base.Token;
 
 import java.util.List;
 
-public class BoardEngine {
-
+public class BoardEngine  {
 
     // For
-    public static void placeToken(Board board, Token token, Position position) {
+    public void placeToken(Board board, Token token, Position position) {
         Tile tile = board.getTile(position.getX(), position.getY());
         if (tile.isEmpty()) {
             tile.setToken(token);
@@ -21,14 +20,14 @@ public class BoardEngine {
         }
     }
 
-    public static void setPreplacedTokens(Board board, List<Token> preplacedTokens) {
+    public void setPreplacedTokens(Board board, List<Token> preplacedTokens) {
         for (int i = 0; i < preplacedTokens.size(); i++) {
             Token token = preplacedTokens.get(i);
             placeToken(board, token, token.getPosition());
         }
     }
 
-    public static void moveToken(Board board, Token token, Position position) {
+    public void moveToken(Board board, Token token, Position position) {
         if (token.isMovable()) {
             placeToken(board, token, position);
         }
@@ -37,7 +36,7 @@ public class BoardEngine {
         }
     }
 
-    public static void turnToken(ITurnableToken token, Direction direction) {
+    public void turnToken(ITurnableToken token, Direction direction) {
         if (token.isTurnable()) {
             token.setDirection(direction);
         }

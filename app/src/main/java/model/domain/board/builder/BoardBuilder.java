@@ -8,6 +8,8 @@ import java.util.List;
 
 public class BoardBuilder {
 
+    BoardEngine boardEngine = new BoardEngine();
+
     private int width = 5;
     private int height = 5;
     List<Token> preplacedTokens = List.of();
@@ -27,7 +29,7 @@ public class BoardBuilder {
 
     public Board build() {
         Board board = new Board(width,height);
-        BoardEngine.setPreplacedTokens(board, preplacedTokens);
+        boardEngine.setPreplacedTokens(board, preplacedTokens);
         return board;
     }
 

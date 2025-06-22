@@ -28,24 +28,24 @@ public class PortalToken extends MutableTwinToken implements IPortalToken {
         return getBluePortalDirection().opposite();
     }
 
-    public List<PositionDirection> spawn(boolean throughBluePortal, List<PositionDirection> beamPath, Board board) {
+    public List<PositionDirection> spawn(LaserEngine laserEngine, boolean throughBluePortal, List<PositionDirection> beamPath, Board board) {
         // when spawn(..) is called from the twin, the beam exits through the equivalent portal color it entered.
         Direction currentBeamDirection = throughBluePortal ? this.getBluePortalDirection() : this.getRedPortalDirection();
         // The beam exits the portal in the direction of the portal's exit, and skips the portal's own tile.
         PositionDirection currentBeamPositionDirection = new PositionDirection(this.getPosition(), currentBeamDirection);
         // The beam continues its path from the portal's exit position and direction.
-        return LaserEngine.travel(currentBeamPositionDirection, beamPath, board);
+        return laserEngine.travel(currentBeamPositionDirection, beamPath, board);
     }
 
     @Override
-    public List<PositionDirection> interact(PositionDirection currentBeamPositionDirection, List<PositionDirection> beamPath, Board board) {
+    public List<PositionDirection> interact(LaserEngine laserEngine,PositionDirection currentBeamPositionDirection, List<PositionDirection> beamPath, Board board) {
         // A Portal token only spawns a beam through its twin if the beam is facing the opening of the portal.
         // this can be determined by checking if the beam's direction is parallel to the portal's direction.
         // and if the portal has a twin.
         boolean throughBluePortal = currentBeamPositionDirection.getDirection().opposite() == getBluePortalDirection();;
         boolean throughRedPortal = currentBeamPositionDirection.getDirection().opposite() == getBluePortalDirection().opposite();
         if ((throughBluePortal || throughRedPortal) && this.getTwin() != null && this.getTwin().isPlaced()) {
-            return this.getTwin().spawn(throughBluePortal, beamPath, board);
+            return this.getTwin().spawn(laserEngine, throughBluePortal, beamPath, board);
         } else {
             return beamPath;
         }

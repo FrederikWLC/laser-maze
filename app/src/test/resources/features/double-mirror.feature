@@ -46,3 +46,60 @@ Feature: Double Mirror token
       # Hits and gets reflected by double mirror, but skips its tile (2, 2))
       | 2 | 1 | UP |
       | 2 | 0 | UP |
+
+  Scenario: Fire laser through Double Mirror facing LEFT
+    Given a new game is started
+    And the board is initialized with width 5 and height 5
+    And a completely mutable Double Mirror token is placed on the board at (2, 2) facing LEFT
+    And a completely mutable Laser token is placed on the board at (0, 2) facing RIGHT
+    When I activate the laser
+    And the laser forms a beam path
+    Then the laser beam should pass through the following position directions:
+      | x | y | dir   |
+      | 1 | 2 | RIGHT |
+      | 2 | 1 | UP    |
+      | 2 | 0 | UP    |
+
+  Scenario: Fire laser through Double Mirror facing UP from below
+    Given I turn the Double Mirror token to face UP
+    And a completely mutable Laser token is placed on the board at (2, 4) facing UP
+    When I activate the laser
+    And the laser forms a beam path
+    Then the laser beam should pass through the following position directions:
+      | x | y | dir  |
+      | 2 | 3 | UP   |
+      | 1 | 2 | LEFT |
+      | 0 | 2 | LEFT |
+
+  Scenario: Fire laser through Double Mirror slash from below
+    And a completely mutable Laser token is placed on the board at (2, 4) facing UP
+    When I activate the laser
+    And the laser forms a beam path
+    Then the laser beam should pass through the following position directions:
+      | x | y | dir   |
+      | 2 | 3 | UP    |
+      | 3 | 2 | RIGHT |
+      | 4 | 2 | RIGHT |
+
+  Scenario: Fire laser through Double Mirror slash from above
+    And a completely mutable Laser token is placed on the board at (2, 0) facing DOWN
+    When I activate the laser
+    And the laser forms a beam path
+    Then the laser beam should pass through the following position directions:
+      | x | y | dir   |
+      | 2 | 1 | DOWN  |
+      | 1 | 2 | LEFT  |
+      | 0 | 2 | LEFT  |
+
+  Scenario: Laser hits backslash Double Mirror from left
+    Given a new game is started
+    And the board is initialized with width 5 and height 5
+    And a completely mutable Double Mirror token is placed on the board at (2, 2) facing DOWN
+    And a completely mutable Laser token is placed on the board at (0, 2) facing RIGHT
+    When I activate the laser
+    And the laser forms a beam path
+    Then the laser beam should pass through the following position directions:
+      | x | y | dir   |
+      | 1 | 2 | RIGHT |
+      | 2 | 3 | DOWN  |
+      | 2 | 4 | DOWN  |

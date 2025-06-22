@@ -491,4 +491,32 @@ public class BoardSteps extends BaseSteps {
         assertFalse(cellBlocker.isTouchRequired(),
                 "Cell Blocker should never require touch");
     }
+
+    @Given("a completely mutable Laser token is created")
+    public void aCompletelyMutableLaserTokenIsCreated() {
+        // no position, no direction => isPlaced()==false, isTurned()==false
+        laser = new LaserTokenBuilder()
+                .withMutability(true, true)
+                .build();
+        token = laser;
+    }
+
+    @When("I try to activate the laser")
+    public void iTryToActivateTheLaser() {
+        try {
+            laser.trigger(true);
+        } catch (Exception e) {
+            exception = e;
+        }
+    }
+
+    @Given("a completely mutable Laser token is placed on the board at \\({int}, {int}) without a direction")
+    public void aCompletelyMutableLaserTokenIsPlacedOnTheBoardWithoutDirection(int x, int y) {
+        // placed but never turned (direction==null)
+        laser = new LaserTokenBuilder()
+                .withMutability(true, true)
+                .withPosition(x, y)
+                .build();
+        boardEngine.placeToken(board, laser, new Position(x, y));
+    }
 }

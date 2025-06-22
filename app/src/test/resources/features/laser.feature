@@ -20,3 +20,13 @@ Feature: Fire Laser
       | 2 | 0 | RIGHT |
       | 3 | 0 | RIGHT |
       | 4 | 0 | RIGHT |
+
+  Scenario: Laser cannot fire before placement
+    Given a completely mutable Laser token is created
+    When I try to activate the laser
+    Then an error should occur
+
+  Scenario: Laser cannot fire before turning
+    Given a completely mutable Laser token is placed on the board at (2, 2) without a direction
+    When I try to activate the laser
+    Then an error should occur

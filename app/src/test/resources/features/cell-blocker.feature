@@ -33,3 +33,8 @@ Feature: Cell blocker
       | 2 | 1 | UP |
       | 2 | 0 | UP |
 
+  Scenario: Cell Blocker does not require touch
+    Given a new game is started
+    And the board is initialized with width 5 and height 5
+    And a Cell Blocker token is preplaced on the board at (2, 2)
+    Then the Cell Blocker token should not require touch

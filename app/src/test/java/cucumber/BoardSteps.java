@@ -485,4 +485,10 @@ public class BoardSteps extends BaseSteps {
         assertSame(board, level.getInventory(),
                 "Expected level.getInventory() to return the board we just set");
     }
+
+    @Then("the Cell Blocker token should not require touch")
+    public void theCellBlockerTokenShouldNotRequireTouch() {
+        assertFalse(cellBlocker.isTouchRequired(),
+                "Cell Blocker should never require touch");
+    }
 }

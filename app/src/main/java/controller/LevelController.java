@@ -17,6 +17,8 @@ import view.GamePanelUIBinder;
 import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.util.List;
+import model.domain.engine.LevelEngine;
+
 
 public class LevelController {
     private final GamePanel gamePanel;
@@ -27,6 +29,8 @@ public class LevelController {
     private final LevelSaver levelSaver = new LevelSaver();
     private final LevelIOHandler levelIOHandler = new LevelIOHandler(defaultLevelLoader,savedLevelLoader,levelSaver);
     private Level currentLevel;
+    private int laserFireInvocationCount = 0;
+
 
     public LevelController(GamePanel gamePanel, ScreenController screenController) {
         this.gamePanel = gamePanel;
@@ -95,6 +99,14 @@ public class LevelController {
                     gamePanel.getControlPanel().boardRenderer.setTilesToRender(updated);
                     gamePanel.repaint();
                     gamePanel.getControlPanel().boardRenderer.repaint();
+
+                    laserFireInvocationCount++;
+                    if (LevelEngine.updateAndCheckLevelCompletionState(getCurrentLevel())
+                            && (laserFireInvocationCount % 2 == 1))
+                    {
+                        gamePanel.showLevelComplete();
+                    }
+
                 },
                 null
         );

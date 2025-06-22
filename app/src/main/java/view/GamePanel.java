@@ -15,6 +15,8 @@ import model.domain.board.TileContainer;
 import view.util.TokenImageLoader;
 import view.util.GameUIBuilder;
 import view.rendering.DrawableManager;
+import javax.swing.JOptionPane;
+
 
 public class GamePanel extends JPanel {
 
@@ -26,6 +28,7 @@ public class GamePanel extends JPanel {
     private JButton restartButton;
     private JButton exitButton;
     private JButton saveAndExitButton;
+
 
     private JScrollPane levelScrollPane;
     private JPanel levelListPanel;
@@ -45,6 +48,8 @@ public class GamePanel extends JPanel {
 
     private final GameRenderer gameRenderer = new GameRenderer();
     private GameControlPanel controlPanel;
+    private boolean levelCompleteDialogShowing = false;
+
 
     public GamePanel(TokenImageLoader loader, GameControlPanel controlPanel) {
         tokenImages.putAll(loader.loadTokenImages());
@@ -297,5 +302,14 @@ public class GamePanel extends JPanel {
 
         return x >= boardX && x < boardX + boardWidth &&
                 y >= boardY && y < boardY + boardHeight;
+    }
+
+    public void showLevelComplete() {
+        JOptionPane.showMessageDialog(
+                this,
+                "Congratulations! You’ve completed the level!",
+                "Level Complete",
+                JOptionPane.INFORMATION_MESSAGE
+        );
     }
 }

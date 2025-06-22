@@ -13,7 +13,6 @@ public class InventoryBuilder {
         for (int i = 0; i < tokens.size() && i < 5; i++) {
             Token token = tokens.get(i);
             inventory.getTile(i, 0).setToken(token);
-            token.setPosition(new Position(i, 0));
         }
 
         return inventory;

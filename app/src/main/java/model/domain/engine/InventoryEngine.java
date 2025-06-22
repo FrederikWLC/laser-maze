@@ -44,7 +44,6 @@ public class InventoryEngine {
     public static void placeTokenAt(Inventory inventory, Token token, int slotIndex) {
         if (slotIndex >= 0 && slotIndex < 5) {
             inventory.getTile(slotIndex, 0).setToken(token);
-            token.setPosition(new Position(slotIndex, 0));
         }
     }
 }

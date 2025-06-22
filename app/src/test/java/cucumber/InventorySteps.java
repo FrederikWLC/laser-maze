@@ -73,7 +73,7 @@ public class InventorySteps extends BaseSteps {
     public void iPlaceATokenFromInventoryAtBoardPosition(String tokenName, int x, int y) {
         token = inventory.getTokenByType(tokenName);
         assertNotNull(token, "No " + tokenName + " found in inventory");
-        BoardEngine.placeToken(board, token, new Position(x, y));
+        boardEngine.placeToken(board, token, new Position(x, y));
         inventory.removeToken(token);
     }
     @Given("a {int} by {int} board")

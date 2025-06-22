@@ -1,5 +1,6 @@
 package controller;
 
+import model.domain.board.Inventory;
 import model.domain.board.Position;
 import model.domain.board.TileContainer;
 import model.domain.token.base.Token;
@@ -19,11 +20,11 @@ public class InputHandler implements MouseListener, MouseMotionListener {
     private final GamePanel gamePanel;
     private final RenderableTileFactory tileFactory;
     private final SoundManager soundManager;
-    private final TileContainer inventory;
+    private final Inventory inventory;
     private final TokenDragController dragController;
     private Point mousePosition = null;
 
-    public InputHandler(GameController gameController, GamePanel gamePanel, RenderableTileFactory tileFactory, SoundManager soundManager, TileContainer inventory, TokenDragController dragController) {
+    public InputHandler(GameController gameController, GamePanel gamePanel, RenderableTileFactory tileFactory, SoundManager soundManager, Inventory inventory, TokenDragController dragController) {
         this.gameController = gameController;
         this.gamePanel = gamePanel;
         this.tileFactory = tileFactory;
@@ -96,9 +97,9 @@ public class InputHandler implements MouseListener, MouseMotionListener {
 
         // Try dropping in either valid area
         if (gamePanel.isBoardArea(e.getX(), e.getY())) {
-            dragController.drop(gameController.getLevel().getBoard(), boardPos);
+            dragController.dropOnBoard(gameController.getLevel().getBoard(), boardPos);
         } else if (gamePanel.isInventoryArea(e.getX(), e.getY())) {
-            dragController.drop(inventory, inventoryPos);
+            dragController.dropOnInventory(inventory, inventoryPos);
         }
 
         // Clear ghost image always

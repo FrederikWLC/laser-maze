@@ -14,7 +14,7 @@ public class DoubleMirrorToken extends MutableToken {
     }
 
     @Override
-    public List<PositionDirection> interact(PositionDirection currentBeamPositionDirection, List<PositionDirection> beamPath, Board board) {
+    public List<PositionDirection> interact(LaserEngine laserEngine, PositionDirection currentBeamPositionDirection, List<PositionDirection> beamPath, Board board) {
         // A Double Mirror reflects the beam 90 degrees depending on the direction it is facing.
         switch (this.getDirection()) {
             case UP,
@@ -44,7 +44,7 @@ public class DoubleMirrorToken extends MutableToken {
                 }
             }
         }
-        return LaserEngine.travel(currentBeamPositionDirection, beamPath, board);
+        return laserEngine.travel(currentBeamPositionDirection, beamPath, board);
     }
 
 }

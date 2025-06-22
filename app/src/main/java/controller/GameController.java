@@ -15,6 +15,8 @@ import javax.swing.*;
 import java.util.List;
 
 public class GameController {
+    LevelEngine levelEngine = new LevelEngine();
+    BoardEngine boardEngine = new BoardEngine();
     private Level level;
     private List<PositionDirection> beamPath = List.of();
 
@@ -27,12 +29,12 @@ public class GameController {
     }
 
     public void updateCurrentLaserPath() {
-        beamPath = LevelEngine.fireLaserToken(level);
+        beamPath = levelEngine.fireLaserToken(level);
     }
 
     public void triggerLaser(boolean isActive) {
         try {
-            LevelEngine.triggerLaserToken(level, isActive);
+            levelEngine.triggerLaserToken(level, isActive);
             updateCurrentLaserPath();
         } catch (Exception e) {
             System.out.println("Failed to trigger laser: " + e.getMessage());
@@ -55,7 +57,7 @@ public class GameController {
             updateCurrentLaserPath();
         }
         try {
-            BoardEngine.turnToken((ITurnableToken) token, direction);
+            boardEngine.turnToken((ITurnableToken) token, direction);
             System.out.println("Rotated token to " + direction);
         } catch (Exception e) {
             System.out.println("Rotation failed: " + e.getMessage());

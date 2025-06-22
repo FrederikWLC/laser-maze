@@ -30,6 +30,7 @@ public abstract class BaseSteps {
     public Exception exception;
     public List<PositionDirection> actualBeamPath;
     public Map<String,Integer> availableTokensMap;
+    public BoardEngine boardEngine = new BoardEngine();
 
 
     public Token getSavedToken(String name) {
@@ -108,7 +109,7 @@ public abstract class BaseSteps {
     public void placeTokenOnTheBoard(Board board, String tokenName, int x, int y, Direction direction, boolean movable, boolean turnable) {
         token = buildToken(tokenName, x, y, direction, movable, turnable);
         saveTokenAsType(token);
-        BoardEngine.placeToken(board,token, new Position(x, y)) ;
+        boardEngine.placeToken(board,token, new Position(x, y)) ;
     }
 
 

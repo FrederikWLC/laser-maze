@@ -1,5 +1,6 @@
 package model.domain.engine;
 
+import model.domain.board.Board;
 import model.domain.board.Position;
 import model.domain.board.PositionDirection;
 import model.domain.token.base.Token;
@@ -12,16 +13,19 @@ import java.util.Optional;
 
 public class LevelEngine {
 
-    public static List<PositionDirection> fireLaserToken(Level level) {
+    private BoardEngine boardEngine = new BoardEngine();
+    private LaserEngine laserEngine = new LaserEngine();
+
+    public List<PositionDirection> fireLaserToken(Level level) {
         Optional<LaserToken> optionalLaserToken = level.getTriggerableLaser();
         if (optionalLaserToken.isEmpty()) {
             throw new IllegalStateException("No triggerable laser token found to fire.");
         }
         LaserToken laserToken = optionalLaserToken.get();
-        return LaserEngine.fire(laserToken, level.getBoard());
+        return laserEngine.fire(laserToken, level.getBoard());
     }
 
-    public static void triggerLaserToken(Level level, boolean isActive) {
+    public void triggerLaserToken(Level level, boolean isActive) {
         Optional<LaserToken> optionalLaserToken = level.getTriggerableLaser();
         if (optionalLaserToken.isEmpty()) {
             throw new IllegalStateException("No triggerable laser token found to trigger.");
@@ -30,13 +34,13 @@ public class LevelEngine {
         laserToken.trigger(isActive);
     }
 
-    public static void placeRequiredToken(Level level, Token token, Position position) {
+    public void placeRequiredToken(Level level, Token token, Position position) {
         List<Token> tokens = new ArrayList<>(level.getRequiredTokens()); // create mutable copy
         tokens.remove(token);
-        BoardEngine.placeToken(level.getBoard(), token, position);
+        boardEngine.placeToken(level.getBoard(), token, position);
     }
 
-    public static boolean updateAndCheckLevelCompletionState(Level level) {
+    public boolean updateAndCheckLevelCompletionState(Level level) {
         Optional<LaserToken> optionalActiveLaser = level.getActiveLaser();
         if (optionalActiveLaser.isEmpty()) { // No active laser found
             level.setComplete(false); // Set level as incomplete
@@ -46,16 +50,16 @@ public class LevelEngine {
         else { // Active laser found
             LaserToken activeLaser = optionalActiveLaser.get();
             // Fire laser, get beam path
-            List<PositionDirection> beamPath = LaserEngine.fire(activeLaser, level.getBoard());
+            List<PositionDirection> beamPath = laserEngine.fire(activeLaser, level.getBoard());
             // Get and set current target number
-            int currentTargetNumber = LaserEngine.getTargetHitNumber(beamPath, level.getTokens());
+            int currentTargetNumber = laserEngine.getTargetHitNumber(beamPath, level.getTokens());
             level.setCurrentTargetNumber(currentTargetNumber);
             // Check if level is complete
             boolean isComplete =
                     level.isRequiredTargetNumberSatisfied() & // Required target number must be satisfied
-                    LaserEngine.areAllTouchRequiredTokensTouched(beamPath, level.getTokens()) & // All touch required tokens must be touched by the beam
-                    LaserEngine.areAllRequiredTargetsHit(beamPath,level.getTokens()) & // All required targets must be hit
-                    LaserEngine.areAllCheckpointsPenetrated(beamPath,level.getTokens()); // All checkpoints must be penetrated
+                    laserEngine.areAllTouchRequiredTokensTouched(beamPath, level.getTokens()) & // All touch required tokens must be touched by the beam
+                    laserEngine.areAllRequiredTargetsHit(beamPath,level.getTokens()) & // All required targets must be hit
+                    laserEngine.areAllCheckpointsPenetrated(beamPath,level.getTokens()); // All checkpoints must be penetrated
             level.setComplete(isComplete); // Set level completion state
             return isComplete; // return completion state
             }

@@ -11,6 +11,7 @@ import model.domain.board.builder.BoardBuilder;
 import model.domain.engine.BoardEngine;
 import model.domain.engine.LaserEngine;
 import model.domain.engine.LevelEngine;
+import model.domain.level.Level;
 import model.domain.level.builder.LevelBuilder;
 import model.domain.token.base.*;
 import model.domain.token.builder.base.*;
@@ -20,6 +21,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class BoardSteps extends BaseSteps {
+
+    LevelEngine levelEngine = new LevelEngine();
+    LaserEngine laserEngine = new LaserEngine();
+    BoardEngine boardEngine = new BoardEngine();
 
     @ParameterType("(?i)laser|cell blocker|double mirror|target mirror|beam splitter|checkpoint|portal")
     public Token token(String name) {
@@ -115,12 +120,12 @@ public class BoardSteps extends BaseSteps {
 
     @And("the laser forms a beam path")
     public void theLaserFormsABeamPath() {
-        actualBeamPath = LaserEngine.fire(laser, board);
+        actualBeamPath = laserEngine.fire(laser, board);
     }
 
     @And("the level's laser forms a beam path")
     public void theLevelsLaserFormsABeamPath() {
-        actualBeamPath = LevelEngine.fireLaserToken(level);
+        actualBeamPath = levelEngine.fireLaserToken(level);
     }
 
     @Then("a laser should be present on the board")
@@ -154,7 +159,7 @@ public class BoardSteps extends BaseSteps {
         cellBlocker = new CellBlockerTokenBuilder()
                 .withPosition(x,y)
                 .build();
-        BoardEngine.placeToken(board,cellBlocker, new Position(x, y));
+        boardEngine.placeToken(board,cellBlocker, new Position(x, y));
     }
 
     public Token buildToken(String tokenName, Integer x, Integer y, Direction direction, boolean movable, boolean turnable) {
@@ -171,7 +176,7 @@ public class BoardSteps extends BaseSteps {
     public void placeTokenOnTheBoard(Board board, String tokenName, int x, int y, Direction direction, boolean movable, boolean turnable) {
         token = buildToken(tokenName, x, y, direction, movable, turnable);
         saveTokenAsType(token);
-        BoardEngine.placeToken(board,token, new Position(x, y)) ;
+        boardEngine.placeToken(board,token, new Position(x, y)) ;
     }
 
     @Given("a completely mutable {tokenName} token is placed on the board at \\({int}, {int}) facing {direction}")
@@ -214,7 +219,7 @@ public class BoardSteps extends BaseSteps {
     @Given("I try to move the {token} token to \\({int}, {int})")
     public void iTryToMoveTheTokenTo(Token token, int x, int y) {
         try {
-            BoardEngine.moveToken(board, token, new Position(x, y));
+            boardEngine.moveToken(board, token, new Position(x, y));
         } catch (Exception e) {
             exception = e;
         }
@@ -222,7 +227,7 @@ public class BoardSteps extends BaseSteps {
 
     @Given("I move the {token} token to \\({int}, {int})")
     public void iMoveTheTokenTo(Token token, int x, int y) {
-        BoardEngine.moveToken(board, token, new Position(x, y));
+        boardEngine.moveToken(board, token, new Position(x, y));
     }
 
     @Then("the {token} token should be at \\({int}, {int})")
@@ -235,7 +240,7 @@ public class BoardSteps extends BaseSteps {
     @Given("I try to turn the {token} token to face {direction}")
     public void iTryToTurnTheTokenToFace(Token token, Direction direction) {
         try {
-            BoardEngine.turnToken((MutableToken) token, direction);
+            boardEngine.turnToken((MutableToken) token, direction);
         } catch (Exception e) {
             exception = e;
         }
@@ -243,7 +248,7 @@ public class BoardSteps extends BaseSteps {
 
     @Given("I turn the {token} token to face {direction}")
     public void iTurnTheTokenToFace(Token token, Direction direction) {
-            BoardEngine.turnToken((MutableToken) token, direction);
+            boardEngine.turnToken((MutableToken) token, direction);
     }
 
     @Then("the {token} token should face {direction}")
@@ -270,26 +275,26 @@ public class BoardSteps extends BaseSteps {
 
     @And("the number of targets hit by the beam path should be {int}")
     public void theNumberOfTargetsHitShouldBe(int n) {
-        int actualHitCount = LaserEngine.getTargetHitNumber(actualBeamPath, level.getTokens());
+        int actualHitCount = laserEngine.getTargetHitNumber(actualBeamPath, level.getTokens());
         assertEquals(n,actualHitCount,
                 "Number of targets hit should be " + n + ", but is: " + actualHitCount);
     }
 
     @And("the beam path should hit all the required targets")
     public void theBeamPathHitsAllTheRequiredTargets() {
-        boolean allRequiredTargetsHit = LaserEngine.areAllRequiredTargetsHit(actualBeamPath, level.getTokens());
+        boolean allRequiredTargetsHit = laserEngine.areAllRequiredTargetsHit(actualBeamPath, level.getTokens());
         assertTrue(allRequiredTargetsHit, "Beam path does not hit all required targets");
     }
 
     @And("the beam path should touch every touch-required token given by the level")
     public void theBeamPathTouchesEveryTokenOnTheBoardExceptTheOnesNotTouchRequired() {
-        boolean allTouchRequiredTokensTouched = LaserEngine.areAllTouchRequiredTokensTouched(actualBeamPath, level.getTokens());
+        boolean allTouchRequiredTokensTouched = laserEngine.areAllTouchRequiredTokensTouched(actualBeamPath, level.getTokens());
         assertTrue(allTouchRequiredTokensTouched, "Beam path does not touch all touch-required tokens");
     }
 
     @And("the beam path should pass through all checkpoints")
     public void theBeamPathShouldPassThroughAllCheckpoints() {
-        boolean allCheckpointsPenetrated = LaserEngine.areAllCheckpointsPenetrated(actualBeamPath, level.getTokens());
+        boolean allCheckpointsPenetrated = laserEngine.areAllCheckpointsPenetrated(actualBeamPath, level.getTokens());
         assertTrue(allCheckpointsPenetrated, "Beam path does not pass through all checkpoints");
     }
 
@@ -313,7 +318,7 @@ public class BoardSteps extends BaseSteps {
 
     @Given("I activate the level's laser")
     public void iActivateTheLevelsLaser() {
-        LevelEngine.triggerLaserToken(level, true);
+        levelEngine.triggerLaserToken(level, true);
         laser = level.getActiveLaser().get();
     }
 
@@ -397,7 +402,7 @@ public class BoardSteps extends BaseSteps {
     @Given("I place token {int} \\(from the required tokens) on the board at \\({int}, {int})")
     public void iPlaceTokenFromTheRequiredTokensOnTheBoardAt(int idx, int x, int y) {
         token = level.getRequiredTokens().get(idx);
-        LevelEngine.placeRequiredToken(level, token, new Position(x, y));
+        levelEngine.placeRequiredToken(level, token, new Position(x, y));
         saveTokenAsType(token);
     }
 
@@ -424,13 +429,13 @@ public class BoardSteps extends BaseSteps {
     }
     @Then("the level should be incomplete")
     public void theLevelShouldBeIncomplete() {
-        LevelEngine.updateAndCheckLevelCompletionState(level);
+        levelEngine.updateAndCheckLevelCompletionState(level);
         assertFalse(level.isComplete(), "Level should not be complete, but is");
     }
 
     @Then("the level should be complete")
     public void theLevelShouldBeComplete() {
-        LevelEngine.updateAndCheckLevelCompletionState(level);
+        levelEngine.updateAndCheckLevelCompletionState(level);
         assertTrue(level.isComplete(), "Level should be complete, but is not");
     }
 
@@ -447,7 +452,7 @@ public class BoardSteps extends BaseSteps {
     @When("I try to trigger the level's laser")
     public void iTryToTriggerTheLevelsLaser() {
         try {
-            LevelEngine.triggerLaserToken(level, true);
+            levelEngine.triggerLaserToken(level, true);
         } catch (Exception e) {
             exception = e;
         }
@@ -456,7 +461,7 @@ public class BoardSteps extends BaseSteps {
     @When("I try to fire the level's laser")
     public void iTryToFireTheLevelsLaser() {
         try {
-            LevelEngine.fireLaserToken(level);
+            levelEngine.fireLaserToken(level);
         } catch (Exception e) {
             exception = e;
         }

@@ -14,7 +14,7 @@ import model.persistence.serializer.util.FieldNameRegistry;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LevelSerializer implements ISerializer<Level> {
+public class LevelSerializer extends Serializer<Level> {
 
     private final TokenSerializerRegistry tokenSerializerRegistry = new TokenSerializerRegistry();
 

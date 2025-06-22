@@ -7,11 +7,10 @@ import io.cucumber.java.en.When;
 import junit.persistence.storage.test.TestDefaultLevelLoader;
 import junit.persistence.storage.test.TestLevelSaver;
 import junit.persistence.storage.test.TestSavedLevelLoader;
+import junit.persistence.storage.test.TestWorld;
 import model.domain.level.Level;
 import model.persistence.serializer.LevelSerializer;
 import model.persistence.storage.LevelIOHandler;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;

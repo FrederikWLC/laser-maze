@@ -7,11 +7,11 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import model.domain.token.builder.base.TokenBuilder;
 import model.persistence.serializer.util.FieldNameRegistry;
-import model.persistence.serializer.ISerializer;
+import model.persistence.serializer.Serializer;
 
 import java.lang.reflect.ParameterizedType;
 
-public abstract class TokenSerializer<T extends Token> implements ISerializer<T> {
+public abstract class TokenSerializer<T extends Token> extends Serializer<T> {
 
     public ObjectNode serialize(T token) {
         ObjectNode node = JsonNodeFactory.instance.objectNode();

@@ -1,4 +1,4 @@
-package cucumber;
+package junit.persistence.storage.test;
 
 
 import java.io.IOException;

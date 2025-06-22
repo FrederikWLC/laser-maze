@@ -29,7 +29,6 @@ public class LevelController {
     private final LevelSaver levelSaver = new LevelSaver();
     private final LevelIOHandler levelIOHandler = new LevelIOHandler(defaultLevelLoader,savedLevelLoader,levelSaver);
     private Level currentLevel;
-    private int laserFireInvocationCount = 0;
 
 
     public LevelController(GamePanel gamePanel, ScreenController screenController) {
@@ -100,10 +99,7 @@ public class LevelController {
                     gamePanel.repaint();
                     gamePanel.getControlPanel().boardRenderer.repaint();
 
-                    laserFireInvocationCount++;
-                    if (LevelEngine.updateAndCheckLevelCompletionState(getCurrentLevel())
-                            && (laserFireInvocationCount % 2 == 1))
-                    {
+                    if (LevelEngine.updateAndCheckLevelCompletionState(getCurrentLevel())) {
                         gamePanel.showLevelComplete();
                     }
 

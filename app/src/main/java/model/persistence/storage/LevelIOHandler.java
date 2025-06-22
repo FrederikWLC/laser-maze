@@ -35,7 +35,7 @@ public class LevelIOHandler {
             } catch (RuntimeException e) {
                 throw new RuntimeException("Failed to load all levels: " + e.getMessage(), e);
             }
-        }
+    }
 
     public void save(Level level) {
         levelSaver.save(level);

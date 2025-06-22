@@ -26,6 +26,7 @@ public class TokenImageLoader {
                 "PurpleTarget-TARGET_ON_SOUTH-M.png",
                 "PurpleTarget-TARGET_ON_WEST-M.png",
                 "PurpleTarget-TARGET_ON_default.png",
+                "PurpleTarget-TARGET_ON_default-M.png",
 
                 "GreenMirror-BACKSLASH_MIRROR.png",
                 "GreenMirror-SLASH_MIRROR.png",

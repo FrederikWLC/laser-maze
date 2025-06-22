@@ -52,9 +52,15 @@ public class GameController {
     }
 
     public void rotateToken(Token token, Direction direction) {
-        if (token instanceof ILaserToken) {
-            ((ILaserToken) token).trigger(false); // turn off laser before rotation
-            updateCurrentLaserPath();
+        if (token instanceof ILaserToken laserToken && token instanceof ITurnableToken turnableToken) {
+            if (turnableToken.isTurned()) {
+                try {
+                    laserToken.trigger(false); // turn off the laser before making changes to the board layout
+                    updateCurrentLaserPath();
+                } catch (IllegalStateException e) {
+                    System.out.println("Skipping laser trigger before rotation: " + e.getMessage());
+                }
+            }
         }
         try {
             boardEngine.turnToken((ITurnableToken) token, direction);
@@ -64,6 +70,7 @@ public class GameController {
         }
 
     }
+
 
     public Token getTokenAt(Position pos) {
         Tile tile = level.getBoard().getTile(pos.getX(), pos.getY());

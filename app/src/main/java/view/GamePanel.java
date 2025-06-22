@@ -48,7 +48,6 @@ public class GamePanel extends JPanel {
 
     private final GameRenderer gameRenderer = new GameRenderer();
     private GameControlPanel controlPanel;
-    private boolean levelCompleteDialogShowing = false;
 
 
     public GamePanel(TokenImageLoader loader, GameControlPanel controlPanel) {

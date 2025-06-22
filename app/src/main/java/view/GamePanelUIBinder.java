@@ -36,9 +36,6 @@ public class GamePanelUIBinder {
 
         if (onFireLaserClick != null) {
             gamePanel.setFireLaserListener(onFireLaserClick);
-            if (gamePanel.hasFireLaserButton()) {
-                gamePanel.setFireLaserListener(onFireLaserClick);
-            }
         }
 
         if (onLevelSelectClick != null) {

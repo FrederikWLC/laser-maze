@@ -182,25 +182,34 @@ public class BoardRendererPanel extends JPanel {
                     }
                 }
                 else if (pd.isTurn()) {
-                    // Draw a turn
-                    if (in == Direction.UP && out == Direction.LEFT) {
-                        g2d.drawLine(x + tileSize / 2, y, x, y + tileSize / 2);
-                    } else if (in == Direction.UP && out == Direction.RIGHT) {
-                        g2d.drawLine(x + tileSize / 2, y, x + tileSize, y + tileSize / 2);
-                    } else if (in == Direction.DOWN && out == Direction.LEFT) {
-                        g2d.drawLine(x + tileSize / 2, y + tileSize, x, y + tileSize / 2);
-                    } else if (in == Direction.DOWN && out == Direction.RIGHT) {
-                        g2d.drawLine(x + tileSize / 2, y + tileSize, x + tileSize, y + tileSize / 2);
-                    } else if (in == Direction.LEFT && out == Direction.UP) {
-                        g2d.drawLine(x, y + tileSize / 2, x + tileSize / 2, y);
-                    } else if (in == Direction.LEFT && out == Direction.DOWN) {
-                        g2d.drawLine(x, y + tileSize / 2, x + tileSize / 2, y + tileSize);
-                    } else if (in == Direction.RIGHT && out == Direction.UP) {
-                        g2d.drawLine(x + tileSize, y + tileSize / 2, x + tileSize / 2, y);
-                    } else if (in == Direction.RIGHT && out == Direction.DOWN) {
-                        g2d.drawLine(x + tileSize, y + tileSize / 2, x + tileSize / 2, y + tileSize);
+
+                    // Tile centre
+                    int cx = x + tileSize / 2;
+                    int cy = y + tileSize / 2;
+
+                    // entry point
+                    int ex = cx, ey = cy;
+                    switch (in) {
+                        case UP   -> { ex = cx;            ey = y + tileSize; } // from bottom
+                        case DOWN -> { ex = cx;            ey = y;            } // from top
+                        case LEFT -> { ex = x + tileSize;  ey = cy;           } // from right
+                        case RIGHT-> { ex = x;             ey = cy;           } // from left
                     }
+
+                    // exit point
+                    int lx = cx, ly = cy;
+                    switch (out) {
+                        case UP   -> { lx = cx;            ly = y;            } // to top
+                        case DOWN -> { lx = cx;            ly = y + tileSize; } // to bottom
+                        case LEFT -> { lx = x;             ly = cy;           } // to left
+                        case RIGHT-> { lx = x + tileSize;  ly = cy;           } // to right
+                    }
+
+                    // Draw the two half-segments
+                    g2d.drawLine(ex, ey, cx, cy);   // entry -> centre
+                    g2d.drawLine(cx, cy, lx, ly);   // centre ->  exit
                 }
+
             }
 
             g2d.setStroke(new BasicStroke(1));

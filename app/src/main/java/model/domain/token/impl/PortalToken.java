@@ -32,6 +32,8 @@ public class PortalToken extends MutableTwinToken implements IPortalToken {
         Direction currentBeamOutDirection = throughBluePortal ? this.getBluePortalDirection() : this.getRedPortalDirection();
         // The beam exits the portal in the direction of the portal's exit, and skips the portal's own tile.
         PositionTurn currentBeamPositionTurn = new PositionTurn(this.getPosition(), currentBeamOutDirection, currentBeamOutDirection);
+        // Add this portal to hit tokens
+        laserEngine.addTokentHit(this);
         // The beam continues its path from the portal's exit position and direction.
         return laserEngine.travelFrom(currentBeamPositionTurn, beamPath);
     }

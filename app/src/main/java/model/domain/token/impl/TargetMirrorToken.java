@@ -92,6 +92,8 @@ public class TargetMirrorToken extends MutableToken implements ITargetToken {
         if (isBeamStopped) {
             return beamPath;
         }
+
+        beamPath = laserEngine.getBeamPathHelper().addToBeamPath(beamPath, currentBeamPositionTurn);
         return laserEngine.travelFrom(currentBeamPositionTurn, beamPath);
     }
 

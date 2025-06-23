@@ -1,178 +1,77 @@
 package controller;
 
-import model.domain.board.Inventory;
-import model.domain.board.PositionTurn;
-import model.domain.board.builder.InventoryBuilder;
-
-import model.domain.level.Level;
-import model.persistence.storage.DefaultLevelLoader;
-import model.persistence.storage.LevelIOHandler;
-import model.persistence.storage.LevelSaver;
-import model.persistence.storage.SavedLevelLoader;
-
-import view.GamePanel;
-import view.RenderableTile;
-import view.GamePanelUIBinder;
-
-import javax.swing.*;
-import java.awt.event.ActionListener;
-import java.util.List;
+import model.domain.board.*;
+import model.domain.engine.BoardEngine;
 import model.domain.engine.LevelEngine;
+import model.domain.level.Level;
+import model.domain.token.base.ILaserToken;
+import model.domain.token.base.ITurnableToken;
+import model.domain.token.base.Token;
 
+import java.util.List;
 
 public class LevelController {
-    private final GamePanel gamePanel;
-    private final ScreenController screenController;
-    private final SoundManager soundManager = new SoundManager();
-    private final DefaultLevelLoader defaultLevelLoader = new DefaultLevelLoader();
-    private final SavedLevelLoader savedLevelLoader = new SavedLevelLoader();
-    private final LevelSaver levelSaver = new LevelSaver();
-    private final LevelIOHandler levelIOHandler = new LevelIOHandler(defaultLevelLoader,savedLevelLoader,levelSaver);
-    private Level currentLevel;
-    private LevelEngine levelEngine;
+    LevelEngine levelEngine;
+    BoardEngine boardEngine;
 
-
-    public LevelController(GamePanel gamePanel, ScreenController screenController) {
-        this.gamePanel = gamePanel;
-        this.screenController = screenController;
+    public LevelController(Level level) {
+        this.levelEngine = new LevelEngine(level);
+        this.boardEngine = new BoardEngine();
     }
 
-    public void loadLevel(int levelNumber) {
-        System.out.println("Loading level " + levelNumber);
-        Level level = levelIOHandler.load(levelNumber);
-        if (level == null) {
-            System.err.println("Failed to load level " + levelNumber);
-            return;
+    public List<PositionTurn> getCurrentLaserPath() {
+       return levelEngine.getLaserEngine().getLastBeamPath();
+    }
+
+    public void triggerLaser(boolean isActive) {
+        try {
+            levelEngine.getLevel().getLaserToken().trigger(isActive);
+            levelEngine.getLaserEngine().fire();
+        } catch (Exception e) {
+            System.out.println("Failed to trigger laser: " + e.getMessage());
+            throw e;
         }
-        setCurrentLevel(level);
-        System.out.println("Loaded level: " + getCurrentLevel());
-        reloadLevelUI();
     }
 
-    public void reloadLevelUI() {
+    public void rotateTokenClockwise(ITurnableToken token) {
+        if (token == null) {System.out.println("No token to rotate"); return;}
+        Direction current = token.getDirection();
+        if (current == null) {
+            rotateToken((Token) token,Direction.UP);
+        } else {
+            rotateToken((Token) token,current.rotateClockwise());
+        }
+    }
 
-        gamePanel.resetBoardUI();
-        gamePanel.clearMouseListeners();
-        gamePanel.createControlButtons();
-        gamePanel.showBoardUI();
-
-        soundManager.stopBackground(); // ensure old track doesn't stack
-        soundManager.play(SoundManager.Sound.BACKGROUND, true);
-
-        Inventory inventory = InventoryBuilder.buildInventory(getCurrentLevel().getRequiredTokens());
-        getCurrentLevel().setInventory(inventory);
-
-        RenderableTileFactory tileFactory = new RenderableTileFactory();
-
-        gamePanel.setInventory(inventory);
-        List<RenderableTile> inventoryTiles = tileFactory.convertBoardToRenderableTiles(inventory);
-        gamePanel.setInventoryTilesToRender(inventoryTiles);
-
-
-        List<RenderableTile> tiles = tileFactory.convertBoardToRenderableTiles(getCurrentLevel().getBoard());
-        gamePanel.setTilesToRender(tiles);
-
-        GameController gameController = new GameController(getCurrentLevel());
-
-        if (!gamePanel.hasFireLaserButton()) {
-            gamePanel.createFireLaserButton();
+    public void rotateToken(Token token, Direction direction) {
+        if (token instanceof ILaserToken laserToken && token instanceof ITurnableToken turnableToken) {
+            if (turnableToken.isTurned()) {
+                try {
+                    laserToken.trigger(false); // turn off the laser before making changes to the board layout
+                    levelEngine.getLaserEngine().refreshBeamPath();
+                } catch (IllegalStateException e) {
+                    System.out.println("Skipping laser trigger before rotation: " + e.getMessage());
+                }
+            }
+        }
+        try {
+            boardEngine.turnToken((ITurnableToken) token, direction);
+            System.out.println("Rotated token to " + direction);
+        } catch (Exception e) {
+            System.out.println("Rotation failed: " + e.getMessage());
         }
 
-        GamePanelUIBinder binder = new GamePanelUIBinder(gamePanel);
-
-        binder.bindAll(
-                null, null, null, null,
-                e -> {
-                    soundManager.play(SoundManager.Sound.LASER, false);
-                    System.out.println("Fire Laser button clicked!");
-                    gameController.triggerLaser(true);
-                    List<PositionTurn> path = gameController.getCurrentLaserPath();
-
-                    System.out.println("Laser path size: " + path.size());
-                    gamePanel.setLaserPath(path);
-
-                    gamePanel.getControlPanel().boardRenderer.setLaserPath(path);
-                    gamePanel.getControlPanel().boardRenderer.repaint();
-
-                    List<RenderableTile> updated = tileFactory.convertBoardToRenderableTiles(getCurrentLevel().getBoard());
-                    gamePanel.setTilesToRender(updated);
-                    gamePanel.getControlPanel().boardRenderer.setTilesToRender(updated);
-                    gamePanel.repaint();
-                    gamePanel.getControlPanel().boardRenderer.repaint();
-
-                    if (levelEngine.updateAndCheckLevelCompletionState()) {
-                        gamePanel.showLevelComplete();
-                    }
-
-                },
-                null
-        );
-
-        TokenDragController dragController = new TokenDragController();
-        InputHandler inputHandler = new InputHandler(
-                gameController,
-                gamePanel,
-                tileFactory,
-                soundManager,
-                inventory,
-                dragController
-        );
-        gamePanel.addMouseListener(inputHandler);
-        gamePanel.addMouseMotionListener(inputHandler);
-
-        screenController.showBoardScreen(tiles);
-        gamePanel.repaint();
-
-        //control buttons
-        JButton restartButton = gamePanel.getRestartButton();
-        JButton exitButton = gamePanel.getExitButton();
-        JButton saveExitButton = gamePanel.getSaveAndExitButton();
-
-        restartButton.setVisible(true);
-        exitButton.setVisible(true);
-        saveExitButton.setVisible(true);
-
-        saveExitButton.addActionListener(e -> {
-            saveLevel();
-            exitLevel();
-        });
-
-        restartButton.addActionListener(e -> {
-            restartLevel();
-        });
-
-        ActionListener exitAction = e -> {
-            exitLevel();
-        };
-
-        exitButton.addActionListener(exitAction);
     }
 
-    public void saveLevel() {
-        System.out.println("Saving...");
-        levelIOHandler.save(getCurrentLevel());
+
+    public Token getTokenAt(Position pos) {
+        Tile tile = levelEngine.getLevel().getBoard().getTile(pos.getX(), pos.getY());
+        return tile != null ? tile.getToken() : null;
     }
 
-    public void exitLevel() {
-        System.out.println("Exiting...");
-        setCurrentLevel(null);
-        System.out.println("Loaded level: " + getCurrentLevel());
-        soundManager.stopBackground();
-        gamePanel.resetBoardUI();
-        screenController.showTitleScreen();
+
+    public LevelEngine getLevelEngine() {
+        return levelEngine;
     }
 
-    public void restartLevel() {
-        Level level = levelIOHandler.restart(getCurrentLevel());
-        setCurrentLevel(level);
-        reloadLevelUI();
-    }
-
-    public Level getCurrentLevel() {
-        return currentLevel;
-    }
-
-    public void setCurrentLevel(Level level) {
-        this.currentLevel = level;
-    }
 }

@@ -32,11 +32,10 @@ Feature: Target Mirror token
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir |
-      | 2 | 1 | DOWN |
-      # Hits and gets reflected by mirror side of target/mirror token, but skips its tile (2, 2))
-      | 3 | 2 | RIGHT |
-      | 4 | 2 | RIGHT |
+      | x | y | in    | out   |
+      | 2 | 1 | DOWN  | DOWN |
+      | 3 | 2 | RIGHT | RIGHT |
+      | 4 | 2 | RIGHT | RIGHT |
 
   # Hits target side: Laser travels in a straight line until it hits the target that faces down
   Scenario: Laser hits target side
@@ -44,8 +43,8 @@ Feature: Target Mirror token
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir |
-      | 2 | 3 | UP |
+      | x | y | in   | out  |
+      | 2 | 3 | UP   | UP   |
       # Hits target side of target/mirror token, but skips its tile (2, 2))
 
 
@@ -55,8 +54,8 @@ Feature: Target Mirror token
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir |
-      | 1 | 2 | RIGHT |
+      | x | y | in    | out    |
+      | 1 | 2 | RIGHT | RIGHT  |
       # Hits non-target non-mirror side of target/mirror token, but skips its tile (2, 2))
 
   Scenario: Laser mirror-side from left when facing UP
@@ -65,10 +64,10 @@ Feature: Target Mirror token
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir   |
-      | 2 | 3 | UP    |
-      | 1 | 2 | LEFT  |
-      | 0 | 2 | LEFT  |
+      | x | y | in   | out  |
+      | 2 | 3 | UP   | UP   |
+      | 1 | 2 | LEFT | LEFT |
+      | 0 | 2 | LEFT | LEFT |
 
   Scenario: Laser target-side when facing UP
     Given I turn the Target Mirror token to face up
@@ -76,8 +75,8 @@ Feature: Target Mirror token
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir |
-      | 2 | 1 | DOWN|
+      | x | y | in    | out   |
+      | 2 | 1 | DOWN  | DOWN  |
 
   Scenario: Laser bare-side when facing UP
     Given I turn the Target Mirror token to face up
@@ -85,8 +84,8 @@ Feature: Target Mirror token
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir  |
-      | 3 | 2 | LEFT |
+      | x | y | in    | out   |
+      | 3 | 2 | LEFT  | LEFT  |
 
   Scenario: Laser hits mirror side when facing RIGHT
     Given I turn the Target Mirror token to face right
@@ -94,10 +93,10 @@ Feature: Target Mirror token
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir   |
-      | 1 | 2 | RIGHT |
-      | 2 | 1 | UP    |
-      | 2 | 0 | UP    |
+      | x | y | in    | out   |
+      | 1 | 2 | RIGHT | RIGHT |
+      | 2 | 1 | UP    | UP    |
+      | 2 | 0 | UP    | UP    |
 
   Scenario: Laser target-side when facing RIGHT
     Given I turn the Target Mirror token to face right
@@ -105,10 +104,10 @@ Feature: Target Mirror token
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir  |
-      | 2 | 1 | DOWN |
-      | 1 | 2 | LEFT |
-      | 0 | 2 | LEFT |
+      | x | y | in    | out   |
+      | 2 | 1 | DOWN  | DOWN  |
+      | 1 | 2 | LEFT  | LEFT  |
+      | 0 | 2 | LEFT  | LEFT  |
 
   Scenario: Laser bare-side when facing RIGHT
     Given I turn the Target Mirror token to face right
@@ -116,8 +115,8 @@ Feature: Target Mirror token
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir |
-      | 3 | 2 | LEFT |
+      | x | y | in    | out   |
+      | 3 | 2 | LEFT  | LEFT  |
 
   Scenario: Laser mirror-side when facing LEFT
     Given I turn the Target Mirror token to face left
@@ -125,10 +124,10 @@ Feature: Target Mirror token
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir  |
-      | 3 | 2 | LEFT |
-      | 2 | 3 | DOWN |
-      | 2 | 4 | DOWN |
+      | x | y | in    | out   |
+      | 3 | 2 | LEFT  | LEFT  |
+      | 2 | 3 | DOWN  | DOWN  |
+      | 2 | 4 | DOWN  | DOWN  |
 
   Scenario: Laser target-side when facing LEFT
     Given I turn the Target Mirror token to face left
@@ -136,10 +135,10 @@ Feature: Target Mirror token
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir   |
-      | 2 | 3 | UP    |
-      | 3 | 2 | RIGHT |
-      | 4 | 2 | RIGHT |
+      | x | y | in    | out    |
+      | 2 | 3 | UP    | UP     |
+      | 3 | 2 | RIGHT | RIGHT  |
+      | 4 | 2 | RIGHT | RIGHT  |
 
   Scenario: Laser mirror-side when facing DOWN
     Given a completely mutable Target Mirror token is placed on the board at (2, 2) facing down
@@ -147,10 +146,10 @@ Feature: Target Mirror token
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir  |
-      | 3 | 2 | LEFT |
-      | 2 | 1 | UP   |
-      | 2 | 0 | UP   |
+      | x | y | in   | out  |
+      | 3 | 2 | LEFT | LEFT |
+      | 2 | 1 | UP   | UP   |
+      | 2 | 0 | UP   | UP   |
 
   Scenario: Laser bare-side from below when facing RIGHT
     Given a new game is started
@@ -160,8 +159,8 @@ Feature: Target Mirror token
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir |
-      | 2 | 3 | UP  |
+      | x | y | in   | out  |
+      | 2 | 3 | UP   | UP   |
 
   Scenario: Laser bare-side from above when facing LEFT
     Given a new game is started
@@ -171,5 +170,5 @@ Feature: Target Mirror token
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir   |
-      | 2 | 1 | DOWN  |
+      | x | y | in    | out   |
+      | 2 | 1 | DOWN  | DOWN  |

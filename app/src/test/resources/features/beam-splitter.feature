@@ -30,15 +30,15 @@ Feature: Beam Splitter token
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir |
-      | 3 | 2 | LEFT |
+      | x | y | in   | out  |
+      | 3 | 2 | LEFT | LEFT |
       # Hits and gets split by beam splitter, but skips its tile (2, 2))
       # The forward beam continues straight (always first one calculated)
-      | 1 | 2 | LEFT |
-      | 0 | 2 | LEFT |
+      | 1 | 2 | LEFT | LEFT |
+      | 0 | 2 | LEFT | LEFT |
       # The reflected beam (always second one calculated) goes down
-      | 2 | 3 | DOWN |
-      | 2 | 4 | DOWN |
+      | 2 | 3 | DOWN   | DOWN |
+      | 2 | 4 | DOWN   | DOWN |
 
 
   # Laser travels in a straight line until it hits the mirror that faces left/right
@@ -48,15 +48,15 @@ Feature: Beam Splitter token
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir |
-      | 3 | 2 | LEFT |
+      | x | y | in    | out   |
+      | 3 | 2 | LEFT  | LEFT  |
       # Hits and gets split by beam splitter, but skips its tile (2, 2))
       # The forward beam (always first one calculated) continues straight
-      | 1 | 2 | LEFT |
-      | 0 | 2 | LEFT |
+      | 1 | 2 | LEFT  | LEFT  |
+      | 0 | 2 | LEFT  | LEFT  |
       # The reflected beam (always second one calculated) goes up
-      | 2 | 1 | UP |
-      | 2 | 0 | UP |
+      | 2 | 1 | UP    | UP    |
+      | 2 | 0 | UP    | UP    |
 
   Scenario: Fire laser through Beam Splitter facing LEFT
     Given a new game is started
@@ -68,12 +68,12 @@ Feature: Beam Splitter token
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir   |
-      | 1 | 2 | RIGHT |
-      | 3 | 2 | RIGHT |
-      | 4 | 2 | RIGHT |
-      | 2 | 1 | UP    |
-      | 2 | 0 | UP    |
+      | x | y | in    | out   |
+      | 1 | 2 | RIGHT | RIGHT |
+      | 3 | 2 | RIGHT | RIGHT |
+      | 4 | 2 | RIGHT | RIGHT |
+      | 2 | 1 | UP    | UP    |
+      | 2 | 0 | UP    | UP    |
 
   Scenario: Fire laser through Beam Splitter facing DOWN
     Given a new game is started
@@ -85,12 +85,12 @@ Feature: Beam Splitter token
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir   |
-      | 2 | 1 | DOWN  |
-      | 2 | 3 | DOWN  |
-      | 2 | 4 | DOWN  |
-      | 3 | 2 | RIGHT |
-      | 4 | 2 | RIGHT |
+      | x | y | in    | out    |
+      | 2 | 1 | DOWN  | DOWN   |
+      | 2 | 3 | DOWN  | DOWN   |
+      | 2 | 4 | DOWN  | DOWN   |
+      | 3 | 2 | RIGHT | RIGHT  |
+      | 4 | 2 | RIGHT | RIGHT  |
 
   Scenario: Fire laser through Beam Splitter from below (inner‐case UP)
     Given a new game is started
@@ -100,12 +100,12 @@ Feature: Beam Splitter token
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir   |
-      | 2 | 3 | UP    |
-      | 2 | 1 | UP    |
-      | 2 | 0 | UP    |
-      | 3 | 2 | RIGHT |
-      | 4 | 2 | RIGHT |
+      | x | y | in    | out    |
+      | 2 | 3 | UP    | UP     |
+      | 2 | 1 | UP    | UP     |
+      | 2 | 0 | UP    | UP     |
+      | 3 | 2 | RIGHT | RIGHT  |
+      | 4 | 2 | RIGHT | RIGHT  |
 
   Scenario: Fire laser through Beam Splitter from above (inner‐case DOWN)
     Given a new game is started
@@ -115,12 +115,12 @@ Feature: Beam Splitter token
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir   |
-      | 2 | 1 | DOWN  |
-      | 2 | 3 | DOWN  |
-      | 2 | 4 | DOWN  |
-      | 1 | 2 | LEFT  |
-      | 0 | 2 | LEFT  |
+      | x | y | in   | out  |
+      | 2 | 1 | DOWN | DOWN |
+      | 2 | 3 | DOWN | DOWN |
+      | 2 | 4 | DOWN | DOWN |
+      | 1 | 2 | LEFT | LEFT |
+      | 0 | 2 | LEFT | LEFT |
 
   Scenario: Fire laser through Beam Splitter facing UP
     Given a new game is started
@@ -131,12 +131,12 @@ Feature: Beam Splitter token
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir   |
-      | 1 | 2 | RIGHT |
-      | 3 | 2 | RIGHT |
-      | 4 | 2 | RIGHT |
-      | 2 | 3 | DOWN  |
-      | 2 | 4 | DOWN  |
+      | x | y | in    | out   |
+      | 1 | 2 | RIGHT | RIGHT |
+      | 3 | 2 | RIGHT | RIGHT |
+      | 4 | 2 | RIGHT | RIGHT |
+      | 2 | 3 | DOWN  | DOWN  |
+      | 2 | 4 | DOWN  | DOWN  |
 
   Scenario: Fire laser through Beam Splitter facing RIGHT
     Given a new game is started
@@ -146,12 +146,12 @@ Feature: Beam Splitter token
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir  |
-      | 2 | 1 | DOWN |
-      | 2 | 3 | DOWN |
-      | 2 | 4 | DOWN |
-      | 1 | 2 | LEFT |
-      | 0 | 2 | LEFT |
+      | x | y | in   | out  |
+      | 2 | 1 | DOWN | DOWN |
+      | 2 | 3 | DOWN | DOWN |
+      | 2 | 4 | DOWN | DOWN |
+      | 1 | 2 | LEFT | LEFT |
+      | 0 | 2 | LEFT | LEFT |
 
   Scenario: Fire laser through Beam Splitter facing UP from the left
     Given a new game is started
@@ -162,12 +162,12 @@ Feature: Beam Splitter token
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir   |
-      | 1 | 2 | RIGHT |
-      | 3 | 2 | RIGHT |
-      | 4 | 2 | RIGHT |
-      | 2 | 3 | DOWN  |
-      | 2 | 4 | DOWN  |
+      | x | y | in    | out   |
+      | 1 | 2 | RIGHT | RIGHT |
+      | 3 | 2 | RIGHT | RIGHT |
+      | 4 | 2 | RIGHT | RIGHT |
+      | 2 | 3 | DOWN  | DOWN  |
+      | 2 | 4 | DOWN  | DOWN  |
 
   Scenario: Fire laser through Beam Splitter facing UP from below
     Given a new game is started
@@ -178,9 +178,9 @@ Feature: Beam Splitter token
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir   |
-      | 2 | 3 | UP    |
-      | 2 | 1 | UP    |
-      | 2 | 0 | UP    |
-      | 1 | 2 | LEFT  |
-      | 0 | 2 | LEFT  |
+      | x | y | in  | out  |
+      | 2 | 3 | UP  | UP   |
+      | 2 | 1 | UP  | UP   |
+      | 2 | 0 | UP  | UP   |
+      | 3 | 2 | LEFT| LEFT |
+      | 4 | 2 | LEFT| LEFT |

@@ -15,11 +15,11 @@ Feature: Fire Laser
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir   |
-      | 1 | 0 | RIGHT |
-      | 2 | 0 | RIGHT |
-      | 3 | 0 | RIGHT |
-      | 4 | 0 | RIGHT |
+      | x | y | in     | out    |
+      | 1 | 0 | RIGHT  | RIGHT  |
+      | 2 | 0 | RIGHT  | RIGHT  |
+      | 3 | 0 | RIGHT  | RIGHT  |
+      | 4 | 0 | RIGHT  | RIGHT  |
 
   Scenario: Laser cannot fire before placement
     Given a completely mutable Laser token is created

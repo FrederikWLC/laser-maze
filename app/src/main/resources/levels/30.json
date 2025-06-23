@@ -16,35 +16,35 @@
       "x": 3,
       "y": 3,
       "movable": false,
-      "turnable": false
+      "turnable": true
     },
     {
       "type": "TargetMirrorToken",
       "x": 3,
       "y": 1,
       "movable": false,
-      "turnable": false
+      "turnable": true
     },
     {
       "type": "TargetMirrorToken",
       "x": 1,
       "y": 1,
       "movable": false,
-      "turnable": false
+      "turnable": true
     },
     {
       "type": "TargetMirrorToken",
       "x": 2,
       "y": 0,
       "movable": false,
-      "turnable": false
+      "turnable": true
     },
     {
       "type": "TargetMirrorToken",
       "x": 1,
       "y": 3,
       "movable": false,
-      "turnable": false,
+      "turnable": true,
       "isRequiredTarget": true
     },
     {

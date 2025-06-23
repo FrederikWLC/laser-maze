@@ -33,6 +33,9 @@ public class GamePanel extends JPanel {
     private JScrollPane levelScrollPane;
     private JPanel levelListPanel;
 
+    private JLabel multiplayerTimerLabel = new JLabel("00:00");
+
+
     private final Map<String, TokenRenderer> tokenRenderers = new HashMap<>();
 
     private DisplayManager currentScreen;

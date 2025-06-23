@@ -1,10 +1,12 @@
 package controller;
 
+import model.domain.level.Level;
 import view.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.IntConsumer;
 
@@ -14,7 +16,8 @@ public class ScreenController {
     private final LevelController levelController;
 
     private DisplayManager titleScreen;
-    private DisplayManager levelSelectScreen;
+    private DisplayManager singlePlayerLevelSelectScreen;
+    private DisplayManager multiplayerLevelSelectScreen;
 
     public ScreenController(GamePanel gamePanel, LevelController levelController) {
         this.gamePanel = gamePanel;
@@ -27,13 +30,14 @@ public class ScreenController {
                 () -> {
                     soundManager.stopBackground();
                     cleanupGameUI();
-                    gamePanel.switchToScreen(levelSelectScreen);
+                    setupSingleplayerLevelButtons(); // <-- fix added here
+                    gamePanel.switchToScreen(singlePlayerLevelSelectScreen);
                 },
-                () -> { // Multiplayer button
+                () -> {
                     soundManager.stopBackground();
                     cleanupGameUI();
-                    gamePanel.switchToScreen(levelSelectScreen); // reuse level select screen
-                    setupMultiplayerLevelButtons(); // use a new method
+                    setupMultiplayerLevelButtons();
+                    gamePanel.switchToScreen(multiplayerLevelSelectScreen);
                 },
                 () -> System.exit(0),
                 () -> {
@@ -52,10 +56,12 @@ public class ScreenController {
             System.err.println("Failed to load title screen background.");
         }
 
-        levelSelectScreen = new LevelSelectScreenManager(gamePanel);
+        singlePlayerLevelSelectScreen = new LevelSelectScreenManager(gamePanel);
+        multiplayerLevelSelectScreen = new LevelSelectScreenManager(gamePanel); // no need for separate creation method
     }
 
-    private void setupMultiplayerLevelButtons() {
+
+    private DisplayManager createMultiplayerLevelSelectScreen() {
         JPanel levelListPanel = gamePanel.getControlPanel().levelListPanel;
         levelListPanel.removeAll();
 
@@ -68,7 +74,35 @@ public class ScreenController {
                 gamePanel.clearLaserPath();
                 gamePanel.repaint();
 
-                levelController.loadMultiplayerLevel(levelNum, 2); // Two players
+                levelController.loadMultiplayerLevel(levelNum, 2); // 2-player multiplayer
+            });
+            levelListPanel.add(button);
+        }
+
+        levelListPanel.revalidate();
+        levelListPanel.repaint();
+
+        return new LevelSelectScreenManager(gamePanel);
+    }
+
+    private void setupSingleplayerLevelButtons() {
+        JPanel levelListPanel = gamePanel.getControlPanel().levelListPanel;
+        levelListPanel.removeAll();
+
+        List<Level> levels = levelController.getAllLevels()
+                .stream()
+                .sorted(Comparator.comparingInt(Level::getId)) // sort by ID
+                .toList();
+        for (Level level : levels) {
+            int levelId = level.getId();
+            JButton button = new JButton("Level " + levelId);
+            button.addActionListener(e -> {
+                gamePanel.resetBoardUI();
+                gamePanel.clearMouseListeners();
+                gamePanel.clearLaserPath();
+                gamePanel.repaint();
+
+                levelController.loadLevel(levelId); // singleplayer
             });
             levelListPanel.add(button);
         }
@@ -76,6 +110,34 @@ public class ScreenController {
         levelListPanel.revalidate();
         levelListPanel.repaint();
     }
+
+
+    private void setupMultiplayerLevelButtons() {
+        JPanel levelListPanel = gamePanel.getControlPanel().levelListPanel;
+        levelListPanel.removeAll();
+
+        List<Level> levels = levelController.getAllLevels()
+                .stream()
+                .sorted(Comparator.comparingInt(Level::getId)) // sort by ID
+                .toList();
+        for (Level level : levels) {
+            int levelId = level.getId();
+            JButton button = new JButton("Level " + levelId);
+            button.addActionListener(e -> {
+                gamePanel.resetBoardUI();
+                gamePanel.clearMouseListeners();
+                gamePanel.clearLaserPath();
+                gamePanel.repaint();
+
+                levelController.loadMultiplayerLevel(levelId, 2); // Start multiplayer
+            });
+            levelListPanel.add(button);
+        }
+
+        levelListPanel.revalidate();
+        levelListPanel.repaint();
+    }
+
 
 
     public void showTitleScreen() {

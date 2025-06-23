@@ -198,4 +198,9 @@ public class LevelController {
     public void setScreenController(ScreenController screenController) {
         this.screenController = screenController;
     }
+
+    public List<Level> getAllLevels() {
+        return levelIOHandler.loadAll();
+    }
+
 }

@@ -2,8 +2,6 @@ package model.domain.token.impl;
 
 import model.domain.board.PositionTurn;
 import model.domain.engine.LaserEngine;
-import model.domain.board.PositionDirection;
-import model.domain.board.Board;
 import model.domain.board.Direction;
 import model.domain.token.base.MutableToken;
 

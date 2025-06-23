@@ -7,7 +7,6 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Map;
 import model.domain.board.Direction;
-import model.domain.board.PositionDirection;
 import model.domain.board.PositionTurn;
 import model.domain.token.base.Token;
 import model.domain.token.base.ITurnableToken;
@@ -166,18 +165,41 @@ public class BoardRendererPanel extends JPanel {
             g2d.setColor(Color.RED);
             g2d.setStroke(new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
-            for (PositionDirection pd : laserPath) {
+            for (PositionTurn pd : laserPath) {
                 int x = 100 + pd.getPosition().getX() * tileSize;
                 int y = 100 + pd.getPosition().getY() * tileSize;
 
-                Direction dir = pd.getDirection();
+                Direction in = pd.getIn();
+                Direction out = pd.getOut();
 
-                if (dir == Direction.UP || dir == Direction.DOWN) {
-                    // Full vertical line down the middle
-                    g2d.drawLine(x + tileSize / 2, y, x + tileSize / 2, y + tileSize);
-                } else if (dir == Direction.LEFT || dir == Direction.RIGHT) {
-                    // Full horizontal line across the middle
-                    g2d.drawLine(x, y + tileSize / 2, x + tileSize, y + tileSize / 2);
+                if (pd.isStraight()) {
+                    if (out == Direction.UP || out == Direction.DOWN) {
+                        // Full vertical line down the middle
+                        g2d.drawLine(x + tileSize / 2, y, x + tileSize / 2, y + tileSize);
+                    } else if (out == Direction.LEFT || out == Direction.RIGHT) {
+                        // Full horizontal line across the middle
+                        g2d.drawLine(x, y + tileSize / 2, x + tileSize, y + tileSize / 2);
+                    }
+                }
+                else if (pd.isTurn()) {
+                    // Draw a turn
+                    if (in == Direction.UP && out == Direction.LEFT) {
+                        g2d.drawLine(x + tileSize / 2, y, x, y + tileSize / 2);
+                    } else if (in == Direction.UP && out == Direction.RIGHT) {
+                        g2d.drawLine(x + tileSize / 2, y, x + tileSize, y + tileSize / 2);
+                    } else if (in == Direction.DOWN && out == Direction.LEFT) {
+                        g2d.drawLine(x + tileSize / 2, y + tileSize, x, y + tileSize / 2);
+                    } else if (in == Direction.DOWN && out == Direction.RIGHT) {
+                        g2d.drawLine(x + tileSize / 2, y + tileSize, x + tileSize, y + tileSize / 2);
+                    } else if (in == Direction.LEFT && out == Direction.UP) {
+                        g2d.drawLine(x, y + tileSize / 2, x + tileSize / 2, y);
+                    } else if (in == Direction.LEFT && out == Direction.DOWN) {
+                        g2d.drawLine(x, y + tileSize / 2, x + tileSize / 2, y + tileSize);
+                    } else if (in == Direction.RIGHT && out == Direction.UP) {
+                        g2d.drawLine(x + tileSize, y + tileSize / 2, x + tileSize / 2, y);
+                    } else if (in == Direction.RIGHT && out == Direction.DOWN) {
+                        g2d.drawLine(x + tileSize, y + tileSize / 2, x + tileSize / 2, y + tileSize);
+                    }
                 }
             }
 

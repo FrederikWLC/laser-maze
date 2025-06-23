@@ -2,8 +2,6 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
-
 
 public class GameControlPanel extends JPanel {
     public final JButton singlePlayer = new JButton("Single Player");

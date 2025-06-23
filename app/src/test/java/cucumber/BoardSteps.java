@@ -9,9 +9,7 @@ import io.cucumber.java.en.When;
 import model.domain.board.*;
 import model.domain.board.builder.BoardBuilder;
 import model.domain.engine.BoardEngine;
-import model.domain.engine.LaserEngine;
 import model.domain.engine.LevelEngine;
-import model.domain.level.Level;
 import model.domain.level.builder.LevelBuilder;
 import model.domain.token.base.*;
 import model.domain.token.builder.base.*;
@@ -22,8 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BoardSteps extends BaseSteps {
 
-    LevelEngine levelEngine = new LevelEngine();
-    LaserEngine laserEngine = new LaserEngine();
+    LevelEngine levelEngine;
     BoardEngine boardEngine = new BoardEngine();
 
     @ParameterType("(?i)laser|cell blocker|double mirror|target mirror|beam splitter|checkpoint|portal")
@@ -93,7 +90,6 @@ public class BoardSteps extends BaseSteps {
     @Then("an error should occur")
     public void anErrorShouldOccur() {
         assertNotNull(exception);
-        assertTrue(exception instanceof Exception);
     }
 
     @Then("the board width should be {int}")
@@ -120,12 +116,13 @@ public class BoardSteps extends BaseSteps {
 
     @And("the laser forms a beam path")
     public void theLaserFormsABeamPath() {
-        actualBeamPath = laserEngine.fire(laser, board);
+        laserEngine.fire();
+        actualBeamPath = laserEngine.getLastBeamPath();
     }
 
     @And("the level's laser forms a beam path")
     public void theLevelsLaserFormsABeamPath() {
-        actualBeamPath = levelEngine.fireLaserToken(level);
+        actualBeamPath = levelEngine.getLaserEngine().getLastBeamPath();
     }
 
     @Then("a laser should be present on the board")
@@ -133,18 +130,18 @@ public class BoardSteps extends BaseSteps {
         assertNotNull(laser, "No laser assigned via saveTokenAsType()");
     }
 
-
     @Then("the laser beam should pass through the following position directions:")
-    public void theLaserBeamShouldPassThroughTheFollowingPositionDirections(DataTable table) {
-        List<PositionDirection> expected = table.asMaps(String.class, String.class)
+    public void theLaserBeamShouldPassThroughTheFollowingPositionTurns(DataTable table) {
+        List<PositionTurn> expected = table.asMaps(String.class, String.class)
                 .stream()
-                .map(row -> new PositionDirection(
+                .map(row -> new PositionTurn(
                         new Position(Integer.parseInt(row.get("x")),
                                 Integer.parseInt(row.get("y"))),
-                        Direction.valueOf(row.get("dir").toUpperCase())))
+                        Direction.valueOf(row.get("in").toUpperCase()),
+                        Direction.valueOf(row.get("out").toUpperCase())))
                 .toList();
 
-        assertEquals(expected, actualBeamPath,   // actualBeamPath is now List<PositionDirection>
+        assertEquals(expected, actualBeamPath,
                 () -> "Beam path mismatch; expected " + expected +
                         " but was " + actualBeamPath);
     }
@@ -275,26 +272,26 @@ public class BoardSteps extends BaseSteps {
 
     @And("the number of targets hit by the beam path should be {int}")
     public void theNumberOfTargetsHitShouldBe(int n) {
-        int actualHitCount = laserEngine.getTargetHitNumber(actualBeamPath, level.getTokens());
+        int actualHitCount = laserEngine.getTargetLitNumber();
         assertEquals(n,actualHitCount,
                 "Number of targets hit should be " + n + ", but is: " + actualHitCount);
     }
 
     @And("the beam path should hit all the required targets")
     public void theBeamPathHitsAllTheRequiredTargets() {
-        boolean allRequiredTargetsHit = laserEngine.areAllRequiredTargetsHit(actualBeamPath, level.getTokens());
+        boolean allRequiredTargetsHit = levelEngine.areAllRequiredTargetsHit();
         assertTrue(allRequiredTargetsHit, "Beam path does not hit all required targets");
     }
 
     @And("the beam path should touch every touch-required token given by the level")
     public void theBeamPathTouchesEveryTokenOnTheBoardExceptTheOnesNotTouchRequired() {
-        boolean allTouchRequiredTokensTouched = laserEngine.areAllTouchRequiredTokensTouched(actualBeamPath, level.getTokens());
-        assertTrue(allTouchRequiredTokensTouched, "Beam path does not touch all touch-required tokens");
+        boolean areAllTouchRequiredTokensHit = levelEngine.areAllTouchRequiredTokensHit();
+        assertTrue(areAllTouchRequiredTokensHit, "Beam path does not touch all touch-required tokens");
     }
 
     @And("the beam path should pass through all checkpoints")
     public void theBeamPathShouldPassThroughAllCheckpoints() {
-        boolean allCheckpointsPenetrated = laserEngine.areAllCheckpointsPenetrated(actualBeamPath, level.getTokens());
+        boolean allCheckpointsPenetrated = levelEngine.areAllCheckpointsChecked();
         assertTrue(allCheckpointsPenetrated, "Beam path does not pass through all checkpoints");
     }
 
@@ -318,30 +315,10 @@ public class BoardSteps extends BaseSteps {
 
     @Given("I activate the level's laser")
     public void iActivateTheLevelsLaser() {
-        levelEngine.triggerLaserToken(level, true);
-        laser = level.getActiveLaser().get();
+        laser = levelEngine.getLevel().getLaserToken();
+        laser.trigger(true);
     }
 
-
-    @And("the first pair of the level's {tokenType} tokens are each other's twins")
-    public void theFirstPairOfTheLevelsTokensAreEachOthersTwins(Class<? extends MutableTwinToken> tokenType) {
-        List<MutableTwinToken> pair = getTwinPairOfType(tokenType, level.getTokens());
-        MutableTwinToken first  = pair.get(0);
-        MutableTwinToken second = pair.get(1);
-        first.setTwin(second);
-        second.setTwin(first);
-    }
-
-    @And("the first pair of the level's {tokenType} tokens should be each other's twins")
-    public void theFirstPairOfTheLevelsTokensShouldBeEachOthersTwins(Class<? extends MutableTwinToken> tokenType) {
-        List<MutableTwinToken> pair = getTwinPairOfType(tokenType, level.getTokens());
-        MutableTwinToken first  = pair.get(0);
-        MutableTwinToken second = pair.get(1);
-        assertEquals(second, first.getTwin(),
-                "First " + tokenType.getSimpleName() + "'s twin should be the second token of same type, but is: " + first.getTwin());
-        assertEquals(first, second.getTwin(),
-                "Second " + tokenType.getSimpleName() +"token's twin should be the first token of same type, but is: " + second.getTwin());
-    }
 
     @Then("the Portal token's blue opening side should face {direction}")
     public void thePortalTokenSBlueOpeningSideShouldFaceUp(Direction direction) {
@@ -363,6 +340,7 @@ public class BoardSteps extends BaseSteps {
                 .withRequiredTargetNumber(reqTargets)
                 .withTokens(getTokensFromTable(table))
                 .build();
+        levelEngine = new LevelEngine(level);
         board = level.getBoard();
     }
 
@@ -390,11 +368,11 @@ public class BoardSteps extends BaseSteps {
     public void theLevelSTokensShouldBe(DataTable table) {
         List<Class<? extends Token>> expected = table.asMaps(String.class, String.class).stream()
                 .map(row -> getTokenType(row.get("token")))
-                .collect(java.util.stream.Collectors.toList());  // 👈 fix here
+                .collect(java.util.stream.Collectors.toList());
 
         List<Class<? extends Token>> actual = level.getTokens().stream()
                 .map(Token::getClass)
-                .collect(java.util.stream.Collectors.toList());  // 👈 fix here
+                .collect(java.util.stream.Collectors.toList());
 
         assertEquals(expected, actual, "Level token types do not match expected");
     }
@@ -429,13 +407,13 @@ public class BoardSteps extends BaseSteps {
     }
     @Then("the level should be incomplete")
     public void theLevelShouldBeIncomplete() {
-        levelEngine.updateAndCheckLevelCompletionState(level);
+        levelEngine.updateAndCheckLevelCompletionState();
         assertFalse(level.isComplete(), "Level should not be complete, but is");
     }
 
     @Then("the level should be complete")
     public void theLevelShouldBeComplete() {
-        levelEngine.updateAndCheckLevelCompletionState(level);
+        levelEngine.updateAndCheckLevelCompletionState();
         assertTrue(level.isComplete(), "Level should be complete, but is not");
     }
 
@@ -452,7 +430,7 @@ public class BoardSteps extends BaseSteps {
     @When("I try to trigger the level's laser")
     public void iTryToTriggerTheLevelsLaser() {
         try {
-            levelEngine.triggerLaserToken(level, true);
+            levelEngine.getLevel().getLaserToken().trigger(true);
         } catch (Exception e) {
             exception = e;
         }
@@ -461,7 +439,7 @@ public class BoardSteps extends BaseSteps {
     @When("I try to fire the level's laser")
     public void iTryToFireTheLevelsLaser() {
         try {
-            levelEngine.fireLaserToken(level);
+            levelEngine.getLaserEngine().fire();
         } catch (Exception e) {
             exception = e;
         }

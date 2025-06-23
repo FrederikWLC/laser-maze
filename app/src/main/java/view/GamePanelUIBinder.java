@@ -3,8 +3,6 @@ package view;
 import java.awt.event.ActionListener;
 import java.util.function.IntConsumer;
 
-import view.GamePanel;
-
 public class GamePanelUIBinder {
     private final GamePanel gamePanel;
 

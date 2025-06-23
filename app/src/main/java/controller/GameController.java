@@ -14,7 +14,7 @@ import java.util.List;
 public class GameController {
     LevelEngine levelEngine;
     BoardEngine boardEngine;
-    private List<PositionDirection> beamPath = List.of();
+    private List<PositionTurn> beamPath = List.of();
 
     public GameController(Level level) {
         this.levelEngine = new LevelEngine(level);

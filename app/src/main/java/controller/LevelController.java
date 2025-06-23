@@ -1,9 +1,7 @@
 package controller;
 
 import model.domain.board.Inventory;
-import model.domain.board.PositionDirection;
 import model.domain.board.PositionTurn;
-import model.domain.board.TileContainer;
 import model.domain.board.builder.InventoryBuilder;
 
 import model.domain.level.Level;
@@ -31,7 +29,7 @@ public class LevelController {
     private final LevelSaver levelSaver = new LevelSaver();
     private final LevelIOHandler levelIOHandler = new LevelIOHandler(defaultLevelLoader,savedLevelLoader,levelSaver);
     private Level currentLevel;
-    private LevelEngine levelEngine = new LevelEngine();
+    private LevelEngine levelEngine;
 
 
     public LevelController(GamePanel gamePanel, ScreenController screenController) {
@@ -102,7 +100,7 @@ public class LevelController {
                     gamePanel.repaint();
                     gamePanel.getControlPanel().boardRenderer.repaint();
 
-                    if (levelEngine.updateAndCheckLevelCompletionState(getCurrentLevel())) {
+                    if (levelEngine.updateAndCheckLevelCompletionState()) {
                         gamePanel.showLevelComplete();
                     }
 

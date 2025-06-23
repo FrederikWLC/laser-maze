@@ -9,8 +9,6 @@ import java.util.Map;
 import java.util.HashMap;
 
 import model.domain.board.Position;
-import model.domain.board.PositionDirection;
-
 import model.domain.board.PositionTurn;
 import model.domain.board.TileContainer;
 import view.util.TokenImageLoader;

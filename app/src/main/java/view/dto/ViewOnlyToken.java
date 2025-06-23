@@ -4,10 +4,6 @@ import model.domain.board.Direction;
 import model.domain.token.base.ITurnableToken;
 import model.domain.token.base.Token;
 import model.domain.token.base.ITargetToken;
-import model.domain.board.PositionDirection;
-
-
-
 
 public class ViewOnlyToken extends Token implements ITurnableToken, ITargetToken {
     private final Direction direction;
@@ -16,7 +12,6 @@ public class ViewOnlyToken extends Token implements ITurnableToken, ITargetToken
     private final boolean requiredTarget;
 
     public ViewOnlyToken(Direction direction, boolean turnable, boolean movable, boolean requiredTarget) {
-
         this.direction = direction;
         this.turnable = turnable;
         this.movable = movable;
@@ -52,10 +47,7 @@ public class ViewOnlyToken extends Token implements ITurnableToken, ITargetToken
     public boolean isRequiredTarget() {
         return requiredTarget;
     }
-    @Override
-    public boolean isHit(model.domain.board.PositionDirection positionDirection) {
-        return false;
-    }
+
     @Override
     public void setRequiredTarget(boolean required) {
         // no-op since this is view-only

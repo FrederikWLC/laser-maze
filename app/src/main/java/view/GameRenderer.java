@@ -1,8 +1,6 @@
 package view;
 
 import model.domain.board.PositionTurn;
-import view.rendering.DrawableManager;
-import model.domain.board.PositionDirection;
 
 import java.awt.image.BufferedImage;
 import java.util.List;

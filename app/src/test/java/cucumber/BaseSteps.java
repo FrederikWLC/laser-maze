@@ -5,6 +5,7 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.ParameterType;
 import model.domain.board.*;
 import model.domain.engine.BoardEngine;
+import model.domain.engine.LaserEngine;
 import model.domain.level.Level;
 import model.domain.token.base.*;
 import model.domain.token.builder.base.*;
@@ -21,6 +22,7 @@ public abstract class BaseSteps {
     public Tile tile;
     public Token token;
     public LaserToken laser;
+    public LaserEngine laserEngine;
     public CellBlockerToken cellBlocker;
     public DoubleMirrorToken doubleMirror;
     public TargetMirrorToken targetMirror;
@@ -28,7 +30,7 @@ public abstract class BaseSteps {
     public CheckpointToken checkpoint;
     public PortalToken portal;
     public Exception exception;
-    public List<PositionDirection> actualBeamPath;
+    public List<PositionTurn> actualBeamPath;
     public Map<String,Integer> availableTokensMap;
     public BoardEngine boardEngine = new BoardEngine();
 
@@ -73,11 +75,16 @@ public abstract class BaseSteps {
 
     public Token buildToken(String tokenName, Integer x, Integer y, Direction direction, boolean movable, boolean turnable) {
         TokenBuilder builder = getTokenBuilder(tokenName);
+
         if (IMutableToken.class.isAssignableFrom(getTokenType(tokenName))) {
             builder = ((MutableTokenBuilder) builder).withMutability(movable, turnable).withDirection(direction);
         }
         if (x != null && y != null) {
             builder = builder.withPosition(x, y);
+        }
+        Token token = builder.build();
+        if (tokenName.equals("laser")) {
+            laserEngine = new LaserEngine((LaserToken) laser, board);
         }
         return builder.build();
     }

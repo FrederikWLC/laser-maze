@@ -2,12 +2,8 @@ package model.domain.token.impl;
 
 import model.domain.board.PositionTurn;
 import model.domain.engine.LaserEngine;
-import model.domain.board.PositionDirection;
-import model.domain.board.Board;
 import model.domain.token.base.Token;
-
 import java.util.List;
-import java.util.stream.Stream;
 
 public class CellBlockerToken extends Token {
     public CellBlockerToken() {

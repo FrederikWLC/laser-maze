@@ -2,13 +2,9 @@ package model.domain.token.impl;
 
 import model.domain.board.PositionTurn;
 import model.domain.engine.LaserEngine;
-import model.domain.board.PositionDirection;
-import model.domain.board.Board;
 import model.domain.token.base.MutableToken;
 import model.domain.token.base.ICheckpointToken;
-
 import java.util.List;
-import java.util.stream.Stream;
 
 public class CheckpointToken extends MutableToken implements ICheckpointToken {
     public CheckpointToken() {

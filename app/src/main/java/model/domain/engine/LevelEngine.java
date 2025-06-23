@@ -27,16 +27,15 @@ public class LevelEngine {
     }
 
     public boolean updateAndCheckLevelCompletionState() {
-        if (getLaserEngine().getLastBeamPath().isEmpty()) { // No laser beam path
-            level.setComplete(false); // Set level as incomplete
-            level.setCurrentTargetNumber(0); // Reset current target number
-            return false; // Return false as level is not complete
-        }
-        else { // There is a laser beam path
             // Get and set current target number
             int currentTargetNumber = laserEngine.getTargetLitNumber();
             level.setCurrentTargetNumber(currentTargetNumber);
             // Check if level is complete
+            System.out.println("Is required target number satisfied? "+level.isRequiredTargetNumberSatisfied());
+            System.out.println("Current target number is: "+level.getCurrentTargetNumber());
+            System.out.println("Are all touch required tokens hit? "+areAllTouchRequiredTokensHit());
+            System.out.println("Are all required targets hit? "+areAllRequiredTargetsHit());
+            System.out.println("Are all checkpoints checked? "+areAllCheckpointsChecked());
             boolean isComplete =
                     level.isRequiredTargetNumberSatisfied() & // Required target number must be satisfied
                     areAllTouchRequiredTokensHit() & // All touch required tokens must be touched by the beam
@@ -44,7 +43,6 @@ public class LevelEngine {
                     areAllCheckpointsChecked(); // All checkpoints must be checked
             level.setComplete(isComplete); // Set level completion state
             return isComplete; // return completion state
-            }
         }
 
     public List<Token> getTouchRequiredTokens() {

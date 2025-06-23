@@ -44,7 +44,7 @@ public class DoubleMirrorToken extends MutableToken {
             }
         }
         // Add the turn within the mirror to the beam path
-        beamPath = beamPathHelper.addToBeamPath(beamPath, currentBeamPositionTurn);
+        beamPath = laserEngine.getBeamPathHelper().addToBeamPath(beamPath, currentBeamPositionTurn);
 
         // Continue the beam's travel from the current position turn
         return laserEngine.travelFrom(currentBeamPositionTurn, beamPath);

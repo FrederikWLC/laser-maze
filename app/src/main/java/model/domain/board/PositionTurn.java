@@ -7,6 +7,7 @@ public class PositionTurn {
         private final Direction in,out;
 
         public PositionTurn(Position position, Direction in, Direction out) {
+            System.out.println("Creating PositionTurn with position: " + position + ", in: " + in + ", out: " + out);
             if ( in == null || out == null) {
                 throw new IllegalArgumentException("In and out directions must be defined");
             }
@@ -27,15 +28,6 @@ public class PositionTurn {
                     getOut(),getOut());
         }
 
-        public PositionTurn incrementWithBend(Direction bend) {
-            return new PositionTurn(
-                    new Position(
-                            position.getX() + getOut().getDx(),
-                            position.getY() + getOut().getDy()
-                    ),
-                    getOut(),bend);
-        }
-
 
         public PositionTurn withOutwardsDirection(Direction newOut) {
             return new PositionTurn(position, getIn(), newOut);
@@ -51,16 +43,18 @@ public class PositionTurn {
         }
 
         public boolean isTurn() {
-            return _isStraight(getIn(),getOut());
+            return _isTurn(getIn(),getOut());
         }
 
-        private boolean _isTurn(Direction _in, Direction _out) {
-            return _in != _out && (Math.abs(_in.getDx() + _out.getDx()) + Math.abs(_in.getDy() + _out.getDy()) == 1);
+        private boolean _isTurn(Direction in, Direction out) {
+            // perpendicular <=> dot-product == 0
+            int dot = in.getDx() * out.getDx() + in.getDy() * out.getDy();
+            return dot == 0;
         }
 
         public Position getPosition() {
-            return position;
-        }
+                return position;
+            }
 
         public Direction getIn() {
             return in;

@@ -400,6 +400,18 @@ public class BoardSteps extends BaseSteps {
                 "Token should not have a direction");
     }
 
+    @And("the first pair of the level's {tokenType} tokens should be each other's twins")
+    public void theFirstPairOfTheLevelsTokensShouldBeEachOthersTwins(Class<? extends MutableTwinToken> tokenType) {
+        List<MutableTwinToken> pair = getTwinPairOfType(tokenType, level.getTokens());
+        MutableTwinToken first  = pair.get(0);
+        MutableTwinToken second = pair.get(1);
+        assertEquals(second, first.getTwin(),
+                "First " + tokenType.getSimpleName() + "'s twin should be the second token of same type, but is: " + first.getTwin());
+        assertEquals(first, second.getTwin(),
+                "Second " + tokenType.getSimpleName() +"token's twin should be the first token of same type, but is: " + second.getTwin());
+    }
+
+
     @And("the remaining number of required tokens to be placed should be {int}")
     public void theRemainingNumberOfRequiredTokensShouldBe(int count) {
         assertEquals(count, level.getRequiredTokens().size(),

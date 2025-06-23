@@ -13,7 +13,7 @@ public class CellBlockerToken extends Token {
     @Override
     public List<PositionTurn> interact(LaserEngine laserEngine, PositionTurn currentPositionTurn, List<PositionTurn> beamPath) {
         // A Cell Blocker allows the beam to pass through its tile without changing its direction.
-        beamPath = beamPathHelper.addToBeamPath(beamPath,currentPositionTurn);
+        beamPath = laserEngine.getBeamPathHelper().addToBeamPath(beamPath,currentPositionTurn);
         // and continue the beam's travel
         return laserEngine.travelFrom(currentPositionTurn, beamPath);
     }

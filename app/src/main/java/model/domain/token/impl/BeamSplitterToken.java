@@ -49,14 +49,14 @@ public class BeamSplitterToken extends MutableToken {
         List<PositionTurn> beamPathContextForward = List.of(currentBeamPositionTurn);
 
         // Beam path context of the reflected beam only includes the reflected beam position turn
-        List<PositionTurn> beamPathContextReflected = List.of(currentBeamPositionTurn); // Add the current beam position turn to the beam path history
+        List<PositionTurn> beamPathContextReflected = List.of(currentPositionTurnOfReflectedBeam); // Add the current beam position turn to the beam path history
 
         // Get the beam path of the forward beam and the reflected beam with their own respective contexts
         List<PositionTurn> forwardBeamPath = laserEngine.travelFrom(currentBeamPositionTurn, beamPathContextForward);
         List<PositionTurn> reflectedBeamPath = laserEngine.travelFrom(currentPositionTurnOfReflectedBeam, beamPathContextReflected);
 
         // Add them together with also the context of the original beam path
-        return beamPathHelper.addAllBeamPaths(List.of(beamPath,forwardBeamPath,reflectedBeamPath));
+        return laserEngine.getBeamPathHelper().addAllBeamPaths(List.of(beamPath,forwardBeamPath,reflectedBeamPath));
     }
 }
 

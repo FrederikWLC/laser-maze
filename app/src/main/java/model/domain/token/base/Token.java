@@ -2,17 +2,14 @@ package model.domain.token.base;
 import model.domain.board.Position;
 import model.domain.board.PositionTurn;
 import model.domain.engine.LaserEngine;
-import model.domain.engine.util.BeamPathHelper;
 
 import java.util.List;
 
 public abstract class Token implements IToken {
     protected Position position;
-    protected BeamPathHelper beamPathHelper;
 
     protected Token() {
     }
-
 
     public boolean isMovable() {
         return false;

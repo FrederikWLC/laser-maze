@@ -18,7 +18,7 @@ public class CheckpointToken extends MutableToken implements ICheckpointToken {
         if (isChecked(currentBeamPositionTurn)) {
             laserEngine.addCheckpointChecked(this);
             // Add the current beam position to the beam path
-            beamPath = beamPathHelper.addToBeamPath(beamPath, currentBeamPositionTurn);
+            beamPath = laserEngine.getBeamPathHelper().addToBeamPath(beamPath, currentBeamPositionTurn);
             return laserEngine.travelFrom(currentBeamPositionTurn,beamPath);
         }
         return beamPath; // If the beam does not pass through the checkpoint, return the current beam path

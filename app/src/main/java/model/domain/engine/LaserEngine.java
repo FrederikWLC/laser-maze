@@ -9,6 +9,8 @@ import model.domain.board.Board;
 import model.domain.token.base.ICheckpointToken;
 import model.domain.token.base.ITargetToken;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -19,9 +21,11 @@ public class LaserEngine {
     private final LaserToken laser;
     private final Board board;
     private List<PositionTurn> lastBeamPath = List.of();
-    private List<Token> tokensHit = List.of();
-    private List<ITargetToken> targetsLit = List.of();
-    private List<ICheckpointToken> checkpointsChecked = List.of();
+
+    // Make lists mutable to allow adding elements
+    private List<Token> tokensHit = new ArrayList<>();
+    private List<ITargetToken> targetsLit = new ArrayList<>();
+    private List<ICheckpointToken> checkpointsChecked = new ArrayList<>();
 
     public LaserEngine(LaserToken laser, Board board) {
         this.laser = laser;
@@ -31,8 +35,9 @@ public class LaserEngine {
     public void fire() {
         refreshBeamPath();
         if (laser.isActive()) {
+            System.out.println("Laser direction: " + laser.getDirection());
             PositionTurn currentPositionTurn = new PositionTurn(laser.getPosition(), laser.getDirection(), laser.getDirection());
-            travelFrom(currentPositionTurn,List.of());
+            lastBeamPath = travelFrom(currentPositionTurn,List.of());
         }
     }
 
@@ -67,6 +72,10 @@ public class LaserEngine {
         return beamPath;
     }
 
+    public BeamPathHelper getBeamPathHelper() {
+        return beamPathHelper;
+    }
+
     public List<Token> getTokensHit() {
         return tokensHit;
     }
@@ -83,13 +92,13 @@ public class LaserEngine {
     }
 
     public List<Token> getTouchRequiredTokensHit() {
-        return tokensHit.stream()
+        return getTokensHit().stream()
                 .filter(Token::isTouchRequired)
                 .collect(toList());
     }
 
     public int getTargetLitNumber() {
-        return targetsLit.size();
+        return getTargetsLit().size();
     }
 
     public List<PositionTurn> getLastBeamPath() {
@@ -114,8 +123,9 @@ public class LaserEngine {
 
     public void refreshBeamPath() {
         this.lastBeamPath = List.of();
+        tokensHit = new ArrayList<>();
+        targetsLit = new ArrayList<>();
+        checkpointsChecked = new ArrayList<>();
     }
-
-
 
 }

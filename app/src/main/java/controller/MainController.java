@@ -21,8 +21,9 @@ public class MainController {
         controller.RendererRegistrar.registerRenderers(gamePanel);
         UIInitializer.setupWindow(window, gamePanel);
 
-        this.screenController = new ScreenController(gamePanel);
-        this.levelController = new LevelController(gamePanel, screenController);
+        this.levelController = new LevelController(gamePanel, null); // temporary null
+        this.screenController = new ScreenController(gamePanel, levelController);
+        this.levelController.setScreenController(screenController); // set it after
     }
 
     public void startGame() {

@@ -6,6 +6,7 @@ import model.domain.board.TileContainer;
 import model.domain.board.builder.InventoryBuilder;
 
 import model.domain.level.Level;
+import model.domain.multiplayer.Multiplayer;
 import model.persistence.storage.DefaultLevelLoader;
 import model.persistence.storage.LevelIOHandler;
 import model.persistence.storage.LevelSaver;
@@ -23,7 +24,7 @@ import model.domain.engine.LevelEngine;
 
 public class LevelController {
     private final GamePanel gamePanel;
-    private final ScreenController screenController;
+    private ScreenController screenController;
     private final SoundManager soundManager = new SoundManager();
     private final DefaultLevelLoader defaultLevelLoader = new DefaultLevelLoader();
     private final SavedLevelLoader savedLevelLoader = new SavedLevelLoader();
@@ -31,7 +32,7 @@ public class LevelController {
     private final LevelIOHandler levelIOHandler = new LevelIOHandler(defaultLevelLoader,savedLevelLoader,levelSaver);
     private Level currentLevel;
     private LevelEngine levelEngine = new LevelEngine();
-
+    private MultiplayerController multiplayerController;
 
     public LevelController(GamePanel gamePanel, ScreenController screenController) {
         this.gamePanel = gamePanel;
@@ -49,6 +50,19 @@ public class LevelController {
         System.out.println("Loaded level: " + getCurrentLevel());
         reloadLevelUI();
     }
+
+    public void loadMultiplayerLevel(int levelNumber, int playerCount) {
+        System.out.println("Loading multiplayer level " + levelNumber);
+        Level defaultLevel = levelIOHandler.load(levelNumber);
+
+        Multiplayer multiplayer = new Multiplayer(defaultLevel, playerCount);
+        MultiplayerController controller = new MultiplayerController(multiplayer, this, gamePanel);
+        this.multiplayerController = controller;
+
+        controller.startGame();
+    }
+
+
 
     public void reloadLevelUI() {
 
@@ -102,7 +116,11 @@ public class LevelController {
                     gamePanel.getControlPanel().boardRenderer.repaint();
 
                     if (levelEngine.updateAndCheckLevelCompletionState(getCurrentLevel())) {
-                        gamePanel.showLevelComplete();
+                        if (multiplayerController != null) {
+                            multiplayerController.onLevelComplete();
+                        } else {
+                            gamePanel.showLevelComplete();
+                        }
                     }
 
                 },
@@ -175,5 +193,9 @@ public class LevelController {
 
     public void setCurrentLevel(Level level) {
         this.currentLevel = level;
+    }
+
+    public void setScreenController(ScreenController screenController) {
+        this.screenController = screenController;
     }
 }

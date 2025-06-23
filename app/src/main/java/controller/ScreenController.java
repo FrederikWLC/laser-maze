@@ -3,6 +3,7 @@ package controller;
 import view.*;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.function.IntConsumer;
@@ -10,12 +11,14 @@ import java.util.function.IntConsumer;
 public class ScreenController {
     private final GamePanel gamePanel;
     private final SoundManager soundManager = new SoundManager();
+    private final LevelController levelController;
 
     private DisplayManager titleScreen;
     private DisplayManager levelSelectScreen;
 
-    public ScreenController(GamePanel gamePanel) {
+    public ScreenController(GamePanel gamePanel, LevelController levelController) {
         this.gamePanel = gamePanel;
+        this.levelController = levelController;
     }
 
     public void setupScreens(IntConsumer onLevelSelectClick) {
@@ -26,7 +29,12 @@ public class ScreenController {
                     cleanupGameUI();
                     gamePanel.switchToScreen(levelSelectScreen);
                 },
-                () -> {}, // Multiplayer
+                () -> { // Multiplayer button
+                    soundManager.stopBackground();
+                    cleanupGameUI();
+                    gamePanel.switchToScreen(levelSelectScreen); // reuse level select screen
+                    setupMultiplayerLevelButtons(); // use a new method
+                },
                 () -> System.exit(0),
                 () -> {
                     soundManager.stopBackground();
@@ -46,6 +54,29 @@ public class ScreenController {
 
         levelSelectScreen = new LevelSelectScreenManager(gamePanel);
     }
+
+    private void setupMultiplayerLevelButtons() {
+        JPanel levelListPanel = gamePanel.getControlPanel().levelListPanel;
+        levelListPanel.removeAll();
+
+        for (int i = 1; i <= 10; i++) {
+            int levelNum = i;
+            JButton button = new JButton("Level " + levelNum);
+            button.addActionListener(e -> {
+                gamePanel.resetBoardUI();
+                gamePanel.clearMouseListeners();
+                gamePanel.clearLaserPath();
+                gamePanel.repaint();
+
+                levelController.loadMultiplayerLevel(levelNum, 2); // Two players
+            });
+            levelListPanel.add(button);
+        }
+
+        levelListPanel.revalidate();
+        levelListPanel.repaint();
+    }
+
 
     public void showTitleScreen() {
         soundManager.stopBackground(); // Ensure music stops

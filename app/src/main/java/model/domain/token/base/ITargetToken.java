@@ -8,5 +8,4 @@ public interface ITargetToken extends IToken {
 
     void setRequiredTarget(boolean requiredTarget);
 
-    boolean isHit(PositionDirection beamPositionDirection);
 }

@@ -1,5 +1,6 @@
 package view;
 
+import model.domain.board.PositionTurn;
 import view.rendering.DrawableManager;
 import model.domain.board.PositionDirection;
 
@@ -23,7 +24,7 @@ public class GameRenderer {
         boardRenderer.setTilesToRender(tiles);
     }
 
-    public void setLaserPath(List<PositionDirection> path) {
+    public void setLaserPath(List<PositionTurn> path) {
         boardRenderer.setLaserPath(path);
     }
 

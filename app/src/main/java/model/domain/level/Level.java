@@ -57,18 +57,13 @@ public class Level {
                 .allMatch(Token::isPlaced);
     }
 
-    public Optional<LaserToken> getActiveLaser() {
-        return getTriggerableLaser().filter(LaserToken::isActive);
-    }
-
-    public Optional<LaserToken> getTriggerableLaser() {
-        return getPlacedTokens().stream()
+    public LaserToken getLaserToken() {
+        return getTokens().stream()
                 .filter(LaserToken.class::isInstance)
                 .map(LaserToken.class::cast)
-                .filter(LaserToken::isTriggerable)
-                .findFirst();
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No LaserToken found in the level."));
     }
-
 
     public void setComplete(boolean complete) {
         this.complete= complete;

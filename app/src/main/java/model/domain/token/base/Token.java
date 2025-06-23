@@ -3,12 +3,15 @@ package model.domain.token.base;
 import model.domain.board.Board;
 import model.domain.board.Position;
 import model.domain.board.PositionDirection;
+import model.domain.board.PositionTurn;
 import model.domain.engine.LaserEngine;
+import model.domain.engine.util.BeamPathHelper;
 
 import java.util.List;
 
 public abstract class Token implements IToken {
     protected Position position;
+    protected BeamPathHelper beamPathHelper;
 
     protected Token() {
     }
@@ -34,8 +37,9 @@ public abstract class Token implements IToken {
         return position != null; // Token is placed if it has a position
     }
 
-    public List<PositionDirection> interact(LaserEngine laserEngine, PositionDirection currentBeamPositionDirection, List<PositionDirection> beamPath, Board board) {
-        return beamPath; // Default implementation returns the beam path unchanged, as beam hits token and stops
+    public List<PositionTurn> interact(LaserEngine laserEngine, PositionTurn currentPositionTurn, List<PositionTurn> beamPath) {
+        // return the beam path by default, this will stop the beam
+        return beamPath;
     }
 
     public boolean isTouchRequired() {

@@ -1,5 +1,6 @@
 package model.domain.token.impl;
 
+import model.domain.board.PositionTurn;
 import model.domain.engine.LaserEngine;
 import model.domain.board.PositionDirection;
 import model.domain.board.Board;
@@ -14,37 +15,41 @@ public class DoubleMirrorToken extends MutableToken {
     }
 
     @Override
-    public List<PositionDirection> interact(LaserEngine laserEngine, PositionDirection currentBeamPositionDirection, List<PositionDirection> beamPath, Board board) {
+    public List<PositionTurn> interact(LaserEngine laserEngine, PositionTurn currentBeamPositionTurn, List<PositionTurn> beamPath) {
         // A Double Mirror reflects the beam 90 degrees depending on the direction it is facing.
         switch (this.getDirection()) {
             case UP,
                  DOWN -> { // Here facing down or up means the mirror spans top left to bottom right (like a backslash)
-                switch (currentBeamPositionDirection.getDirection()) { // where beam then gets reflected depending on the direction
+                switch (currentBeamPositionTurn.getOut()) { // where beam then gets reflected depending on the direction
                     case UP ->
-                            currentBeamPositionDirection = currentBeamPositionDirection.withDirection(Direction.LEFT);
+                            currentBeamPositionTurn = currentBeamPositionTurn.withOutwardsDirection(Direction.LEFT);
                     case DOWN ->
-                            currentBeamPositionDirection = currentBeamPositionDirection.withDirection(Direction.RIGHT);
+                            currentBeamPositionTurn = currentBeamPositionTurn.withOutwardsDirection(Direction.RIGHT);
                     case LEFT ->
-                            currentBeamPositionDirection = currentBeamPositionDirection.withDirection(Direction.UP);
+                            currentBeamPositionTurn = currentBeamPositionTurn.withOutwardsDirection(Direction.UP);
                     case RIGHT ->
-                            currentBeamPositionDirection = currentBeamPositionDirection.withDirection(Direction.DOWN);
+                            currentBeamPositionTurn = currentBeamPositionTurn.withOutwardsDirection(Direction.DOWN);
                 }
             }
             case LEFT,
                  RIGHT -> { // Facing right or left means the mirror spans bottom left to top right (like a slash)
-                switch (currentBeamPositionDirection.getDirection()) { // where beam then gets reflected depending on the direction
+                switch (currentBeamPositionTurn.getOut()) { // where beam then gets reflected depending on the direction
                     case UP ->
-                            currentBeamPositionDirection = currentBeamPositionDirection.withDirection(Direction.RIGHT);
+                            currentBeamPositionTurn = currentBeamPositionTurn.withOutwardsDirection(Direction.RIGHT);
                     case DOWN ->
-                            currentBeamPositionDirection = currentBeamPositionDirection.withDirection(Direction.LEFT);
+                            currentBeamPositionTurn = currentBeamPositionTurn.withOutwardsDirection(Direction.LEFT);
                     case LEFT ->
-                            currentBeamPositionDirection = currentBeamPositionDirection.withDirection(Direction.DOWN);
+                            currentBeamPositionTurn = currentBeamPositionTurn.withOutwardsDirection(Direction.DOWN);
                     case RIGHT ->
-                            currentBeamPositionDirection = currentBeamPositionDirection.withDirection(Direction.UP);
+                            currentBeamPositionTurn = currentBeamPositionTurn.withOutwardsDirection(Direction.UP);
                 }
             }
         }
-        return laserEngine.travel(currentBeamPositionDirection, beamPath, board);
+        // Add the turn within the mirror to the beam path
+        beamPath = beamPathHelper.addToBeamPath(beamPath, currentBeamPositionTurn);
+
+        // Continue the beam's travel from the current position turn
+        return laserEngine.travelFrom(currentBeamPositionTurn, beamPath);
     }
 
 }

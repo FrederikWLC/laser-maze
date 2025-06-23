@@ -402,7 +402,7 @@ public class BoardSteps extends BaseSteps {
     @Given("I place token {int} \\(from the required tokens) on the board at \\({int}, {int})")
     public void iPlaceTokenFromTheRequiredTokensOnTheBoardAt(int idx, int x, int y) {
         token = level.getRequiredTokens().get(idx);
-        levelEngine.placeRequiredToken(level, token, new Position(x, y));
+        boardEngine.placeToken(level.getBoard(), token, new Position(x, y));
         saveTokenAsType(token);
     }
 

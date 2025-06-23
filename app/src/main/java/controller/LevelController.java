@@ -2,6 +2,7 @@ package controller;
 
 import model.domain.board.Inventory;
 import model.domain.board.PositionDirection;
+import model.domain.board.PositionTurn;
 import model.domain.board.TileContainer;
 import model.domain.board.builder.InventoryBuilder;
 
@@ -87,7 +88,7 @@ public class LevelController {
                     soundManager.play(SoundManager.Sound.LASER, false);
                     System.out.println("Fire Laser button clicked!");
                     gameController.triggerLaser(true);
-                    List<PositionDirection> path = gameController.getCurrentLaserPath();
+                    List<PositionTurn> path = gameController.getCurrentLaserPath();
 
                     System.out.println("Laser path size: " + path.size());
                     gamePanel.setLaserPath(path);

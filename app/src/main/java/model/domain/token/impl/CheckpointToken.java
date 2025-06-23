@@ -1,5 +1,6 @@
 package model.domain.token.impl;
 
+import model.domain.board.PositionTurn;
 import model.domain.engine.LaserEngine;
 import model.domain.board.PositionDirection;
 import model.domain.board.Board;
@@ -15,40 +16,23 @@ public class CheckpointToken extends MutableToken implements ICheckpointToken {
     }
 
     @Override
-    public List<PositionDirection> interact(LaserEngine laserEngine, PositionDirection currentBeamPositionDirection, List<PositionDirection> beamPath, Board board) {
+    public List<PositionTurn> interact(LaserEngine laserEngine, PositionTurn currentBeamPositionTurn, List<PositionTurn> beamPath) {
         // A Checkpoint allows the beam to pass through its tile without changing its direction
         // only if the beam is facing the opening of the checkpoint.
-        switch (this.getDirection()) {
-            case UP, DOWN -> { // Here facing up or down means the opening is vertical
-                switch (currentBeamPositionDirection.getDirection()) { // if the beam passes or not depending on the direction
-                    case UP, DOWN -> { // Beam passes through the opening
-                        beamPath = Stream.concat(beamPath.stream(), Stream.of(currentBeamPositionDirection)).toList();
-                        return laserEngine.travel(currentBeamPositionDirection, beamPath, board);
-                    }
-                    case LEFT, RIGHT -> {
-                        return beamPath;
-                    } // Beam hits non-opening side
-                }
-            }
-            case LEFT, RIGHT -> { // Here facing left or right means the opening is horizontal
-                switch (currentBeamPositionDirection.getDirection()) { // if the beam passes or not depending on the direction
-                    case UP, DOWN -> {
-                        return beamPath;
-                    } // Beam hits non-opening side
-                    case LEFT, RIGHT -> { // Beam passes through the opening
-                        beamPath = Stream.concat(beamPath.stream(), Stream.of(currentBeamPositionDirection)).toList();
-                        return laserEngine.travel(currentBeamPositionDirection, beamPath, board);
-                    }
-                }
-            }
+        if (isChecked(currentBeamPositionTurn)) {
+            laserEngine.addCheckpointChecked(this);
+            // Add the current beam position to the beam path
+            beamPath = beamPathHelper.addToBeamPath(beamPath, currentBeamPositionTurn);
+            return laserEngine.travelFrom(currentBeamPositionTurn,beamPath);
         }
         return beamPath; // If the beam does not pass through the checkpoint, return the current beam path
     }
 
-    public boolean isPenetrated(PositionDirection beamPositionDirection) {
+    public boolean isChecked(PositionTurn beamPositionTurn) {
         // A Checkpoint is penetrated if the beam goes through the checkpoint parallel to its opening.
-        return beamPositionDirection.getPosition().equals(this.getPosition())
-                && getDirection().isParallel(this.getDirection());
+        return beamPositionTurn.getPosition().equals(this.getPosition())
+                && beamPositionTurn.getIn().isParallel(this.getDirection())
+                && beamPositionTurn.getOut().isParallel(this.getDirection());
     }
 }
 

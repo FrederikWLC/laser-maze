@@ -1,9 +1,6 @@
 package controller;
 
-import model.domain.board.Direction;
-import model.domain.board.Position;
-import model.domain.board.PositionDirection;
-import model.domain.board.Tile;
+import model.domain.board.*;
 import model.domain.engine.BoardEngine;
 import model.domain.engine.LevelEngine;
 import model.domain.level.Level;
@@ -15,27 +12,22 @@ import javax.swing.*;
 import java.util.List;
 
 public class GameController {
-    LevelEngine levelEngine = new LevelEngine();
-    BoardEngine boardEngine = new BoardEngine();
-    private Level level;
+    LevelEngine levelEngine;
+    BoardEngine boardEngine;
     private List<PositionDirection> beamPath = List.of();
 
     public GameController(Level level) {
-        this.level = level;
+        this.levelEngine = new LevelEngine(level);
     }
 
-    public List<PositionDirection> getCurrentLaserPath() {
-       return beamPath;
-    }
-
-    public void updateCurrentLaserPath() {
-        beamPath = levelEngine.fireLaserToken(level);
+    public List<PositionTurn> getCurrentLaserPath() {
+       return levelEngine.getLaserEngine().getLastBeamPath();
     }
 
     public void triggerLaser(boolean isActive) {
         try {
-            levelEngine.triggerLaserToken(level, isActive);
-            updateCurrentLaserPath();
+            levelEngine.getLevel().getLaserToken().trigger(isActive);
+            levelEngine.getLaserEngine().fire();
         } catch (Exception e) {
             System.out.println("Failed to trigger laser: " + e.getMessage());
         }
@@ -56,7 +48,7 @@ public class GameController {
             if (turnableToken.isTurned()) {
                 try {
                     laserToken.trigger(false); // turn off the laser before making changes to the board layout
-                    updateCurrentLaserPath();
+                    levelEngine.getLaserEngine().refreshBeamPath();
                 } catch (IllegalStateException e) {
                     System.out.println("Skipping laser trigger before rotation: " + e.getMessage());
                 }
@@ -73,13 +65,13 @@ public class GameController {
 
 
     public Token getTokenAt(Position pos) {
-        Tile tile = level.getBoard().getTile(pos.getX(), pos.getY());
+        Tile tile = levelEngine.getLevel().getBoard().getTile(pos.getX(), pos.getY());
         return tile != null ? tile.getToken() : null;
     }
 
 
     public Level getLevel() {
-        return level;
+        return levelEngine.getLevel();
     }
 
 }

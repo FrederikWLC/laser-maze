@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import model.domain.board.Direction;
 import model.domain.board.PositionDirection;
+import model.domain.board.PositionTurn;
 import model.domain.token.base.Token;
 import model.domain.token.base.ITurnableToken;
 import java.util.HashMap;
@@ -17,18 +18,16 @@ import view.dto.ViewOnlyToken;
 public class BoardRendererPanel extends JPanel {
 
     private List<RenderableTile> tilesToRender;
-    private List<PositionDirection> laserPath;
+    private List<PositionTurn> laserPath;
 
     private Map<String, BufferedImage> tokenImages;
     private Map<String, TokenRenderer> staticRenderers;
     private Map<String, ITurnableTokenRenderer> turnableRenderers;
 
-    private int visibleLaserSegments = 0;
-
     private List<RenderableTile> inventoryTilesToRender;
-    private int inventoryStartX = 100;
-    private int inventoryStartY = 520; // below board
-    private int inventoryTileSize = 60;
+    private final int inventoryStartX = 100;
+    private final int inventoryStartY = 520; // below board
+    private final int inventoryTileSize = 60;
 
     private Point dragMousePosition = null;
     private Token currentlyDraggedToken = null;
@@ -53,7 +52,7 @@ public class BoardRendererPanel extends JPanel {
         repaint();
     }
 
-    public void setLaserPath(List<PositionDirection> path) {
+    public void setLaserPath(List<PositionTurn> path) {
         this.laserPath = path;
         repaint();
     }

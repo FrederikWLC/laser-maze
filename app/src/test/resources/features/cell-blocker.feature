@@ -20,7 +20,7 @@ Feature: Cell blocker
     Then an error should occur
 
   # Laser travels in an unobstructed straight line through the cell blocker
-  Scenario: Fire laser in an open horizontal line
+  Scenario: Fire laser through Cell Blocker
     Given a completely mutable Laser token is placed on the board at (2, 4) facing up
     When I activate the laser
     And the laser forms a beam path

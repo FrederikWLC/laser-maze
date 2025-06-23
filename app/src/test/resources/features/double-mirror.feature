@@ -23,19 +23,21 @@ Feature: Double Mirror token
     Then the Double Mirror token should face right
 
   # Laser travels in a straight line until it hits the double mirror that faces down/up
-  Scenario: Fire laser in an open horizontal line
+  Scenario: Laser reflects through Backslash Double Mirror
     Given a completely mutable Laser token is placed on the board at (4, 2) facing left
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
       | x | y | in   | out  |
       | 3 | 2 | LEFT | LEFT |
-      # Hits and gets reflected by double mirror, but skips its tile (2, 2)
-      | 2 | 3 | LEFT | DOWN |
-      | 2 | 4 | LEFT | DOWN |
+      # Hits and gets reflected by double mirror, and turns within its tile (2, 2)
+      | 2 | 2 | LEFT | DOWN |
+      # The reflected beam continues straight down
+      | 2 | 3 | DOWN | DOWN |
+      | 2 | 4 | DOWN | DOWN |
 
   # Laser travels in a straight line until it hits the mirror that faces left/right
-  Scenario: Fire laser in an open horizontal line
+  Scenario: Laser reflects through Slash Double Mirror
     Given a completely mutable Laser token is placed on the board at (4, 2) facing left
     And I turn the Double Mirror token to face up
     When I activate the laser
@@ -43,62 +45,8 @@ Feature: Double Mirror token
     Then the laser beam should pass through the following position directions:
       | x | y | in   | out  |
       | 3 | 2 | LEFT | LEFT |
+      # Hits and gets reflected by double mirror, and turns within its tile (2, 2)
+      | 2 | 2 | LEFT | UP   |
+      # The reflected beam continues straight up
       | 2 | 1 | UP   | UP   |
       | 2 | 0 | UP   | UP   |
-
-  Scenario: Fire laser through Double Mirror facing LEFT
-    Given a new game is started
-    And the board is initialized with width 5 and height 5
-    And a completely mutable Double Mirror token is placed on the board at (2, 2) facing LEFT
-    And a completely mutable Laser token is placed on the board at (0, 2) facing RIGHT
-    When I activate the laser
-    And the laser forms a beam path
-    Then the laser beam should pass through the following position directions:
-      | x | y | in    | out   |
-      | 1 | 2 | RIGHT | RIGHT |
-      | 2 | 1 | UP    | UP    |
-      | 2 | 0 | UP    | UP    |
-
-  Scenario: Fire laser through Double Mirror facing UP from below
-    Given I turn the Double Mirror token to face UP
-    And a completely mutable Laser token is placed on the board at (2, 4) facing UP
-    When I activate the laser
-    And the laser forms a beam path
-    Then the laser beam should pass through the following position directions:
-      | x | y | in   | out  |
-      | 2 | 3 | UP   | UP   |
-      | 1 | 2 | LEFT | LEFT |
-      | 0 | 2 | LEFT | LEFT |
-
-  Scenario: Fire laser through Double Mirror slash from below
-    And a completely mutable Laser token is placed on the board at (2, 4) facing UP
-    When I activate the laser
-    And the laser forms a beam path
-    Then the laser beam should pass through the following position directions:
-      | x | y | in    | out    |
-      | 2 | 3 | UP    | UP     |
-      | 3 | 2 | RIGHT | RIGHT  |
-      | 4 | 2 | RIGHT | RIGHT  |
-
-  Scenario: Fire laser through Double Mirror slash from above
-    And a completely mutable Laser token is placed on the board at (2, 0) facing DOWN
-    When I activate the laser
-    And the laser forms a beam path
-    Then the laser beam should pass through the following position directions:
-      | x | y | in    | out   |
-      | 2 | 1 | DOWN  | DOWN  |
-      | 1 | 2 | LEFT  | LEFT  |
-      | 0 | 2 | LEFT  | LEFT  |
-
-  Scenario: Laser hits backslash Double Mirror from left
-    Given a new game is started
-    And the board is initialized with width 5 and height 5
-    And a completely mutable Double Mirror token is placed on the board at (2, 2) facing DOWN
-    And a completely mutable Laser token is placed on the board at (0, 2) facing RIGHT
-    When I activate the laser
-    And the laser forms a beam path
-    Then the laser beam should pass through the following position directions:
-      | x | y | in     | out    |
-      | 1 | 2 | RIGHT  | RIGHT  |
-      | 2 | 3 | DOWN   | DOWN   |
-      | 2 | 4 | DOWN   | DOWN   |

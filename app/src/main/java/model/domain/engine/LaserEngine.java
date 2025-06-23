@@ -61,7 +61,7 @@ public class LaserEngine {
 
             if (!tile.isEmpty()) {
                 Token tokenHit = tile.getToken();
-                beamPath = beamPathHelper.addBeamPaths(beamPath, tokenHit.interact(this, positionTurn, beamPath));
+                beamPath = tokenHit.interact(this, positionTurn, beamPath);
                 this.addTokentHit(tokenHit);
                 break; // Stop the beam if it hits a token
             }

@@ -20,19 +20,19 @@ Feature: Level Completion
       | Double Mirror   |    |    |       | true     | true    |             |
 
   Scenario: Level is incomplete if any requirement is unmet
-    Given I activate the level's laser
-    And the laser forms a beam path
+    Given I fire the level's laser
+    And the level's laser forms a beam path
     And the number of targets hit by the beam path should be 0
     And the level should be incomplete
 
 
   Scenario: Level is completed when all requirements are fulfilled
-    Given I place token 0 (from the required tokens) on the board at (1, 3)
-    Then the token on the board at (1, 3) should be a Double Mirror token
+    Given I place token 0 (from the required tokens) on the level's board at (1, 3)
+    Then the token on the level's board at (1, 3) should be a Double Mirror token
     # We turn the Double Mirror token to be a backslash mirror
-    And I turn the Double Mirror token to face up
-    When I activate the level's laser
-    And the laser forms a beam path
+    And I turn the given token in the level to face up
+    When I fire the level's laser
+    And the level's laser forms a beam path
     Then the level should be complete
     And the beam path should touch every touch-required token given by the level
     And the number of targets hit by the beam path should be 1

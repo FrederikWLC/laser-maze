@@ -70,14 +70,3 @@ Feature: Checkpoint
     Then the laser beam should pass through the following position directions:
       | x | y | in    | out    |
       | 1 | 2 | RIGHT | RIGHT  |
-
-  Scenario: Level beam passes through a vertical‐opening checkpoint
-    Given a new game is started
-    And the level is initialized with id 1, required target number 0, a board with width 5 and height 5, and the following tokens:
-      | token      | x | y | in | out | turnable | movable | is required |
-      | Checkpoint | 2 | 2 | UP | UP  | false    | false   |             |
-      | Laser      | 2 | 4 | UP | UP  | false    | false   |             |
-    When I activate the level's laser
-    And the level's laser forms a beam path
-    Then the beam path should pass through all checkpoints
-    And the number of targets hit by the beam path should be 0

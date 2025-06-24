@@ -7,7 +7,6 @@ public class PositionTurn {
         private final Direction in,out;
 
         public PositionTurn(Position position, Direction in, Direction out) {
-            System.out.println("Creating PositionTurn with position: " + position + ", in: " + in + ", out: " + out);
             if ( in == null || out == null) {
                 throw new IllegalArgumentException("In and out directions must be defined");
             }

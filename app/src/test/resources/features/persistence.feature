@@ -30,3 +30,22 @@ Feature: Save management and restart
     And the player restarts the level
     Then the level should be equivalent to the one loaded from the default source
     And the completion state should be false
+
+  Scenario: getAllAvailableLevelIds() on empty folder
+    Given the resource folder has no JSON files
+    When I retrieve all available level IDs
+    Then the list of available level IDs should be empty
+
+  Scenario: getAllAvailableLevelIds() returns parsed IDs
+    Given the resource folder contains files:
+      | filename |
+      | 5.json   |
+      | abc.txt  |
+      | 12.json  |
+      | 007.json |
+    When I retrieve all available level IDs
+    Then the list of available level IDs should be:
+      | id |
+      | 5  |
+      | 7  |
+      | 12 |

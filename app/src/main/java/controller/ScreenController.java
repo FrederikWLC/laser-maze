@@ -1,16 +1,13 @@
 package controller;
 
-import model.domain.level.Level;
 import view.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
-import java.util.Comparator;
 import java.util.List;
 import java.util.function.IntConsumer;
 
-import static java.util.stream.Collectors.toList;
 
 public class ScreenController {
     private final GamePanel gamePanel;
@@ -32,7 +29,7 @@ public class ScreenController {
                 () -> {
                     soundManager.stopBackground();
                     cleanupGameUI();
-                    setupSingleplayerLevelButtons(); // <-- fix added here
+                    setupSingleplayerLevelButtons();
                     gamePanel.switchToScreen(singlePlayerLevelSelectScreen);
                 },
                 () -> {
@@ -59,7 +56,7 @@ public class ScreenController {
         }
 
         singlePlayerLevelSelectScreen = new LevelSelectScreenManager(gamePanel);
-        multiplayerLevelSelectScreen = new LevelSelectScreenManager(gamePanel); // no need for separate creation method
+        multiplayerLevelSelectScreen = new LevelSelectScreenManager(gamePanel);
     }
 
     private void setupSingleplayerLevelButtons() {
@@ -71,7 +68,7 @@ public class ScreenController {
                 .getDefaultLevelLoader()
                 .getAllAvailableLevelIds()
                 .stream()
-                .sorted() // sort by ID
+                .sorted()
                 .toList();
         for (Integer id : ids) {
             JButton button = new JButton("Level " + id);
@@ -99,7 +96,7 @@ public class ScreenController {
                 .getDefaultLevelLoader()
                 .getAllAvailableLevelIds()
                 .stream()
-                .sorted() // sort by ID
+                .sorted()
                 .toList();
         for (Integer id : ids) {
             JButton button = new JButton("Level " + id);
@@ -120,7 +117,7 @@ public class ScreenController {
 
 
     public void showTitleScreen() {
-        soundManager.stopBackground(); // Ensure music stops
+        soundManager.stopBackground();
         cleanupGameUI();
         gamePanel.switchToScreen(titleScreen);
     }
@@ -133,10 +130,6 @@ public class ScreenController {
         );
         gamePanel.switchToScreen(boardScreen);
         gamePanel.showBoardUI();
-    }
-
-    public void bindFireLaserListener(java.awt.event.ActionListener fireLaserListener) {
-        gamePanel.setFireLaserListener(fireLaserListener);
     }
 
     private void cleanupGameUI() {

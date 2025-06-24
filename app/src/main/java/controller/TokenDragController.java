@@ -23,7 +23,6 @@ public class TokenDragController {
     public boolean drop(TileContainer target, Position to) {
         if (draggedToken == null || to == null || !target.isWithinBounds(to.getX(), to.getY())) return false;
 
-        // Allow dropping into the same position
         if (target == source && to.equals(origin)) {
             cancel();
             return false;
@@ -31,14 +30,12 @@ public class TokenDragController {
 
         if (!target.getTile(to.getX(), to.getY()).isEmpty()) {
             System.out.println("Drop target occupied.");
-            cancel(); // or allow swap if desired
+            cancel();
             return false;
         }
 
-        // Remove from source
         source.getTile(origin.getX(), origin.getY()).setToken(null);
 
-        // Place in target
         target.getTile(to.getX(), to.getY()).setToken(draggedToken);
         return true;
     }
@@ -58,7 +55,7 @@ public class TokenDragController {
         if (drop(target,to)) {
             draggedToken.setPosition(to);
             if (draggedToken instanceof ITurnableToken turnable && turnable.getDirection() == null) {
-                turnable.setDirection(Direction.UP); // Safe default direction
+                turnable.setDirection(Direction.UP);
             }
         }
         else {

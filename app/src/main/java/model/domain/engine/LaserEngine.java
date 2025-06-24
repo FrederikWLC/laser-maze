@@ -9,7 +9,6 @@ import model.domain.board.Board;
 import model.domain.token.base.ICheckpointToken;
 import model.domain.token.base.ITargetToken;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +21,6 @@ public class LaserEngine {
     private final Board board;
     private List<PositionTurn> lastBeamPath = List.of();
 
-    // Make lists mutable to allow adding elements
     private List<Token> tokensHit = new ArrayList<>();
     private List<ITargetToken> targetsLit = new ArrayList<>();
     private List<ICheckpointToken> checkpointsChecked = new ArrayList<>();

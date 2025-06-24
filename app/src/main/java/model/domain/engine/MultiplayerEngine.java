@@ -10,7 +10,6 @@ public class MultiplayerEngine {
     LevelSerializer levelSerializer = new LevelSerializer();
 
     public MultiplayerEngine(Multiplayer multiplayer) {
-        // Initialize multiplayer engine
         this.multiplayer = multiplayer;
     }
 
@@ -24,7 +23,7 @@ public class MultiplayerEngine {
         if (multiplayer.isTurnActive()) {
             throw new IllegalStateException("Cannot start a new turn while the current turn is still active.");
         }
-        nextTurn(multiplayer); // Move to the next player automatically when starting a turn
+        nextTurn(multiplayer);
         restartLevelState(multiplayer);
         multiplayer.setPlayerStartStamp(startTime);
         multiplayer.setTurnActive(true);

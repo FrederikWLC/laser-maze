@@ -1,13 +1,11 @@
 package model.domain.level;
 
-import model.domain.board.Inventory;
 import model.domain.board.TileContainer;
 import model.domain.token.base.Token;
 import model.domain.board.Board;
 import model.domain.token.impl.LaserToken;
 
 import java.util.List;
-import java.util.Optional;
 
 public class Level {
     int id;
@@ -36,12 +34,6 @@ public class Level {
 
     public List<Token> getTokens() {
         return tokens;
-    }
-
-    public List<Token> getPlacedTokens() {
-        return getTokens().stream()
-                .filter(token -> token.isPlaced())
-                .toList();
     }
 
     public boolean isRequiredTargetNumberSatisfied() {

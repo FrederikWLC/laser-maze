@@ -7,10 +7,6 @@ import java.util.stream.Stream;
 
 public class BeamPathHelper {
 
-    public List<PositionTurn> addBeamPaths(List<PositionTurn> pathA, List<PositionTurn> pathB) {
-        return Stream.concat(pathA.stream(), pathB.stream()).toList();
-    }
-
     public List<PositionTurn> addToBeamPath(List<PositionTurn> path,PositionTurn positionTurn) {
         return Stream.concat(path.stream(), Stream.of(positionTurn)).toList();
     }

@@ -68,7 +68,7 @@ public class LevelSelectionController {
         gamePanel.createControlButtons();
         gamePanel.showBoardUI();
 
-        soundManager.stopBackground(); // ensure old track doesn't stack
+        soundManager.stopBackground();
         soundManager.play(SoundManager.Sound.BACKGROUND, true);
 
         Inventory inventory = InventoryBuilder.buildInventory(getCurrentLevel().getRequiredTokens());
@@ -139,7 +139,6 @@ public class LevelSelectionController {
         screenController.showBoardScreen(tiles);
         gamePanel.repaint();
 
-        //control buttons
         JButton restartButton = gamePanel.getRestartButton();
         JButton exitButton = gamePanel.getExitButton();
         JButton saveExitButton = gamePanel.getSaveAndExitButton();
@@ -182,10 +181,6 @@ public class LevelSelectionController {
         setCurrentLevel(level);
         gamePanel.getControlPanel().boardRenderer.setLevelController(levelController);
         reloadLevelUI();
-    }
-
-    public LevelController getLevelController() {
-        return levelController;
     }
 
     public LevelIOHandler getLevelIOHandler() {

@@ -21,9 +21,6 @@ public class MainController {
         controller.RendererRegistrar.registerRenderers(gamePanel);
         UIInitializer.setupWindow(window, gamePanel);
 
-        // BIG DIP VIOLATION: BOTH DEPEND ON EACH OTHER, WTF IS THIS..... MAN... WASTE
-        // BUT WE HAVE TO GO WITH IT FOR NOW
-        // TOO LIITLE TIME TO FIX THIS PROPERLY
         this.levelSelectionController = new LevelSelectionController(gamePanel);
         this.screenController = new ScreenController(gamePanel, levelSelectionController);
         this.levelSelectionController.setScreenController(screenController);

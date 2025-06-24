@@ -11,7 +11,6 @@ import java.util.List;
 
 public class BoardEngine  {
 
-    // For
     public void placeToken(Board board, Token token, Position position) {
         Tile tile = board.getTile(position.getX(), position.getY());
         if (tile.isEmpty()) {

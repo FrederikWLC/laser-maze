@@ -231,7 +231,7 @@ public class BoardRendererPanel extends JPanel {
         if (levelController != null) {
             int hit = levelController.getCurrentTouchTargetCount();
             int required = levelController.getRequiredTouchTargetCount();
-            String display = "Touch Tokens Hit: " + hit + " / " + required;
+            String display = "Target Tokens Lit: " + hit + " / " + required;
             g2d.setColor(hit >= required ? Color.GREEN : Color.WHITE); // Green if complete
             g2d.drawString(display, getWidth() - 220, 30);
         }

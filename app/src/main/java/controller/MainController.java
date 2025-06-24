@@ -10,7 +10,7 @@ public class MainController {
     private final GamePanel gamePanel;
     private final JFrame window;
     private final ScreenController screenController;
-    private final LevelSelectionController levelController;
+    private final LevelSelectionController levelSelectionController;
 
     public MainController() {
         this.window = new JFrame("Laser Maze");
@@ -21,8 +21,12 @@ public class MainController {
         controller.RendererRegistrar.registerRenderers(gamePanel);
         UIInitializer.setupWindow(window, gamePanel);
 
-        this.screenController = new ScreenController(gamePanel);
-        this.levelController = new LevelSelectionController(gamePanel, screenController);
+        // BIG DIP VIOLATION: BOTH DEPEND ON EACH OTHER, WTF IS THIS..... MAN... WASTE
+        // BUT WE HAVE TO GO WITH IT FOR NOW
+        // TOO LIITLE TIME TO FIX THIS PROPERLY
+        this.levelSelectionController = new LevelSelectionController(gamePanel);
+        this.screenController = new ScreenController(gamePanel, levelSelectionController);
+        this.levelSelectionController.setScreenController(screenController);
     }
 
     public void startGame() {
@@ -33,6 +37,6 @@ public class MainController {
     }
 
     public void loadLevel(int levelNumber) {
-        levelController.loadLevel(levelNumber);
+        levelSelectionController.loadLevel(levelNumber);
     }
 }

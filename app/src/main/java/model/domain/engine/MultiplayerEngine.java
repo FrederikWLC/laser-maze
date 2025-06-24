@@ -6,10 +6,12 @@ import model.persistence.serializer.LevelSerializer;
 
 public class MultiplayerEngine {
 
+    Multiplayer multiplayer;
     LevelSerializer levelSerializer = new LevelSerializer();
 
-    public MultiplayerEngine() {
+    public MultiplayerEngine(Multiplayer multiplayer) {
         // Initialize multiplayer engine
+        this.multiplayer = multiplayer;
     }
 
     private void restartLevelState(Multiplayer multiplayer) {

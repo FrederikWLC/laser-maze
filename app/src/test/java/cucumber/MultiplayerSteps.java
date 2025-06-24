@@ -16,7 +16,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MultiplayerSteps {
-    MultiplayerEngine multiplayerEngine = new MultiplayerEngine();
+    MultiplayerEngine multiplayerEngine;
     Multiplayer multiplayer;
     TestTimeHelper timeHelper = new TestTimeHelper();
     Exception lastException = null;
@@ -41,6 +41,7 @@ public class MultiplayerSteps {
     public void aMultiplayerLevelIsInitializedWithPlayers(int n) {
         Level level = new LevelBuilder(1).build();
         multiplayer = new Multiplayer(level, n);
+        multiplayerEngine = new MultiplayerEngine(multiplayer);
     }
 
     @When("the next player starts their turn")

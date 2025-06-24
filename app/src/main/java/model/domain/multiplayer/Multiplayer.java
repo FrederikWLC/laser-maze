@@ -45,16 +45,15 @@ public class Multiplayer {
         this.playerEndStamps[getCurrentPlayerIndex()] = completionTime;
     }
 
-    // no setter, only increment
     public Integer getCurrentPlayerIndex() {
         return currentPlayerIndex;
     }
 
     public void incrementCurrentPlayerIndex() {
-        if (getCurrentPlayerIndex() == null) { // If no player has been set yet
-            currentPlayerIndex = 0; // Start with the first player
+        if (getCurrentPlayerIndex() == null) {
+            currentPlayerIndex = 0;
         } else {
-            if (getPlayerCount() == getCurrentPlayerIndex() + 1) { //
+            if (getPlayerCount() == getCurrentPlayerIndex() + 1) {
                 throw new IllegalStateException("Cannot increment max player index: " + getCurrentPlayerIndex());
             } else {
                 currentPlayerIndex++;
@@ -66,11 +65,14 @@ public class Multiplayer {
         return getPlayerTimeByEndStamp(playerIndex,getPlayerEndStamps()[playerIndex]);
     }
 
-    public Integer getPlayerTimeByEndStamp(int playerIndex,long endStamp) {
-        if (playerIndex < 0 || playerIndex >= playerCount) {
-            throw new IllegalArgumentException("Invalid player index: " + playerIndex);
+    public Integer getPlayerTimeByEndStamp(int playerIndex, Long endStamp) {
+        if (playerIndex < 0 || playerIndex >= playerCount || endStamp == null) {
+            return null;
         }
-        int time = (int) (endStamp - getPlayerStartStamps()[playerIndex]);
+        Long startStamp = getPlayerStartStamps()[playerIndex];
+        if (startStamp == null) return null;
+
+        int time = (int) (endStamp - startStamp);
         return time > 0 ? time : null;
     }
 
@@ -81,7 +83,6 @@ public class Multiplayer {
     }
 
     public List<PlayerScore> getSortedPlayerScoreTimes() {
-        // timeMillis may be null if player didn't complete their level
         return IntStream.range(0, playerCount)
                 .mapToObj(this::getPlayerScoreTime)
                 .sorted(Comparator.comparing(

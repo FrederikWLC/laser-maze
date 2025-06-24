@@ -46,6 +46,7 @@ public class LevelSelectionController {
             return;
         }
         setCurrentLevel(level);
+        gamePanel.getControlPanel().boardRenderer.setLevelController(levelController);
         System.out.println("Loaded level: " + levelController.getLevelEngine().getLevel());
         reloadLevelUI();
     }
@@ -178,6 +179,7 @@ public class LevelSelectionController {
     public void restartLevel() {
         Level level = levelIOHandler.restart(getCurrentLevel());
         setCurrentLevel(level);
+        gamePanel.getControlPanel().boardRenderer.setLevelController(levelController);
         reloadLevelUI();
     }
 
@@ -191,6 +193,7 @@ public class LevelSelectionController {
 
     public void setCurrentLevel(Level level) {
         levelController = new LevelController(level);
+        level.setCurrentTargetNumber(0);
     }
 
 }

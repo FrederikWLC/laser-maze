@@ -206,7 +206,9 @@ public class GamePanel extends JPanel {
 
     public void startMultiplayerTimer() {
         multiplayerStartTime = System.currentTimeMillis();
-        multiplayerTimerLabel.setBounds(600, 20, 160, 30);
+        multiplayerTimerLabel.setBounds(600, 40, 160, 30);
+        multiplayerTimerLabel.setForeground(Color.WHITE);
+        multiplayerTimerLabel.setFont(new Font("Arial", Font.BOLD, 16));
         multiplayerTimerLabel.setVisible(true);
         add(multiplayerTimerLabel);
 

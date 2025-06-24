@@ -40,11 +40,9 @@ public class InputHandler implements MouseListener, MouseMotionListener {
         List<RenderableTile> boardTiles = tileFactory.convertBoardToRenderableTiles(levelController.getLevelEngine().getLevel().getBoard());
         List<RenderableTile> inventoryTiles = tileFactory.convertBoardToRenderableTiles(inventory);
 
-        // Update both game panel and board renderer with board tiles
         gamePanel.setTilesToRender(boardTiles);
         gamePanel.getControlPanel().boardRenderer.setTilesToRender(boardTiles);
 
-        // Update inventory tiles
         gamePanel.setInventoryTilesToRender(inventoryTiles);
         gamePanel.getControlPanel().boardRenderer.setInventoryTilesToRender(inventoryTiles);
 
@@ -87,7 +85,6 @@ public class InputHandler implements MouseListener, MouseMotionListener {
             dragController.startDrag(inventory, inventoryPos);
         }
 
-        // Provide dragged token to the renderer
         Token dragged = dragController.getDraggedToken();
         gamePanel.getControlPanel().boardRenderer.setCurrentlyDraggedToken(dragged);
         refreshBoardAndInventoryView();
@@ -103,14 +100,12 @@ public class InputHandler implements MouseListener, MouseMotionListener {
             gamePanel.clearLaserPath();
         }
 
-        // Try dropping in either valid area
         if (gamePanel.isBoardArea(e.getX(), e.getY())) {
             dragController.dropOnBoard(levelController.getLevelEngine().getLevel().getBoard(), boardPos);
         } else if (gamePanel.isInventoryArea(e.getX(), e.getY())) {
             dragController.dropOnInventory(inventory, inventoryPos);
         }
 
-        // Clear ghost image always
         gamePanel.getControlPanel().boardRenderer.setDragMousePosition(null);
         gamePanel.getControlPanel().boardRenderer.setCurrentlyDraggedToken(null);
         gamePanel.repaint();
@@ -127,18 +122,12 @@ public class InputHandler implements MouseListener, MouseMotionListener {
 
 
     @Override
-    public void mouseEntered(MouseEvent e) {
-        // Optional
-    }
+    public void mouseEntered(MouseEvent e) {}
 
     @Override
-    public void mouseExited(MouseEvent e) {
-        // Optional
-    }
+    public void mouseExited(MouseEvent e) {}
 
 
     @Override
-    public void mouseMoved(MouseEvent e) {
-        // Optional: implement hover effects if needed
-    }
+    public void mouseMoved(MouseEvent e) {}
 }

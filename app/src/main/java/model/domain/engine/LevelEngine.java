@@ -37,12 +37,12 @@ public class LevelEngine {
             System.out.println("Are all required targets hit? "+areAllRequiredTargetsHit());
             System.out.println("Are all checkpoints checked? "+areAllCheckpointsChecked());
             boolean isComplete =
-                    level.isRequiredTargetNumberSatisfied() & // Required target number must be satisfied
-                    areAllTouchRequiredTokensHit() & // All touch required tokens must be touched by the beam
-                    areAllRequiredTargetsHit() & // All required targets must be hit
-                    areAllCheckpointsChecked(); // All checkpoints must be checked
-            level.setComplete(isComplete); // Set level completion state
-            return isComplete; // return completion state
+                    level.isRequiredTargetNumberSatisfied() &
+                    areAllTouchRequiredTokensHit() &
+                    areAllRequiredTargetsHit() &
+                    areAllCheckpointsChecked();
+            level.setComplete(isComplete);
+            return isComplete;
         }
 
     public List<Token> getTouchRequiredTokens() {

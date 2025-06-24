@@ -50,7 +50,7 @@ public class LevelController {
         if (token instanceof ILaserToken laserToken && token instanceof ITurnableToken turnableToken) {
             if (turnableToken.isTurned()) {
                 try {
-                    laserToken.trigger(false); // turn off the laser before making changes to the board layout
+                    laserToken.trigger(false);
                     levelEngine.getLaserEngine().refreshBeamPath();
                 } catch (IllegalStateException e) {
                     System.out.println("Skipping laser trigger before rotation: " + e.getMessage());

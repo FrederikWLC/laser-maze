@@ -22,7 +22,6 @@ public class LaserEngine {
     private final Board board;
     private List<PositionTurn> lastBeamPath = List.of();
 
-    // Make lists mutable to allow adding elements
     private List<Token> tokensHit = new ArrayList<>();
     private List<ITargetToken> targetsLit = new ArrayList<>();
     private List<ICheckpointToken> checkpointsChecked = new ArrayList<>();

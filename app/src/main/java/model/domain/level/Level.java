@@ -38,12 +38,6 @@ public class Level {
         return tokens;
     }
 
-    public List<Token> getPlacedTokens() {
-        return getTokens().stream()
-                .filter(token -> token.isPlaced())
-                .toList();
-    }
-
     public boolean isRequiredTargetNumberSatisfied() {
         return getRemainingTargetCount() == 0;
     }

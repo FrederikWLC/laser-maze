@@ -33,14 +33,14 @@ public class MultiplayerController {
     public void startGame() {
         startTurn(() -> {
             int playerIndex = multiplayer.getCurrentPlayerIndex();
-            showTurnStartMessage(playerIndex + 1); // 1-based display
+            showTurnStartMessage(playerIndex + 1);
         });
     }
 
     private void startTurn(Runnable afterLoadUI) {
         multiplayerEngine.startTurn(multiplayer, System.currentTimeMillis());
 
-        Level freshLevel = multiplayer.getCurrentLevel(); // already set by engine
+        Level freshLevel = multiplayer.getCurrentLevel();
         levelSelectionController.setCurrentLevel(freshLevel);
         levelSelectionController.reloadLevelUI();
         gamePanel.startMultiplayerTimer();

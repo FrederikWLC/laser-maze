@@ -11,15 +11,6 @@ public class Position {
         this.y = y;
     }
 
-    public List<Position> getNeighbours() {
-        return List.of(
-                new Position(x + 1, y),
-                new Position(x - 1, y),
-                new Position(x, y + 1),
-                new Position(x, y - 1)
-        );
-    }
-
     public int getX() { return x; }
     public int getY() { return y; }
 

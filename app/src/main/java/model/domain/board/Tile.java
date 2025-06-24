@@ -5,7 +5,7 @@ import model.domain.token.base.Token;
 public class Tile {
     private final int x;
     private final int y;
-    private Token token = null; // placeholder until Token class is ready
+    private Token token = null;
 
     public Tile(int x, int y) {
         this.x = x;

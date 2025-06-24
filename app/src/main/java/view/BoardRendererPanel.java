@@ -6,6 +6,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Map;
+
+import controller.LevelController;
+import controller.MainController;
 import model.domain.board.Direction;
 import model.domain.board.PositionTurn;
 import model.domain.token.base.Token;
@@ -31,6 +34,8 @@ public class BoardRendererPanel extends JPanel {
     private Point dragMousePosition = null;
     private Token currentlyDraggedToken = null;
 
+    private controller.LevelController levelController;
+
 
     public BoardRendererPanel() {
 
@@ -41,6 +46,10 @@ public class BoardRendererPanel extends JPanel {
     }
 
     // Setters
+    public void setLevelController(controller.LevelController controller) {
+        this.levelController = controller;
+    }
+
     public void setTilesToRender(List<RenderableTile> tiles) {
         this.tilesToRender = tiles;
         repaint();
@@ -215,8 +224,17 @@ public class BoardRendererPanel extends JPanel {
             g2d.setStroke(new BasicStroke(1));
         }
 
+        //Token counter
+        g2d.setColor(Color.WHITE);
+        g2d.setFont(new Font("Arial", Font.BOLD, 16));
 
-
+        if (levelController != null) {
+            int hit = levelController.getCurrentTouchTargetCount();
+            int required = levelController.getRequiredTouchTargetCount();
+            String display = "Target Tokens Lit: " + hit + " / " + required;
+            g2d.setColor(hit >= required ? Color.GREEN : Color.WHITE); // Green if complete
+            g2d.drawString(display, getWidth() - 220, 30);
+        }
 
         g2d.dispose();
     }

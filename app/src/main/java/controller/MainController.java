@@ -36,7 +36,7 @@ public class MainController {
         });
     }
 
-    public void loadLevel(int levelNumber) {
-        levelSelectionController.loadLevel(levelNumber);
+    public void loadLevel(int id) {
+        levelSelectionController.loadLevelById(id);
     }
 }

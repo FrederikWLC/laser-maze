@@ -10,6 +10,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.IntConsumer;
 
+import static java.util.stream.Collectors.toList;
+
 public class ScreenController {
     private final GamePanel gamePanel;
     private final SoundManager soundManager = new SoundManager();
@@ -60,49 +62,25 @@ public class ScreenController {
         multiplayerLevelSelectScreen = new LevelSelectScreenManager(gamePanel); // no need for separate creation method
     }
 
-
-    private DisplayManager createMultiplayerLevelSelectScreen() {
-        JPanel levelListPanel = gamePanel.getControlPanel().levelListPanel;
-        levelListPanel.removeAll();
-
-        for (int i = 1; i <= 10; i++) {
-            int levelNum = i;
-            JButton button = new JButton("Level " + levelNum);
-            button.addActionListener(e -> {
-                gamePanel.resetBoardUI();
-                gamePanel.clearMouseListeners();
-                gamePanel.clearLaserPath();
-                gamePanel.repaint();
-
-                levelSelectionController.loadMultiplayerLevel(levelNum, 2); // 2-player multiplayer
-            });
-            levelListPanel.add(button);
-        }
-
-        levelListPanel.revalidate();
-        levelListPanel.repaint();
-
-        return new LevelSelectScreenManager(gamePanel);
-    }
-
     private void setupSingleplayerLevelButtons() {
         JPanel levelListPanel = gamePanel.getControlPanel().levelListPanel;
         levelListPanel.removeAll();
 
-        List<Level> levels = levelSelectionController.getAllLevels()
+        List<Integer> ids = levelSelectionController
+                .getLevelIOHandler()
+                .getDefaultLevelLoader()
+                .getAllAvailableLevelIds()
                 .stream()
-                .sorted(Comparator.comparingInt(Level::getId)) // sort by ID
+                .sorted() // sort by ID
                 .toList();
-        for (Level level : levels) {
-            int levelId = level.getId();
-            JButton button = new JButton("Level " + levelId);
+        for (Integer id : ids) {
+            JButton button = new JButton("Level " + id);
             button.addActionListener(e -> {
                 gamePanel.resetBoardUI();
                 gamePanel.clearMouseListeners();
                 gamePanel.clearLaserPath();
                 gamePanel.repaint();
-
-                levelSelectionController.loadLevel(levelId); // singleplayer
+                levelSelectionController.loadLevelById(id);
             });
             levelListPanel.add(button);
         }
@@ -116,20 +94,21 @@ public class ScreenController {
         JPanel levelListPanel = gamePanel.getControlPanel().levelListPanel;
         levelListPanel.removeAll();
 
-        List<Level> levels = levelSelectionController.getAllLevels()
+        List<Integer> ids = levelSelectionController
+                .getLevelIOHandler()
+                .getDefaultLevelLoader()
+                .getAllAvailableLevelIds()
                 .stream()
-                .sorted(Comparator.comparingInt(Level::getId)) // sort by ID
+                .sorted() // sort by ID
                 .toList();
-        for (Level level : levels) {
-            int levelId = level.getId();
-            JButton button = new JButton("Level " + levelId);
+        for (Integer id : ids) {
+            JButton button = new JButton("Level " + id);
             button.addActionListener(e -> {
                 gamePanel.resetBoardUI();
                 gamePanel.clearMouseListeners();
                 gamePanel.clearLaserPath();
                 gamePanel.repaint();
-
-                levelSelectionController.loadMultiplayerLevel(levelId, 2); // Start multiplayer
+                levelSelectionController.loadMultiplayerLevelById(id,2);
             });
             levelListPanel.add(button);
         }

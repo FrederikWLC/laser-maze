@@ -77,7 +77,7 @@ public class PersistenceSteps {
 
     @Then("the level should be equivalent to the one loaded from the default source")
     public void theLevelShouldBeLoadedFromTheDefaultSource() {
-        Level defaultLevel = defaultLevelLoader.load(level.getId());
+        Level defaultLevel = levelIOHandler.getDefaultLevelLoader().load(level.getId());
         String levelSerialization = levelSerializer.serialize(level).toString();
         String defaultLevelSerialization = levelSerializer.serialize(defaultLevel).toString();
         assertEquals(levelSerialization, defaultLevelSerialization,
@@ -86,7 +86,7 @@ public class PersistenceSteps {
 
     @Then("the level should not be equivalent to the one loaded from the default source")
     public void theLevelShouldNotBeEquivalentToTheOneLoadedFromTheDefaultSource() {
-        Level defaultLevel = defaultLevelLoader.load(level.getId());
+        Level defaultLevel = levelIOHandler.getDefaultLevelLoader().load(level.getId());
         String levelSerialization = levelSerializer.serialize(level).toString();
         String defaultLevelSerialization = levelSerializer.serialize(defaultLevel).toString();
         assertNotEquals(levelSerialization, defaultLevelSerialization,

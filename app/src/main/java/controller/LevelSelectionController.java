@@ -1,7 +1,6 @@
 package controller;
 
 import model.domain.board.Inventory;
-import model.domain.board.PositionTurn;
 import model.domain.board.builder.InventoryBuilder;
 
 import model.domain.level.Level;
@@ -10,6 +9,7 @@ import model.persistence.storage.LevelIOHandler;
 import model.persistence.storage.LevelSaver;
 import model.persistence.storage.SavedLevelLoader;
 
+import model.domain.multiplayer.Multiplayer;
 import view.GamePanel;
 import view.RenderableTile;
 import view.GamePanelUIBinder;
@@ -22,16 +22,19 @@ import java.util.List;
 public class LevelSelectionController {
     private final GamePanel gamePanel;
     private LevelController levelController;
-    private final ScreenController screenController;
+    private MultiplayerController multiplayerController;
+    private ScreenController screenController;
     private final SoundManager soundManager = new SoundManager();
     private final DefaultLevelLoader defaultLevelLoader = new DefaultLevelLoader();
     private final SavedLevelLoader savedLevelLoader = new SavedLevelLoader();
     private final LevelSaver levelSaver = new LevelSaver();
     private final LevelIOHandler levelIOHandler = new LevelIOHandler(defaultLevelLoader,savedLevelLoader,levelSaver);
-    private Level currentLevel;
 
-    public LevelSelectionController(GamePanel gamePanel, ScreenController screenController) {
+    public LevelSelectionController(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
+    }
+
+    public void setScreenController(ScreenController screenController) {
         this.screenController = screenController;
     }
 
@@ -45,6 +48,15 @@ public class LevelSelectionController {
         setCurrentLevel(level);
         System.out.println("Loaded level: " + levelController.getLevelEngine().getLevel());
         reloadLevelUI();
+    }
+
+    public void loadMultiplayerLevel(int levelNumber, int playerCount) {
+        Level defaultLevel = levelIOHandler.load(levelNumber);
+
+        Multiplayer multiplayer = new Multiplayer(defaultLevel, playerCount);
+        this.multiplayerController = new MultiplayerController(multiplayer,this,gamePanel);
+
+        multiplayerController.startGame();
     }
 
     public void reloadLevelUI() {
@@ -82,12 +94,11 @@ public class LevelSelectionController {
                     soundManager.play(SoundManager.Sound.LASER, false);
                     System.out.println("Fire Laser button clicked!");
                     levelController.triggerLaser(true);
-                    List<PositionTurn> path = levelController.getCurrentLaserPath();
 
-                    System.out.println("Laser path size: " + path.size());
-                    gamePanel.setLaserPath(path);
+                    System.out.println("Laser path size: " + levelController.getCurrentLaserPath().size());
+                    gamePanel.setLaserPath(levelController.getCurrentLaserPath());
 
-                    gamePanel.getControlPanel().boardRenderer.setLaserPath(path);
+                    gamePanel.getControlPanel().boardRenderer.setLaserPath(levelController.getCurrentLaserPath());
                     gamePanel.getControlPanel().boardRenderer.repaint();
 
                     List<RenderableTile> updated = tileFactory.convertBoardToRenderableTiles(getCurrentLevel().getBoard());
@@ -100,6 +111,11 @@ public class LevelSelectionController {
                     System.out.println("Level completed: " + levelCompleted);
                     if (levelCompleted) {
                         gamePanel.showLevelComplete();
+                        if (multiplayerController != null) {
+                            multiplayerController.onLevelComplete();
+                        } else {
+                            gamePanel.showLevelComplete();
+                        }
                     }
 
                 },
@@ -165,6 +181,10 @@ public class LevelSelectionController {
         reloadLevelUI();
     }
 
+    public List<Level> getAllLevels() {
+        return levelIOHandler.loadAll();
+    }
+
     public Level getCurrentLevel() {
         return levelController.getLevelEngine().getLevel();
     }
@@ -172,4 +192,5 @@ public class LevelSelectionController {
     public void setCurrentLevel(Level level) {
         levelController = new LevelController(level);
     }
+
 }

@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Map;
 import model.domain.board.Direction;
-import model.domain.board.PositionDirection;
+import model.domain.board.PositionTurn;
 import model.domain.token.base.Token;
 import model.domain.token.base.ITurnableToken;
 import java.util.HashMap;
@@ -17,18 +17,16 @@ import view.dto.ViewOnlyToken;
 public class BoardRendererPanel extends JPanel {
 
     private List<RenderableTile> tilesToRender;
-    private List<PositionDirection> laserPath;
+    private List<PositionTurn> laserPath;
 
     private Map<String, BufferedImage> tokenImages;
     private Map<String, TokenRenderer> staticRenderers;
     private Map<String, ITurnableTokenRenderer> turnableRenderers;
 
-    private int visibleLaserSegments = 0;
-
     private List<RenderableTile> inventoryTilesToRender;
-    private int inventoryStartX = 100;
-    private int inventoryStartY = 520; // below board
-    private int inventoryTileSize = 60;
+    private final int inventoryStartX = 100;
+    private final int inventoryStartY = 520; // below board
+    private final int inventoryTileSize = 60;
 
     private Point dragMousePosition = null;
     private Token currentlyDraggedToken = null;
@@ -53,7 +51,7 @@ public class BoardRendererPanel extends JPanel {
         repaint();
     }
 
-    public void setLaserPath(List<PositionDirection> path) {
+    public void setLaserPath(List<PositionTurn> path) {
         this.laserPath = path;
         repaint();
     }
@@ -167,19 +165,51 @@ public class BoardRendererPanel extends JPanel {
             g2d.setColor(Color.RED);
             g2d.setStroke(new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
-            for (PositionDirection pd : laserPath) {
+            for (PositionTurn pd : laserPath) {
                 int x = 100 + pd.getPosition().getX() * tileSize;
                 int y = 100 + pd.getPosition().getY() * tileSize;
 
-                Direction dir = pd.getDirection();
+                Direction in = pd.getIn();
+                Direction out = pd.getOut();
 
-                if (dir == Direction.UP || dir == Direction.DOWN) {
-                    // Full vertical line down the middle
-                    g2d.drawLine(x + tileSize / 2, y, x + tileSize / 2, y + tileSize);
-                } else if (dir == Direction.LEFT || dir == Direction.RIGHT) {
-                    // Full horizontal line across the middle
-                    g2d.drawLine(x, y + tileSize / 2, x + tileSize, y + tileSize / 2);
+                if (pd.isStraight()) {
+                    if (out == Direction.UP || out == Direction.DOWN) {
+                        // Full vertical line down the middle
+                        g2d.drawLine(x + tileSize / 2, y, x + tileSize / 2, y + tileSize);
+                    } else if (out == Direction.LEFT || out == Direction.RIGHT) {
+                        // Full horizontal line across the middle
+                        g2d.drawLine(x, y + tileSize / 2, x + tileSize, y + tileSize / 2);
+                    }
                 }
+                else if (pd.isTurn()) {
+
+                    // Tile centre
+                    int cx = x + tileSize / 2;
+                    int cy = y + tileSize / 2;
+
+                    // entry point
+                    int ex = cx, ey = cy;
+                    switch (in) {
+                        case UP   -> { ex = cx;            ey = y + tileSize; } // from bottom
+                        case DOWN -> { ex = cx;            ey = y;            } // from top
+                        case LEFT -> { ex = x + tileSize;  ey = cy;           } // from right
+                        case RIGHT-> { ex = x;             ey = cy;           } // from left
+                    }
+
+                    // exit point
+                    int lx = cx, ly = cy;
+                    switch (out) {
+                        case UP   -> { lx = cx;            ly = y;            } // to top
+                        case DOWN -> { lx = cx;            ly = y + tileSize; } // to bottom
+                        case LEFT -> { lx = x;             ly = cy;           } // to left
+                        case RIGHT-> { lx = x + tileSize;  ly = cy;           } // to right
+                    }
+
+                    // Draw the two half-segments
+                    g2d.drawLine(ex, ey, cx, cy);   // entry -> centre
+                    g2d.drawLine(cx, cy, lx, ly);   // centre ->  exit
+                }
+
             }
 
             g2d.setStroke(new BasicStroke(1));

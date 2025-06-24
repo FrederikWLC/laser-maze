@@ -20,18 +20,18 @@ Feature: Cell blocker
     Then an error should occur
 
   # Laser travels in an unobstructed straight line through the cell blocker
-  Scenario: Fire laser in an open horizontal line
+  Scenario: Fire laser through Cell Blocker
     Given a completely mutable Laser token is placed on the board at (2, 4) facing up
     When I activate the laser
     And the laser forms a beam path
     Then the laser beam should pass through the following position directions:
-      | x | y | dir |
-      | 2 | 3 | UP |
-      # Hits and goes through cell blocker
-      | 2 | 2 | UP |
-      # continues straight
-      | 2 | 1 | UP |
-      | 2 | 0 | UP |
+      | x | y | in  | out |
+      | 2 | 3 | UP  | UP  |
+    # Hits and goes through cell blocker
+      | 2 | 2 | UP  | UP  |
+    # continues straight
+      | 2 | 1 | UP  | UP  |
+      | 2 | 0 | UP  | UP  |
 
   Scenario: Cell Blocker does not require touch
     Given a new game is started

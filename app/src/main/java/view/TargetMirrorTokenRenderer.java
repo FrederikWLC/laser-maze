@@ -7,15 +7,9 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.Map;
 import java.awt.Color;
-import model.domain.token.base.MutableToken;
 import java.awt.AlphaComposite;
 import java.awt.Composite;
-import java.awt.Graphics2D;
-import java.awt.Color;
 import model.domain.token.base.ITargetToken;
-
-
-
 
 public class TargetMirrorTokenRenderer extends TurnableTokenRenderer {
     private final Map<String, BufferedImage> tokenImages;

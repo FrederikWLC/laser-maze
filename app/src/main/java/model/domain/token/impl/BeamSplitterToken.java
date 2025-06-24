@@ -1,55 +1,40 @@
 package model.domain.token.impl;
-
-import model.domain.board.Board;
 import model.domain.board.Direction;
-import model.domain.board.PositionDirection;
+import model.domain.board.PositionTurn;
 import model.domain.engine.LaserEngine;
+import model.domain.token.base.MirrorToken;
 import model.domain.token.base.MutableToken;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
-public class BeamSplitterToken extends MutableToken {
+public class BeamSplitterToken extends MirrorToken {
     public BeamSplitterToken() {
         super();
     }
 
     @Override
-    public List<PositionDirection> interact(LaserEngine laserEngine, PositionDirection currentBeamPositionDirection, List<PositionDirection> beamPath, Board board) {
+    public List<PositionTurn> interact(LaserEngine laserEngine, PositionTurn currentBeamPositionTurn, List<PositionTurn> beamPath) {
         // A Beam Splitter splits the beam into two paths, one forward and one reflected 90 degrees depending on direction.
-        PositionDirection currentPositionDirectionOfReflectedBeam = currentBeamPositionDirection; // This will be the position direction of the beam reflected by the beam splitter
-        switch (this.getDirection()) {
-            case UP,
-                 DOWN -> { // Here facing down or up means the mirror spans top left to bottom right (like a backslash)
-                switch (currentBeamPositionDirection.getDirection()) { // where beam then gets reflected depending on the direction
-                    case UP ->
-                            currentPositionDirectionOfReflectedBeam = currentBeamPositionDirection.withDirection(Direction.LEFT);
-                    case DOWN ->
-                            currentPositionDirectionOfReflectedBeam = currentBeamPositionDirection.withDirection(Direction.RIGHT);
-                    case LEFT ->
-                            currentPositionDirectionOfReflectedBeam = currentBeamPositionDirection.withDirection(Direction.UP);
-                    case RIGHT ->
-                            currentPositionDirectionOfReflectedBeam = currentBeamPositionDirection.withDirection(Direction.DOWN);
-                }
-            }
-            case LEFT,
-                 RIGHT -> { // Facing right or left means the mirror spans bottom left to top right (like a slash)
-                switch (currentBeamPositionDirection.getDirection()) { // where beam then gets reflected depending on the direction
-                    case UP ->
-                            currentPositionDirectionOfReflectedBeam = currentBeamPositionDirection.withDirection(Direction.RIGHT);
-                    case DOWN ->
-                            currentPositionDirectionOfReflectedBeam = currentBeamPositionDirection.withDirection(Direction.LEFT);
-                    case LEFT ->
-                            currentPositionDirectionOfReflectedBeam = currentBeamPositionDirection.withDirection(Direction.DOWN);
-                    case RIGHT ->
-                            currentPositionDirectionOfReflectedBeam = currentBeamPositionDirection.withDirection(Direction.UP);
-                }
-            }
-        }
-        // Returns the union of the entire beam path of the forward beam and then the reflected beam path (without previous path history before this split)
-        List<PositionDirection> emptyBeamPath = new ArrayList<>(); // Thus, the empty beam path
-        return Stream.concat(laserEngine.travel(currentBeamPositionDirection, beamPath, board).stream(), laserEngine.travel(currentPositionDirectionOfReflectedBeam, emptyBeamPath, board).stream()).toList();
+
+        // compute the reflected turn
+        Direction reflectedOut =
+                getReflectionMap().get(currentBeamPositionTurn.getOut());
+        PositionTurn reflectedTurn =
+                currentBeamPositionTurn.withOutwardsDirection(reflectedOut);
+
+        // run each beam with its own context
+        List<PositionTurn> forwardPath   =
+                laserEngine.travelFrom(currentBeamPositionTurn,
+                        List.of(currentBeamPositionTurn));
+
+        List<PositionTurn> reflectedPath =
+                laserEngine.travelFrom(reflectedTurn,
+                        List.of(reflectedTurn));
+
+        // merge original history + forward and reflected paths
+        return laserEngine.getBeamPathHelper()
+                .addAllBeamPaths(List.of(beamPath,
+                        forwardPath,
+                        reflectedPath));
     }
 }
 

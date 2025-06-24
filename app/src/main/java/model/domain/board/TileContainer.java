@@ -2,8 +2,6 @@ package model.domain.board;
 
 import model.domain.token.base.Token;
 
-import java.util.Map;
-
 public abstract class TileContainer {
     protected int width;
     protected int height;

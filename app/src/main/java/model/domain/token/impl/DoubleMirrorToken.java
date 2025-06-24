@@ -1,50 +1,31 @@
 package model.domain.token.impl;
 
+import model.domain.board.PositionTurn;
 import model.domain.engine.LaserEngine;
-import model.domain.board.PositionDirection;
-import model.domain.board.Board;
 import model.domain.board.Direction;
+import model.domain.token.base.MirrorToken;
 import model.domain.token.base.MutableToken;
 
 import java.util.List;
 
-public class DoubleMirrorToken extends MutableToken {
+public class DoubleMirrorToken extends MirrorToken {
     public DoubleMirrorToken() {
         super();
     }
 
     @Override
-    public List<PositionDirection> interact(LaserEngine laserEngine, PositionDirection currentBeamPositionDirection, List<PositionDirection> beamPath, Board board) {
+    public List<PositionTurn> interact(LaserEngine laserEngine, PositionTurn currentBeamPositionTurn, List<PositionTurn> beamPath) {
         // A Double Mirror reflects the beam 90 degrees depending on the direction it is facing.
-        switch (this.getDirection()) {
-            case UP,
-                 DOWN -> { // Here facing down or up means the mirror spans top left to bottom right (like a backslash)
-                switch (currentBeamPositionDirection.getDirection()) { // where beam then gets reflected depending on the direction
-                    case UP ->
-                            currentBeamPositionDirection = currentBeamPositionDirection.withDirection(Direction.LEFT);
-                    case DOWN ->
-                            currentBeamPositionDirection = currentBeamPositionDirection.withDirection(Direction.RIGHT);
-                    case LEFT ->
-                            currentBeamPositionDirection = currentBeamPositionDirection.withDirection(Direction.UP);
-                    case RIGHT ->
-                            currentBeamPositionDirection = currentBeamPositionDirection.withDirection(Direction.DOWN);
-                }
-            }
-            case LEFT,
-                 RIGHT -> { // Facing right or left means the mirror spans bottom left to top right (like a slash)
-                switch (currentBeamPositionDirection.getDirection()) { // where beam then gets reflected depending on the direction
-                    case UP ->
-                            currentBeamPositionDirection = currentBeamPositionDirection.withDirection(Direction.RIGHT);
-                    case DOWN ->
-                            currentBeamPositionDirection = currentBeamPositionDirection.withDirection(Direction.LEFT);
-                    case LEFT ->
-                            currentBeamPositionDirection = currentBeamPositionDirection.withDirection(Direction.DOWN);
-                    case RIGHT ->
-                            currentBeamPositionDirection = currentBeamPositionDirection.withDirection(Direction.UP);
-                }
-            }
-        }
-        return laserEngine.travel(currentBeamPositionDirection, beamPath, board);
+        Direction reflectedOutDirection = getReflectionMap().get(currentBeamPositionTurn.getOut());
+        PositionTurn reflectedTurn =
+                currentBeamPositionTurn.withOutwardsDirection(reflectedOutDirection);
+
+        // update path
+        List<PositionTurn> updatedPath =
+                laserEngine.getBeamPathHelper().addToBeamPath(beamPath, reflectedTurn);
+
+        // Continue the beam's travel from the current position turn
+        return laserEngine.travelFrom(reflectedTurn, updatedPath);
     }
 
 }

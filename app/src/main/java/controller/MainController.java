@@ -10,7 +10,7 @@ public class MainController {
     private final GamePanel gamePanel;
     private final JFrame window;
     private final ScreenController screenController;
-    private final LevelController levelController;
+    private final LevelSelectionController levelController;
 
     public MainController() {
         this.window = new JFrame("Laser Maze");
@@ -22,7 +22,7 @@ public class MainController {
         UIInitializer.setupWindow(window, gamePanel);
 
         this.screenController = new ScreenController(gamePanel);
-        this.levelController = new LevelController(gamePanel, screenController);
+        this.levelController = new LevelSelectionController(gamePanel, screenController);
     }
 
     public void startGame() {

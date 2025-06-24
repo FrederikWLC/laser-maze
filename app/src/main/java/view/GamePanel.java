@@ -9,8 +9,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 import model.domain.board.Position;
-import model.domain.board.PositionDirection;
-
+import model.domain.board.PositionTurn;
 import model.domain.board.TileContainer;
 import view.util.TokenImageLoader;
 import view.util.GameUIBuilder;
@@ -143,7 +142,7 @@ public class GamePanel extends JPanel {
         boardRenderer.setTurnableRenderers(renderers);
     }
 
-    public void setLaserPath(List<PositionDirection> path) {
+    public void setLaserPath(List<PositionTurn> path) {
         gameRenderer.setLaserPath(path);
     }
 

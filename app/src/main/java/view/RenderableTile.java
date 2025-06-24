@@ -3,8 +3,6 @@ package view;
 import model.domain.board.Direction;
 import model.domain.token.base.Token;
 
-
-
 public class RenderableTile {
     private final int x;
     private final int y;

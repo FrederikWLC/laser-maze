@@ -1,7 +1,7 @@
 package model.domain.token.base;
 
-import model.domain.board.PositionDirection;
+import model.domain.board.PositionTurn;
 
 public interface ICheckpointToken {
-    boolean isPenetrated(PositionDirection beamPositionDirection);
+    boolean isChecked(PositionTurn beamPositionTurn);
 }

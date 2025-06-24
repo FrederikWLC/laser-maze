@@ -23,7 +23,7 @@ public class BackgroundRenderer implements Drawable {
         if (image != null) {
             g.drawImage(image, 0, 0, 800, 600, null);
         } else {
-            g.setColor(fallbackColor); // fallback background
+            g.setColor(fallbackColor);
             g.fillRect(0, 0, 800, 600);
         }
     }

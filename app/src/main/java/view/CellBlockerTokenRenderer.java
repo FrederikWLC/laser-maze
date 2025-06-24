@@ -21,7 +21,7 @@ public class CellBlockerTokenRenderer implements TokenRenderer {
             g2d.drawImage(img, x, y, size, size, null);
         } else {
             g2d.setColor(java.awt.Color.MAGENTA);
-            g2d.fillRect(x, y, size, size); // fallback
+            g2d.fillRect(x, y, size, size);
         }
     }
 }

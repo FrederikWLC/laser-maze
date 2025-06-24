@@ -50,7 +50,6 @@ public class ViewOnlyToken extends Token implements ITurnableToken, ITargetToken
 
     @Override
     public void setRequiredTarget(boolean required) {
-        // no-op since this is view-only
     }
 
 

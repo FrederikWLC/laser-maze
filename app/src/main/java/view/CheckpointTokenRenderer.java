@@ -19,7 +19,6 @@ public class CheckpointTokenRenderer extends TurnableTokenRenderer {
     @Override
     public void render(Graphics2D g2d, ITurnableToken token, int x, int y, int size) {
         if (!(token instanceof ITurnableToken turnable)) {
-            // Fallback if direction is missing or invalid
             g2d.setColor(Color.MAGENTA);
             g2d.fillRect(x, y, size, size);
             return;
@@ -46,10 +45,10 @@ public class CheckpointTokenRenderer extends TurnableTokenRenderer {
         }
         if (token.isMovable() && token.getDirection() != null) {
             Composite originalComposite = g2d.getComposite();
-            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f)); // 40% transparency
-            g2d.setColor(Color.BLACK); // or any dark color you'd like
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
+            g2d.setColor(Color.BLACK);
             g2d.fillRect(x, y, size, size);
-            g2d.setComposite(originalComposite); // Reset to original
+            g2d.setComposite(originalComposite);
         }
 
     }

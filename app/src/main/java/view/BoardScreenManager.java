@@ -31,12 +31,12 @@ public class BoardScreenManager implements DisplayManager {
         boardRenderer.setTilesToRender(tiles);
         boardRenderer.setTokenImages(tokenImages);
 
-        // Create it once
+
         if (!panel.hasFireLaserButton()) {
             panel.createFireLaserButton();
         }
 
-        // Show it only on this screen
+
         panel.getFireLaserButton().setVisible(true);
 
         // Hide unrelated UI

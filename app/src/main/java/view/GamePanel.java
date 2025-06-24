@@ -276,7 +276,7 @@ public class GamePanel extends JPanel {
         for (var l : getMouseMotionListeners()) removeMouseMotionListener(l);
     }
 
-    // Getters
+
     public JButton getRestartButton() {
         return restartButton;
     }

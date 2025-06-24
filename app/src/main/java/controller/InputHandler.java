@@ -2,7 +2,6 @@ package controller;
 
 import model.domain.board.Inventory;
 import model.domain.board.Position;
-import model.domain.board.TileContainer;
 import model.domain.token.base.Token;
 import model.domain.token.base.ITurnableToken;
 import view.GamePanel;

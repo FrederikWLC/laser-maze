@@ -1,5 +1,4 @@
 package model.domain.board;
-import java.util.List;
 import java.util.Objects;
 
 public class Position {

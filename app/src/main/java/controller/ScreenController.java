@@ -1,16 +1,13 @@
 package controller;
 
-import model.domain.level.Level;
 import view.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
-import java.util.Comparator;
 import java.util.List;
 import java.util.function.IntConsumer;
 
-import static java.util.stream.Collectors.toList;
 
 public class ScreenController {
     private final GamePanel gamePanel;

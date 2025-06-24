@@ -9,7 +9,6 @@ import model.domain.board.Board;
 import model.domain.token.base.ICheckpointToken;
 import model.domain.token.base.ITargetToken;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 

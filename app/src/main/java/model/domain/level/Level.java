@@ -1,13 +1,11 @@
 package model.domain.level;
 
-import model.domain.board.Inventory;
 import model.domain.board.TileContainer;
 import model.domain.token.base.Token;
 import model.domain.board.Board;
 import model.domain.token.impl.LaserToken;
 
 import java.util.List;
-import java.util.Optional;
 
 public class Level {
     int id;

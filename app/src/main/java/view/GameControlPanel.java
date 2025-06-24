@@ -12,7 +12,7 @@ public class GameControlPanel extends JPanel {
     public final JPanel levelListPanel = new JPanel();
     public final JScrollPane levelScrollPane = new JScrollPane(levelListPanel);
     public final BoardRendererPanel boardRenderer = new BoardRendererPanel();
-    private JButton fireLaserButton;
+
 
 
 

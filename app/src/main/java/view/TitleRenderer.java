@@ -24,11 +24,11 @@ public class TitleRenderer implements Drawable {
         GlyphVector gv = font.createGlyphVector(g.getFontRenderContext(), text);
         Shape shape = gv.getOutline(x, y);
 
-        g.setColor(Color.RED); // Outline color
+        g.setColor(Color.RED);
         g.setStroke(new BasicStroke(3f));
         g.draw(shape);
 
-        g.setColor(Color.BLACK); // Fill color
+        g.setColor(Color.BLACK);
         g.fill(shape);
     }
 }

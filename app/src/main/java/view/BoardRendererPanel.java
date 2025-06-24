@@ -28,7 +28,7 @@ public class BoardRendererPanel extends JPanel {
 
     private List<RenderableTile> inventoryTilesToRender;
     private final int inventoryStartX = 100;
-    private final int inventoryStartY = 520; // below board
+    private final int inventoryStartY = 520;
     private final int inventoryTileSize = 60;
 
     private Point dragMousePosition = null;
@@ -183,20 +183,20 @@ public class BoardRendererPanel extends JPanel {
 
                 if (pd.isStraight()) {
                     if (out == Direction.UP || out == Direction.DOWN) {
-                        // Full vertical line down the middle
+
                         g2d.drawLine(x + tileSize / 2, y, x + tileSize / 2, y + tileSize);
                     } else if (out == Direction.LEFT || out == Direction.RIGHT) {
-                        // Full horizontal line across the middle
+
                         g2d.drawLine(x, y + tileSize / 2, x + tileSize, y + tileSize / 2);
                     }
                 }
                 else if (pd.isTurn()) {
 
-                    // Tile centre
+
                     int cx = x + tileSize / 2;
                     int cy = y + tileSize / 2;
 
-                    // entry point
+
                     int ex = cx, ey = cy;
                     switch (in) {
                         case UP   -> { ex = cx;            ey = y + tileSize; } // from bottom
@@ -205,7 +205,7 @@ public class BoardRendererPanel extends JPanel {
                         case RIGHT-> { ex = x;             ey = cy;           } // from left
                     }
 
-                    // exit point
+
                     int lx = cx, ly = cy;
                     switch (out) {
                         case UP   -> { lx = cx;            ly = y;            } // to top
@@ -214,9 +214,8 @@ public class BoardRendererPanel extends JPanel {
                         case RIGHT-> { lx = x + tileSize;  ly = cy;           } // to right
                     }
 
-                    // Draw the two half-segments
-                    g2d.drawLine(ex, ey, cx, cy);   // entry -> centre
-                    g2d.drawLine(cx, cy, lx, ly);   // centre ->  exit
+                    g2d.drawLine(ex, ey, cx, cy);
+                    g2d.drawLine(cx, cy, lx, ly);
                 }
 
             }
@@ -232,7 +231,7 @@ public class BoardRendererPanel extends JPanel {
             int hit = levelController.getCurrentTouchTargetCount();
             int required = levelController.getRequiredTouchTargetCount();
             String display = "Target Tokens Lit: " + hit + " / " + required;
-            g2d.setColor(hit >= required ? Color.GREEN : Color.WHITE); // Green if complete
+            g2d.setColor(hit >= required ? Color.GREEN : Color.WHITE);
             g2d.drawString(display, getWidth() - 220, 30);
         }
 

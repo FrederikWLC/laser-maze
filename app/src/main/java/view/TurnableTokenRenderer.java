@@ -5,7 +5,7 @@ import model.domain.board.Direction;
 public abstract class TurnableTokenRenderer implements ITurnableTokenRenderer {
     public String getDirString(Direction dir) {
         if (dir == null) {
-            return "default"; // or "none", "neutral", or a fallback rotation asset
+            return "default";
         }
         return switch (dir) {
             case UP -> "NORTH";

@@ -24,12 +24,12 @@ public class PortalTokenRenderer extends TurnableTokenRenderer {
         if (img != null) {
             g2d.drawImage(img, x, y, size, size, null);
         } else {
-            // Fallback: cyan circle
+
             g2d.setColor(Color.CYAN);
             g2d.fillOval(x, y, size, size);
         }
 
-        // Optional overlay for turnable or movable
+
         if (token.isTurnable() && dir != null) {
             BufferedImage overlay = tokenImages.get("turnable.png");
             if (overlay != null) {

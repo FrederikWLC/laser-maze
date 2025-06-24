@@ -19,8 +19,17 @@ import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import io.cucumber.datatable.DataTable;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.io.IOException;
+
+
 public class PersistenceSteps {
     private final TestWorld world = new TestWorld();
+    private List<Integer> listedIds;
     LevelSerializer levelSerializer = new LevelSerializer();
     Level level;
 
@@ -50,7 +59,70 @@ public class PersistenceSteps {
               "requiredTargetNumber": %d,
               "currentTargetNumber": %d,
               "complete": %b,
-              "tokens": []
+              "tokens": [
+                         {
+                                       "type": "DoubleMirrorToken",
+                                       "movable": true,
+                                       "turnable": true
+                                     },
+                                     {
+                                       "type": "LaserToken",
+                                       "x": 3,
+                                       "y": 1,
+                                       "movable": false,
+                                       "turnable": true
+                                     },
+                                     {
+                                       "type": "TargetMirrorToken",
+                                       "x": 2,
+                                       "y": 0,
+                                       "movable": false,
+                                       "turnable": true,
+                                       "isRequiredTarget": true
+                                     },
+                                     {
+                                       "type": "TargetMirrorToken",
+                                       "x": 0,
+                                       "y": 1,
+                                       "movable": false,
+                                       "turnable": true
+                                     },
+                                     {
+                                       "type": "TargetMirrorToken",
+                                       "x": 1,
+                                       "y": 2,
+                                       "movable": false,
+                                       "turnable": true
+                                     },
+                                     {
+                                       "type": "TargetMirrorToken",
+                                       "x": 0,
+                                       "y": 3,
+                                       "movable": false,
+                                       "turnable": true
+                                     },
+                                     {
+                                       "type": "TargetMirrorToken",
+                                       "x": 2,
+                                       "y": 3,
+                                       "movable": false,
+                                       "turnable": true
+                                     },
+                                     {
+                                       "type": "CheckpointToken",
+                                       "x": 1,
+                                       "y": 1,
+                                       "direction": "LEFT",
+                                       "movable": false,
+                                       "turnable": true
+                                     },
+                                     {
+                                       "type": "BeamSplitterToken",
+                                       "x": 2,
+                                       "y": 2,
+                                       "movable": false,
+                                       "turnable": true
+                                     }]
             }
         """, id, width, height, requiredTargetNumber, currentTargetNumber, complete);
         Files.writeString(levelFile, json, StandardCharsets.UTF_8);
@@ -77,7 +149,7 @@ public class PersistenceSteps {
 
     @Then("the level should be equivalent to the one loaded from the default source")
     public void theLevelShouldBeLoadedFromTheDefaultSource() {
-        Level defaultLevel = levelIOHandler.getDefaultLevelLoader().load(level.getId());
+        Level defaultLevel = defaultLevelLoader.load(level.getId());
         String levelSerialization = levelSerializer.serialize(level).toString();
         String defaultLevelSerialization = levelSerializer.serialize(defaultLevel).toString();
         assertEquals(levelSerialization, defaultLevelSerialization,
@@ -86,7 +158,7 @@ public class PersistenceSteps {
 
     @Then("the level should not be equivalent to the one loaded from the default source")
     public void theLevelShouldNotBeEquivalentToTheOneLoadedFromTheDefaultSource() {
-        Level defaultLevel = levelIOHandler.getDefaultLevelLoader().load(level.getId());
+        Level defaultLevel = defaultLevelLoader.load(level.getId());
         String levelSerialization = levelSerializer.serialize(level).toString();
         String defaultLevelSerialization = levelSerializer.serialize(defaultLevel).toString();
         assertNotEquals(levelSerialization, defaultLevelSerialization,
@@ -122,5 +194,47 @@ public class PersistenceSteps {
     @And("the player restarts the level")
     public void thePlayerRestartsTheLevel() {
         level = levelIOHandler.restart(level);
+    }
+
+    @Given("the resource folder has no JSON files")
+    public void theResourceFolderHasNoJSONFiles() throws IOException {
+        Files.list(world.resourcePath)
+                .filter(p -> p.toString().endsWith(".json"))
+                .forEach(p -> p.toFile().delete());
+    }
+
+    @Given("the resource folder contains files:")
+    public void theResourceFolderContainsFiles(DataTable table) throws IOException {
+        Files.list(world.resourcePath)
+                .forEach(p -> p.toFile().delete());
+        for (Map<String,String> row : table.asMaps(String.class, String.class)) {
+            Path f = world.resourcePath.resolve(row.get("filename"));
+            Files.writeString(f, "{}", java.nio.charset.StandardCharsets.UTF_8);
+        }
+    }
+
+    @When("I retrieve all available level IDs")
+    public void iRetrieveAllAvailableLevelIDs() {
+        listedIds = defaultLevelLoader.getAllAvailableLevelIds();
+    }
+
+    @Then("the list of available level IDs should be empty")
+    public void theListOfAvailableLevelIDsShouldBeEmpty() {
+        assertNotNull(listedIds);
+        assertTrue(listedIds.isEmpty(), "Expected no level IDs but got " + listedIds);
+    }
+
+    @Then("the list of available level IDs should be:")
+    public void theListOfAvailableLevelIDsShouldBe(DataTable table) {
+        List<Integer> expected = table.asMaps().stream()
+                .map(m -> Integer.parseInt(m.get("id")))
+                .sorted()
+                .collect(Collectors.toList());
+
+        List<Integer> actualSorted = listedIds.stream()
+                .sorted()
+                .collect(Collectors.toList());
+
+        assertEquals(expected, actualSorted, "Parsed level IDs mismatch");
     }
 }

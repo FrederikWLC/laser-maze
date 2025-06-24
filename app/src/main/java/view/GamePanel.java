@@ -34,7 +34,8 @@ public class GamePanel extends JPanel {
     private JPanel levelListPanel;
 
     private JLabel multiplayerTimerLabel = new JLabel("00:00");
-
+    private Timer multiplayerTimer;
+    private long multiplayerStartTime;
 
     private final Map<String, TokenRenderer> tokenRenderers = new HashMap<>();
 
@@ -204,6 +205,30 @@ public class GamePanel extends JPanel {
         repaint();
     }
 
+    public void startMultiplayerTimer() {
+        multiplayerStartTime = System.currentTimeMillis();
+        multiplayerTimerLabel.setBounds(600, 20, 160, 30);
+        multiplayerTimerLabel.setVisible(true);
+        add(multiplayerTimerLabel);
+
+        multiplayerTimer = new Timer(1000, e -> {
+            long elapsed = System.currentTimeMillis() - multiplayerStartTime;
+            long seconds = (elapsed / 1000) % 60;
+            long minutes = (elapsed / 1000) / 60;
+            multiplayerTimerLabel.setText(String.format("Time: %02d:%02d", minutes, seconds));
+        });
+        multiplayerTimer.start();
+    }
+
+    public void stopMultiplayerTimer() {
+        if (multiplayerTimer != null) {
+            multiplayerTimer.stop();
+            multiplayerTimer = null;
+        }
+        multiplayerTimerLabel.setVisible(false);
+    }
+
+
     public void resetBoardUI() {
         if (boardRenderer != null) {
             boardRenderer.setVisible(false);
@@ -211,6 +236,7 @@ public class GamePanel extends JPanel {
             boardRenderer.setLaserPath(null);
         }
 
+        stopMultiplayerTimer();
         setTilesToRender(List.of());
         setLaserPath(null);
         clearGameplayButtons();

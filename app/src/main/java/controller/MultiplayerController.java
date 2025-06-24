@@ -11,13 +11,13 @@ public class MultiplayerController {
 
     private final Multiplayer multiplayer;
     private final MultiplayerEngine multiplayerEngine;
-    private final LevelController levelController;
+    private final LevelSelectionController levelSelectionController;
     private final GamePanel gamePanel;
 
-    public MultiplayerController(Multiplayer multiplayer, LevelController levelController, GamePanel gamePanel) {
+    public MultiplayerController(Multiplayer multiplayer, LevelSelectionController levelSelectionController, GamePanel gamePanel) {
         this.multiplayer = multiplayer;
         this.multiplayerEngine = new MultiplayerEngine();
-        this.levelController = levelController;
+        this.levelSelectionController = levelSelectionController;
         this.gamePanel = gamePanel;
     }
 
@@ -41,8 +41,8 @@ public class MultiplayerController {
         multiplayerEngine.startTurn(multiplayer, System.currentTimeMillis());
 
         Level freshLevel = multiplayer.getCurrentLevel(); // already set by engine
-        levelController.setCurrentLevel(freshLevel);
-        levelController.reloadLevelUI();
+        levelSelectionController.setCurrentLevel(freshLevel);
+        levelSelectionController.reloadLevelUI();
         gamePanel.startMultiplayerTimer();
 
         SwingUtilities.invokeLater(afterLoadUI);
@@ -79,6 +79,6 @@ public class MultiplayerController {
                 JOptionPane.INFORMATION_MESSAGE
         );
 
-        levelController.exitLevel();
+        levelSelectionController.exitLevel();
     }
 }

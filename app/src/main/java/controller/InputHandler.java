@@ -2,7 +2,6 @@ package controller;
 
 import model.domain.board.Inventory;
 import model.domain.board.Position;
-import model.domain.board.TileContainer;
 import model.domain.token.base.Token;
 import model.domain.token.base.ITurnableToken;
 import view.GamePanel;
@@ -16,7 +15,7 @@ import java.util.List;
 
 
 public class InputHandler implements MouseListener, MouseMotionListener {
-    private final GameController gameController;
+    private final LevelController levelController;
     private final GamePanel gamePanel;
     private final RenderableTileFactory tileFactory;
     private final SoundManager soundManager;
@@ -24,8 +23,8 @@ public class InputHandler implements MouseListener, MouseMotionListener {
     private final TokenDragController dragController;
     private Point mousePosition = null;
 
-    public InputHandler(GameController gameController, GamePanel gamePanel, RenderableTileFactory tileFactory, SoundManager soundManager, Inventory inventory, TokenDragController dragController) {
-        this.gameController = gameController;
+    public InputHandler(LevelController levelController, GamePanel gamePanel, RenderableTileFactory tileFactory, SoundManager soundManager, Inventory inventory, TokenDragController dragController) {
+        this.levelController = levelController;
         this.gamePanel = gamePanel;
         this.tileFactory = tileFactory;
         this.soundManager = soundManager;
@@ -34,7 +33,7 @@ public class InputHandler implements MouseListener, MouseMotionListener {
     }
 
     private void refreshBoardAndInventoryView() {
-        List<RenderableTile> boardTiles = tileFactory.convertBoardToRenderableTiles(gameController.getLevel().getBoard());
+        List<RenderableTile> boardTiles = tileFactory.convertBoardToRenderableTiles(levelController.getLevel().getBoard());
         List<RenderableTile> inventoryTiles = tileFactory.convertBoardToRenderableTiles(inventory);
 
         // Update both game panel and board renderer with board tiles
@@ -57,14 +56,14 @@ public class InputHandler implements MouseListener, MouseMotionListener {
 
         soundManager.play(SoundManager.Sound.CLICK, false);
 
-        Token token = gameController.getTokenAt(clicked);
+        Token token = levelController.getTokenAt(clicked);
         if (token == null) {
             System.out.println("No token at: " + clicked);
             return;
         }
 
         if (token instanceof ITurnableToken turnable && token.isTurnable()) {
-            gameController.rotateTokenClockwise(turnable);
+            levelController.rotateTokenClockwise(turnable);
         }
 
         refreshBoardAndInventoryView();
@@ -77,7 +76,7 @@ public class InputHandler implements MouseListener, MouseMotionListener {
         Position inventoryPos = gamePanel.screenToInventory(e.getX(), e.getY());
 
         if (gamePanel.isBoardArea(e.getX(), e.getY())) {
-            dragController.startDrag(gameController.getLevel().getBoard(), boardPos);
+            dragController.startDrag(levelController.getLevel().getBoard(), boardPos);
         } else if (gamePanel.isInventoryArea(e.getX(), e.getY())) {
             dragController.startDrag(inventory, inventoryPos);
         }
@@ -97,7 +96,7 @@ public class InputHandler implements MouseListener, MouseMotionListener {
 
         // Try dropping in either valid area
         if (gamePanel.isBoardArea(e.getX(), e.getY())) {
-            dragController.dropOnBoard(gameController.getLevel().getBoard(), boardPos);
+            dragController.dropOnBoard(levelController.getLevel().getBoard(), boardPos);
         } else if (gamePanel.isInventoryArea(e.getX(), e.getY())) {
             dragController.dropOnInventory(inventory, inventoryPos);
         }

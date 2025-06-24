@@ -13,15 +13,15 @@ import java.util.function.IntConsumer;
 public class ScreenController {
     private final GamePanel gamePanel;
     private final SoundManager soundManager = new SoundManager();
-    private final LevelController levelController;
+    private final LevelSelectionController levelSelectionController;
 
     private DisplayManager titleScreen;
     private DisplayManager singlePlayerLevelSelectScreen;
     private DisplayManager multiplayerLevelSelectScreen;
 
-    public ScreenController(GamePanel gamePanel, LevelController levelController) {
+    public ScreenController(GamePanel gamePanel, LevelSelectionController levelSelectionController) {
         this.gamePanel = gamePanel;
-        this.levelController = levelController;
+        this.levelSelectionController = levelSelectionController;
     }
 
     public void setupScreens(IntConsumer onLevelSelectClick) {
@@ -74,7 +74,7 @@ public class ScreenController {
                 gamePanel.clearLaserPath();
                 gamePanel.repaint();
 
-                levelController.loadMultiplayerLevel(levelNum, 2); // 2-player multiplayer
+                levelSelectionController.loadMultiplayerLevel(levelNum, 2); // 2-player multiplayer
             });
             levelListPanel.add(button);
         }
@@ -89,7 +89,7 @@ public class ScreenController {
         JPanel levelListPanel = gamePanel.getControlPanel().levelListPanel;
         levelListPanel.removeAll();
 
-        List<Level> levels = levelController.getAllLevels()
+        List<Level> levels = levelSelectionController.getAllLevels()
                 .stream()
                 .sorted(Comparator.comparingInt(Level::getId)) // sort by ID
                 .toList();
@@ -102,7 +102,7 @@ public class ScreenController {
                 gamePanel.clearLaserPath();
                 gamePanel.repaint();
 
-                levelController.loadLevel(levelId); // singleplayer
+                levelSelectionController.loadLevel(levelId); // singleplayer
             });
             levelListPanel.add(button);
         }
@@ -116,7 +116,7 @@ public class ScreenController {
         JPanel levelListPanel = gamePanel.getControlPanel().levelListPanel;
         levelListPanel.removeAll();
 
-        List<Level> levels = levelController.getAllLevels()
+        List<Level> levels = levelSelectionController.getAllLevels()
                 .stream()
                 .sorted(Comparator.comparingInt(Level::getId)) // sort by ID
                 .toList();
@@ -129,7 +129,7 @@ public class ScreenController {
                 gamePanel.clearLaserPath();
                 gamePanel.repaint();
 
-                levelController.loadMultiplayerLevel(levelId, 2); // Start multiplayer
+                levelSelectionController.loadMultiplayerLevel(levelId, 2); // Start multiplayer
             });
             levelListPanel.add(button);
         }

@@ -34,6 +34,7 @@ public class LevelController {
     }
 
     public void rotateTokenClockwise(ITurnableToken token) {
+        levelEngine.getLaserEngine().refreshBeamPath();
         if (token == null) {System.out.println("No token to rotate"); return;}
         Direction current = token.getDirection();
         if (current == null) {
@@ -44,6 +45,7 @@ public class LevelController {
     }
 
     public void rotateToken(Token token, Direction direction) {
+        levelEngine.getLaserEngine().refreshBeamPath();
         if (token instanceof ILaserToken laserToken && token instanceof ITurnableToken turnableToken) {
             if (turnableToken.isTurned()) {
                 try {

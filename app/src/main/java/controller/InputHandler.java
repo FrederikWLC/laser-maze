@@ -33,6 +33,9 @@ public class InputHandler implements MouseListener, MouseMotionListener {
         this.dragController = dragController;
     }
 
+
+
+
     private void refreshBoardAndInventoryView() {
         List<RenderableTile> boardTiles = tileFactory.convertBoardToRenderableTiles(levelController.getLevelEngine().getLevel().getBoard());
         List<RenderableTile> inventoryTiles = tileFactory.convertBoardToRenderableTiles(inventory);
@@ -63,8 +66,10 @@ public class InputHandler implements MouseListener, MouseMotionListener {
             return;
         }
 
+
         if (token instanceof ITurnableToken turnable && token.isTurnable()) {
             levelController.rotateTokenClockwise(turnable);
+            gamePanel.clearLaserPath();
         }
 
         refreshBoardAndInventoryView();
@@ -85,8 +90,6 @@ public class InputHandler implements MouseListener, MouseMotionListener {
         // Provide dragged token to the renderer
         Token dragged = dragController.getDraggedToken();
         gamePanel.getControlPanel().boardRenderer.setCurrentlyDraggedToken(dragged);
-
-
         refreshBoardAndInventoryView();
     }
 
@@ -94,6 +97,11 @@ public class InputHandler implements MouseListener, MouseMotionListener {
     public void mouseReleased(MouseEvent e) {
         Position boardPos = gamePanel.screenToBoard(e.getX(), e.getY());
         Position inventoryPos = gamePanel.screenToInventory(e.getX(), e.getY());
+
+        Token dragged = dragController.getDraggedToken();
+        if (dragged != null) {
+            gamePanel.clearLaserPath();
+        }
 
         // Try dropping in either valid area
         if (gamePanel.isBoardArea(e.getX(), e.getY())) {

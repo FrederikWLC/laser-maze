@@ -111,8 +111,8 @@ public class LevelSelectionController {
                     boolean levelCompleted = levelController.getLevelEngine().updateAndCheckLevelCompletionState();
                     System.out.println("Level completed: " + levelCompleted);
                     if (levelCompleted) {
-                        gamePanel.showLevelComplete();
                         if (multiplayerController != null) {
+                            gamePanel.showLevelComplete();
                             multiplayerController.onLevelComplete();
                         } else {
                             gamePanel.showLevelComplete();

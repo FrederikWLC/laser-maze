@@ -193,6 +193,11 @@ To be filled in later.
 - **Sprint 2** Takes place from Jun 14, 12:00 until Jun 18, 12:00
 - **Sprint 3** Takes place from Jun 19, 12:00 until Jun 23, 12:00
 
+These *actually* ended up like:
+- **Group Contract Deadline:** Jun 6, 2025, 12:00
+- **Sprint 1** Took place from Jun 9, 12:00 until Jun 17, 12:00
+- **Sprint 2** Took place from Jun 17, 12:00 until Jun 23, 12:00
+
 - **Final Submission:** Jun 24, 2025, 13:00
 - **Final Presentation:** Jun 25, 2025, 9:00
 

@@ -25,24 +25,25 @@ public class LevelSelectionController {
     private MultiplayerController multiplayerController;
     private ScreenController screenController;
     private final SoundManager soundManager = new SoundManager();
-    private final DefaultLevelLoader defaultLevelLoader = new DefaultLevelLoader();
-    private final SavedLevelLoader savedLevelLoader = new SavedLevelLoader();
-    private final LevelSaver levelSaver = new LevelSaver();
-    private final LevelIOHandler levelIOHandler = new LevelIOHandler(defaultLevelLoader,savedLevelLoader,levelSaver);
+    private final LevelIOHandler levelIOHandler;
 
     public LevelSelectionController(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
+        DefaultLevelLoader defaultLevelLoader = new DefaultLevelLoader();
+        SavedLevelLoader savedLevelLoader = new SavedLevelLoader();
+        LevelSaver levelSaver = new LevelSaver();
+        levelIOHandler = new LevelIOHandler(defaultLevelLoader,savedLevelLoader,levelSaver);
     }
 
     public void setScreenController(ScreenController screenController) {
         this.screenController = screenController;
     }
 
-    public void loadLevel(int levelNumber) {
-        System.out.println("Loading level " + levelNumber);
-        Level level = levelIOHandler.load(levelNumber);
+    public void loadLevelById(int id) {
+        System.out.println("Loading level " + id);
+        Level level = levelIOHandler.load(id);
         if (level == null) {
-            System.err.println("Failed to load level " + levelNumber);
+            System.err.println("Failed to load level " + id);
             return;
         }
         setCurrentLevel(level);
@@ -50,8 +51,8 @@ public class LevelSelectionController {
         reloadLevelUI();
     }
 
-    public void loadMultiplayerLevel(int levelNumber, int playerCount) {
-        Level defaultLevel = levelIOHandler.load(levelNumber);
+    public void loadMultiplayerLevelById(int id, int playerCount) {
+        Level defaultLevel = levelIOHandler.getDefaultLevelLoader().load(id);
 
         Multiplayer multiplayer = new Multiplayer(defaultLevel, playerCount);
         this.multiplayerController = new MultiplayerController(multiplayer,this,gamePanel);
@@ -181,8 +182,12 @@ public class LevelSelectionController {
         reloadLevelUI();
     }
 
-    public List<Level> getAllLevels() {
-        return levelIOHandler.loadAll();
+    public LevelController getLevelController() {
+        return levelController;
+    }
+
+    public LevelIOHandler getLevelIOHandler() {
+        return levelIOHandler;
     }
 
     public Level getCurrentLevel() {

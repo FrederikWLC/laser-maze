@@ -15,20 +15,32 @@ public class LevelIOHandler {
         this.levelSaver = levelSaver;
     }
 
+    public DefaultLevelLoader getDefaultLevelLoader() {
+        return defaultLevelLoader;
+    }
+
+    public SavedLevelLoader getSavedLevelLoader() {
+        return savedLevelLoader;
+    }
+
+    public LevelSaver getLevelSaver() {
+        return levelSaver;
+    }
+
     public Level load(int levelId) {
         Level level;
         try {
-            level = savedLevelLoader.load(levelId);
+            level = getSavedLevelLoader().load(levelId);
         } catch (RuntimeException e) {
             // If the level is not found, "save" and return a default level
-            level = defaultLevelLoader.load(levelId);
+            level = getDefaultLevelLoader().load(levelId);
         }
         return level;
     }
 
     public List<Level> loadAll() {
             try {
-                return defaultLevelLoader.getAllAvailableLevelIds()
+                return getDefaultLevelLoader().getAllAvailableLevelIds()
                         .stream()
                         .map(levelId -> load(levelId))
                         .toList();
@@ -38,11 +50,11 @@ public class LevelIOHandler {
     }
 
     public void save(Level level) {
-        levelSaver.save(level);
+        getLevelSaver().save(level);
     }
 
     public Level restart(Level level) {
-        Level defaultLevel = defaultLevelLoader.load(level.getId());
+        Level defaultLevel = getDefaultLevelLoader().load(level.getId());
         save(defaultLevel);
         return defaultLevel;
     }

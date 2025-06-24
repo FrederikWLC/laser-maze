@@ -17,6 +17,7 @@ public class LevelController {
     public LevelController(Level level) {
         this.levelEngine = new LevelEngine(level);
         this.boardEngine = new BoardEngine();
+
     }
 
     public List<PositionTurn> getCurrentLaserPath() {
@@ -74,6 +75,14 @@ public class LevelController {
 
     public LevelEngine getLevelEngine() {
         return levelEngine;
+    }
+
+    public int getCurrentTouchTargetCount() {
+        return levelEngine.getLevel().getCurrentTargetNumber();
+    }
+
+    public int getRequiredTouchTargetCount() {
+        return levelEngine.getLevel().getRequiredTargetNumber();
     }
 
 }
